@@ -1,0 +1,588 @@
+<h3>Registrar empleado</h3>
+<p class="text-sm">INSTITUTION_NAME</p>
+
+<pre>
+  {{ formulario_actual?.getRawValue() | json }}
+</pre>
+
+<section class="flex gap-5 mt-5">
+  <section class="w-60">
+    <ul class="stepper | sticky top-5">
+      <li>
+        <button
+          class="stepper__step"
+          [attr.data-active]="paso_actual === 1"
+          [attr.data-completed]="datos_personales.valid"
+          (click)="paso_actual = 1"
+        >
+          <div class="stepper__step__number">
+            @if (datos_personales.valid) { <i class="pi pi-check"></i> } @else {
+            1 }
+          </div>
+          <div>
+            <p class="stepper__step__title">Datos personales</p>
+            <p class="stepper__step__description">
+              {{
+                datos_personales.valid
+                  ? 'Completado'
+                  : 'Nombres, Apellidos, etc.'
+              }}
+            </p>
+          </div>
+        </button>
+      </li>
+      <span class="stepper__separator"></span>
+      <li>
+        <button
+          class="stepper__step"
+          [attr.data-active]="paso_actual === 2"
+          (click)="paso_actual = 2"
+          [attr.data-completed]="centro_de_votacion.valid"
+        >
+          <div class="stepper__step__number">
+            @if (centro_de_votacion.valid) { <i class="pi pi-check"></i> } @else
+            { 2 }
+          </div>
+          <div>
+            <p class="stepper__step__title">Centro de votación</p>
+            <p class="stepper__step__description">
+              {{
+                centro_de_votacion.valid
+                  ? 'Completado'
+                  : 'Estado federal, parroquia, etc.'
+              }}
+            </p>
+          </div>
+        </button>
+      </li>
+      <span class="stepper__separator"></span>
+      <li>
+        <button
+          class="stepper__step"
+          [attr.data-active]="paso_actual === 3"
+          [attr.data-completed]="datos_de_empleo.valid"
+          (click)="paso_actual = 3"
+        >
+          <div class="stepper__step__number">
+            @if (datos_de_empleo.valid) { <i class="pi pi-check"></i> } @else {
+            3 }
+          </div>
+          <div>
+            <p class="stepper__step__title">Datos de empleo</p>
+            <p class="stepper__step__description">
+              {{
+                datos_de_empleo.valid
+                  ? 'Completado'
+                  : 'Tipo de empleado, RIF, etc.'
+              }}
+            </p>
+          </div>
+        </button>
+      </li>
+      <span class="stepper__separator"></span>
+      <li>
+        <button
+          class="stepper__step"
+          [attr.data-active]="paso_actual === 4"
+          [attr.data-completed]="datos_de_contacto.valid"
+          (click)="paso_actual = 4"
+        >
+          <div class="stepper__step__number">
+            @if (datos_de_contacto.valid) { <i class="pi pi-check"></i> } @else
+            { 4 }
+          </div>
+          <div>
+            <p class="stepper__step__title">Datos de contacto</p>
+            <p class="stepper__step__description">
+              {{
+                datos_de_contacto.valid
+                  ? 'Completado'
+                  : 'Dirección, teléfono, etc.'
+              }}
+            </p>
+          </div>
+        </button>
+      </li>
+      <span class="stepper__separator"></span>
+      <li>
+        <button
+          class="stepper__step"
+          [attr.data-active]="paso_actual === 5"
+          [attr.data-completed]="datos_de_salud.valid"
+          (click)="paso_actual = 5"
+        >
+          <div class="stepper__step__number">
+            @if (datos_de_salud.valid) { <i class="pi pi-check"></i> } @else { 5
+            }
+          </div>
+          <div>
+            <p class="stepper__step__title">Datos de salud</p>
+            <p class="stepper__step__description">
+              {{
+                datos_de_contacto.valid
+                  ? 'Completado'
+                  : 'Tipo de sangre, discapacidad, etc.'
+              }}
+            </p>
+          </div>
+        </button>
+      </li>
+    </ul>
+  </section>
+  <form class="flex-1" [formGroup]="formulario_actual!">
+    @if (paso_actual === 1) {
+    <h5>Datos personales</h5>
+    <p class="text-sm">Información del empleado</p>
+    <section class="grid mt-5 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="nombres">Nombres</label>
+          <input
+            pInputText
+            [autofocus]="true"
+            id="nombres"
+            placeholder="Juan José"
+            formControlName="nombres"
+            [class]="{
+                'ng-invalid ng-dirty':
+                  datos_personales.controls.nombres.invalid,
+              }"
+          />
+          <small class="text-red-500">
+            {{ datos_personales.get('nombres')?.errors | json }}
+          </small>
+        </div>
+        <div class="form_input" data-required>
+          <label for="apellidos">Apellidos</label>
+          <input
+            pInputText
+            id="apellidos"
+            placeholder="Pérez Rodrigues"
+            formControlName="apellidos"
+            [class]="{
+                'ng-invalid ng-dirty':
+                  datos_personales.controls.apellidos.invalid,
+              }"
+          />
+          <small class="text-red-500">
+            {{ datos_personales.get('apellidos')?.errors | json }}
+          </small>
+        </div>
+        <div class="form_input" data-required>
+          <label for="cedula">Cedula de identidad</label>
+
+          <p-inputnumber
+            locale="es-VE"
+            prefix="V-"
+            inputId="cedula"
+            placeholder="V-12.345.678"
+            formControlName="cedula"
+            [max]="99999999"
+          />
+
+          <small class="text-red-500">
+            {{ datos_personales.get('cedula')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="fecha_de_nacimiento">Fecha de nacimiento</label>
+          <!-- TODO: el input no ocupa el mismo espacio que los demas -->
+          <p-datepicker
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            inputId="fecha_de_nacimiento"
+            formControlName="fecha_de_nacimiento"
+          />
+          <small class="text-red-500">
+            {{ datos_personales.get('fecha_de_nacimiento')?.errors | json }}
+          </small>
+        </div>
+        <div class="form_input" data-required>
+          <label for="estado_civil">Estado civil</label>
+          <p-select
+            inputId="estado_civil"
+            [options]="$any(ESTADOS_CIVILES)"
+            formControlName="estado_civil"
+            optionLabel="nombre"
+            optionValue="id"
+            placeholder="Seleccione"
+          >
+          </p-select>
+          <small class="text-red-500">
+            {{ datos_personales.get('estado_civil')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      <div class="form_input" data-required>
+        <label>Sexo</label>
+        <p-selectbutton
+          emptyMessage="Sin resultados"
+          [options]="[
+            { id: 'M', nombre: 'Masculino' },
+            { id: 'F', nombre: 'Femenino' }
+          ]"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="sexo"
+        >
+          <ng-template #item let-it>
+            <i [class]="'pi ' + (it.id === 'M' ? 'pi-mars' : 'pi-venus')"></i>
+            {{ it.nombre }}
+          </ng-template>
+        </p-selectbutton>
+        <small class="text-red-500">
+          {{ datos_personales.get('sexo')?.errors | json }}
+        </small>
+      </div>
+    </section>
+    } @else if (paso_actual === 2) {
+    <h5>Centro de votación</h5>
+    <p class="text-sm">Información del empleo</p>
+    <section class="grid mt-5 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="estado_federal">Estado federal</label>
+          <p-select
+            inputId="estado_federal"
+            [options]="$any(ESTADOS_FEDERALES)"
+            formControlName="estado_federal"
+            optionLabel="nombre"
+            optionValue="codigo"
+            [filter]="true"
+            filterBy="nombre"
+            placeholder="Seleccione"
+          >
+          </p-select>
+        </div>
+        <div class="form_input" data-required>
+          <label for="municipio">Municipio</label>
+          <p-select
+            inputId="municipio"
+            [options]="municipios"
+            formControlName="municipio"
+            optionLabel="nombre"
+            optionValue="codigo"
+            [filter]="true"
+            filterBy="nombre"
+            placeholder="Seleccione"
+          >
+          </p-select>
+        </div>
+        <div class="form_input" data-required>
+          <label for="parroquia">Parroquia</label>
+          <p-select
+            inputId="parroquia"
+            [options]="parroquias"
+            formControlName="parroquia"
+            optionLabel="nombre"
+            optionValue="codigo"
+            [filter]="true"
+            filterBy="nombre"
+            placeholder="Seleccione"
+          >
+          </p-select>
+        </div>
+      </section>
+      <div class="form_input" data-required>
+        <label for="centro">Centro de votación</label>
+        <p-select
+          inputId="centro"
+          [options]="centros_de_votacion"
+          formControlName="centro"
+          optionLabel="nombre"
+          optionValue="codigo"
+          [filter]="true"
+          filterBy="nombre"
+          placeholder="Seleccione"
+          [loading]="loadings.centros_de_votacion"
+        >
+        </p-select>
+      </div>
+    </section>
+    } @else if (paso_actual === 3) {
+    <h5>Datos de empleo</h5>
+    <p class="text-sm">Información del empleo</p>
+    <section class="grid gap-4 mt-5">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="tipo_de_empleado">Tipo de empleado</label>
+          <p-select
+            [options]="$any(TIPOS_DE_EMPLEADO)"
+            optionValue="id"
+            optionLabel="nombre"
+            formControlName="tipo_de_empleado"
+            placeholder="Selecione"
+          >
+            <ng-template let-tipo #item #selectedItem>
+              <aw-tag-tipo-de-empleado [tipo]="tipo.id" />
+            </ng-template>
+          </p-select>
+        </div>
+      </section>
+      <ng-template [ngIf]="datos_de_empleo.controls.tipo_de_empleado.value">
+        <section class="form_group">
+          <div class="form_input" data-required>
+            <label for="rif">RIF</label>
+            <input
+              pInputText
+              [autofocus]="true"
+              id="rif"
+              placeholder="RIF"
+              formControlName="rif"
+              [class]="{
+                  'ng-invalid ng-dirty':
+                    datos_de_empleo.controls.rif.invalid,
+                }"
+            />
+            <small class="text-red-500">
+              {{ datos_de_empleo.get('rif')?.errors | json }}
+            </small>
+          </div>
+          <div class="form_input" data-required>
+            <label for="codigo_carnet_patria">Carnet de la Patria</label>
+            <p-password
+              formControlName="codigo_carnet_patria"
+              placeholder="Código"
+              [toggleMask]="true"
+              [feedback]="false"
+            />
+            <small class="text-red-500">
+              {{ datos_de_empleo.get('codigo_carnet_patria')?.errors | json }}
+            </small>
+          </div>
+          @if (datos_de_empleo.controls.tipo_de_empleado.value &&
+          +datos_de_empleo.controls.tipo_de_empleado.value ===
+          TIPO_DE_EMPLEADO.DOCENTE) {
+          <div class="form_input" data-required>
+            <label for="plantel_de_dependencia"
+              >Plantel de depencencia (DEA)</label
+            >
+            <p-iconfield>
+              <input
+                type="text"
+                pInputText
+                formControlName="plantel_de_dependencia"
+                placeholder="Código DEA"
+                class="w-full"
+                #code
+                (input)="code.value = code.value.toUpperCase()"
+              />
+              @if(code.value) { @if(loadings.plantel){
+              <p-inputicon styleClass="pi pi-spinner pi-spin" />
+              } @else if (plantel) {
+              <p-inputicon styleClass="pi pi-check-circle text-green-500" />
+              } @else {
+              <p-inputicon styleClass="pi pi-times-circle text-red-500" />
+              } }
+            </p-iconfield>
+            <small class="text-red-500">
+              {{ datos_de_empleo.get('plantel_de_dependencia')?.errors | json }}
+            </small>
+          </div>
+          }
+        </section>
+        <section class="form_group">
+          <div class="form_input" data-required>
+            <label for="fecha_de_ingreso">Fecha de ingreso</label>
+            <p-datepicker
+              [showButtonBar]="true"
+              [iconDisplay]="'input'"
+              [showIcon]="true"
+              inputId="fecha_de_ingreso"
+              formControlName="fecha_de_ingreso"
+            />
+            <small class="text-red-500">
+              {{ datos_de_empleo.get('fecha_de_ingreso')?.errors | json }}
+            </small>
+          </div>
+        </section>
+        <section class="form_group">
+          @if (datos_de_empleo.controls.tipo_de_empleado.value){ @if
+          (+datos_de_empleo.controls.tipo_de_empleado.value !==
+          TIPO_DE_EMPLEADO.OBRERO) {
+          <div class="form_input" data-required>
+            <label for="titulo_de_pregrado">Título de pregrado</label>
+            <p-select
+              [options]="titulos_de_pregrado"
+              formControlName="titulo_de_pregrado"
+              optionValue="id"
+              optionLabel="nombre"
+              [filter]="true"
+              filterBy="nombre"
+              placeholder="Seleccione"
+            >
+            </p-select>
+          </div>
+          } @if (+datos_de_empleo.controls.tipo_de_empleado.value ===
+          TIPO_DE_EMPLEADO.DOCENTE) {
+          <div class="form_input" data-required>
+            <label for="especialidad">Especialidad</label>
+            <p-select
+              [options]="$any(ESPECIALIDADES)"
+              formControlName="especialidad"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccione"
+            >
+            </p-select>
+          </div>
+          } }
+        </section>
+      </ng-template>
+    </section>
+    } @else if (paso_actual === 4) {
+    <h5>Datos de contacto</h5>
+    <p class="text-sm">Datos de contacto del empleado</p>
+    <section class="grid mt-5 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="telefono">Teléfono</label>
+          <p-inputmask
+            mask="+58 (999) 999-9999"
+            autocomplete="off"
+            inputId="telefono"
+            [autofocus]="true"
+            [unmask]="true"
+            formControlName="telefono"
+            placeholder="+58 (424) 999-9999"
+          />
+          <small class="text-red-500">{{
+            datos_de_contacto.controls.telefono.errors | json
+          }}</small>
+        </div>
+        <div class="form_input" data-required>
+          <label>Correo electrónico</label>
+          <input
+            type="text"
+            placeholder="email@email.com"
+            pInputText
+            formControlName="email"
+            [email]="true"
+          />
+          <small class="text-red-500">{{
+            datos_de_contacto.controls.email.errors | json
+          }}</small>
+        </div>
+      </section>
+      <div class="form_input">
+        <label for="direccion">Dirección</label>
+        <textarea
+          pTextarea
+          id="direccion"
+          name="direccion"
+          formControlName="direccion"
+          placeholder="Liceo José Miguel Sanz. Avenida Bolívar, Maturín, Venezuela."
+        ></textarea>
+        <small class="text-red-500">{{
+          datos_de_contacto.controls.direccion.errors | json
+        }}</small>
+      </div>
+    </section>
+    } @else if (paso_actual === 5) {
+    <h5>Datos de salud</h5>
+    <p class="text-sm">Datos de salud del empleado</p>
+    <div class="grid mt-8 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="tipo_de_sangre">Tipo de sangre</label>
+          <p-select
+            inputId="tipo_de_sangre"
+            [options]="$any(TIPOS_DE_SANGRE)"
+            optionLabel="nombre"
+            optionValue="id"
+            formControlName="tipo_de_sangre"
+          ></p-select>
+          <small class="text-red-500">{{
+            datos_de_salud.get('tipo_de_sangre')!.errors | json
+          }}</small>
+        </div>
+      </section>
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label>Discapacidad</label>
+          <p-selectbutton
+            formControlName="discapacidad"
+            [options]="[
+              { valor: false, nombre: 'No' },
+              { valor: true, nombre: 'Si' }
+            ]"
+            optionLabel="nombre"
+            optionValue="valor"
+            formControlName="discapacidad"
+          >
+          </p-selectbutton>
+          <small class="text-red-500">
+            {{ datos_de_salud.get('discapacidad')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      <section
+        class="form_group"
+        *ngIf="datos_de_salud.controls.discapacidad.value"
+      >
+        <div class="form_input" data-required>
+          <label for="descripcion_discapacidad">Tipo de dispacidad</label>
+          <p-select
+            [options]="$any(TIPOS_DE_DISCAPACIDAD)"
+            optionValue="id"
+            optionLabel="nombre"
+            formControlName="tipo_de_discapacidad"
+          ></p-select>
+          <small class="text-red-500">{{
+            datos_de_salud.controls.tipo_de_discapacidad.errors | json
+          }}</small>
+        </div>
+      </section>
+      <div
+        class="form_input"
+        *ngIf="datos_de_salud.controls.discapacidad.value"
+      >
+        <label for="descripcion_discapacidad"
+          >Descripción de la dispacidad (opcional)</label
+        >
+        <textarea
+          placeholder="Descripción"
+          rows="5"
+          cols="30"
+          pTextarea
+          id="descripcion_discapacidad"
+          formControlName="descripcion_discapacidad"
+        ></textarea>
+        <small class="text-red-500">{{
+          datos_de_salud.controls.descripcion_discapacidad.errors | json
+        }}</small>
+      </div>
+    </div>
+    }
+    <div class="flex gap-4 mt-8 justify-end">
+      <p-button
+        *ngIf="paso_actual > 1"
+        icon="pi pi-angle-left"
+        label="Anterior"
+        severity="secondary"
+        (click)="paso_actual = paso_actual - 1"
+      />
+      @if (paso_actual === 5) {
+      <p-button
+        icon="pi pi-check"
+        iconPos="right"
+        label="Registrar"
+        [disabled]="!puede_enviar_formulario"
+        [loading]="loadings.registrando"
+        (click)="registrar()"
+      />
+      } @else {
+      <p-button
+        icon="pi pi-angle-right"
+        iconPos="right"
+        label="Siguiente"
+        (click)="paso_actual = paso_actual + 1"
+        [disabled]="formulario_actual?.invalid"
+      />
+
+      }
+    </div>
+  </form>
+</section>

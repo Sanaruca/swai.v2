@@ -1,0 +1,127 @@
+<aw-perfil [persona]="estudiante">
+  <ng-template #headerRight>
+    <div class="flex gap-3">
+      <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+      <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+      <a routerLink="editar" pButton>
+        <i class="pi pi-user-edit"></i>
+        <span>Editar estudiante</span>
+      </a>
+    </div>
+  </ng-template>
+  <ng-template #tags>
+    <li>
+      <p-tag
+        value="Estudiante"
+        [rounded]="true"
+        styleClass="bg-teal-500 text-white"
+      >
+        <div class="flex items-center gap-1">
+          <i class="pi pi-book rig"></i>
+        </div>
+      </p-tag>
+    </li>
+    <li>
+      <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id" />
+    </li>
+    @if (estudiante.nivel_academico.numero !== NIVEL_ACADEMICO.Egresado &&
+    estudiante.seccion) {
+    <li>
+      <a
+        [routerLink]="[
+          '/admin',
+          'niveles_academicos',
+          estudiante.nivel_academico.numero,
+          estudiante.seccion!.seccion
+        ]"
+      >
+        <p-tag
+          [value]="
+            estudiante.nivel_academico.numero +
+            ' Año ' +
+            estudiante.seccion!.seccion
+          "
+          [rounded]="true"
+          styleClass="border bg-transparent text-color"
+        >
+          <div class="flex items-center gap-1">
+            <i class="pi pi-external-link"></i>
+          </div>
+        </p-tag>
+      </a>
+    </li>
+    }
+  </ng-template>
+
+  <aw-fast-link
+    [routerLink]="[
+      '/admin/niveles_academicos',
+      estudiante.nivel_academico.numero
+    ]"
+    [title]="estudiante.nivel_academico.numero + ' Año'"
+    subtitle="Nivel Académico"
+    icon="pi pi-circle-fill text-[1.6em]"
+    [iconContentClassName]="
+      getNivelAcademicoIconClassName(estudiante.nivel_academico.numero)
+    "
+  />
+  @if (estudiante.seccion) {
+
+  <aw-fast-link
+    [routerLink]="[
+      '/admin/niveles_academicos',
+      estudiante.nivel_academico.numero,
+      estudiante.seccion.seccion
+    ]"
+    [title]="
+      estudiante.nivel_academico.numero + ' Año ' + estudiante.seccion.seccion
+    "
+    subtitle="Seccion Académica"
+    icon="pi pi-circle-fill text-[1.6em]"
+    [iconContentClassName]="
+      getNivelAcademicoIconClassName(estudiante.nivel_academico.numero)
+    "
+  />
+  } @if (estudiante.seccion?.profesor_guia) {
+  <aw-fast-link
+    [routerLink]="[
+      '/admin/empleados',
+      estudiante.seccion!.profesor_guia!.cedula
+    ]"
+    [title]="estudiante.seccion!.profesor_guia! | nombre"
+    subtitle="Profesor(a) guía"
+  >
+    <ng-template #icon>
+      <p-avatar
+        shape="circle"
+        size="large"
+        styleClass="w-full h-full"
+        [label]="estudiante.seccion!.profesor_guia! | nombre : 'iniciales'"
+      />
+    </ng-template>
+  </aw-fast-link>
+  }
+
+  <aw-seccion-campo-valor titulo="Información Académica">
+    <aw-campo-valor
+      campo="Nivel Académico"
+      [valor]="estudiante.nivel_academico.nombre"
+    />
+    <aw-campo-valor
+      *ngIf="estudiante.seccion"
+      campo="Sección Académica"
+      [valor]="estudiante.seccion.seccion"
+      class="text-center"
+    />
+    <aw-campo-valor
+      campo="Tipo de Estudiante"
+      [valor]="estudiante.tipo.nombre"
+    />
+    <!-- TODO: materias pendientes -->
+    <aw-campo-valor campo="Estado" [valor]="estudiante.estado_academico">
+      <ng-template #valor let-it>
+        <aw-tag-estado-academico [estado]="it.id" />
+      </ng-template>
+    </aw-campo-valor>
+  </aw-seccion-campo-valor>
+</aw-perfil>

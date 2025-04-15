@@ -1,0 +1,380 @@
+ generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "sistema", "venezuela"]
+}
+
+model administrativos {
+  cedula              Int                 @id
+  titulo_de_pregrado  Int
+  empleados           empleados           @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: "administrativos_empleados_fk")
+  personas            personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: "persona_fk")
+  titulos_de_pregrado titulos_de_pregrado @relation(fields: [titulo_de_pregrado], references: [id], map: "titulo_de_pregrado_fk")
+
+  @@schema("public")
+}
+
+model af_docentes {
+  docente            Int
+  area_de_formacion  String             @db.VarChar(3)
+  id                 Int                @id @default(autoincrement())
+  areas_de_formacion areas_de_formacion @relation(fields: [area_de_formacion], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  profesores         profesores         @relation(fields: [docente], references: [cedula], onDelete: Cascade, map: "af_docentes_profesor_fkey")
+
+  @@schema("public")
+}
+
+model areas_de_formacion {
+  codigo      String        @id(map: "area_de_formacion_pkey") @db.VarChar(3)
+  nombre      String        @db.VarChar(100)
+  af_docentes af_docentes[]
+  pensum      pensum[]
+
+  @@schema("public")
+}
+
+model discapacitados {
+  cedula                Int                   @id(map: "discapacitados_pk") @default(autoincrement())
+  tipo_de_discapacidad  Int
+  descripcion           String?
+  personas              personas              @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: "discapacitados_personas_fk")
+  tipos_de_discapacidad tipos_de_discapacidad @relation(fields: [tipo_de_discapacidad], references: [id], map: "discapacitados_tipos_de_discapacidad_fk")
+
+  @@schema("public")
+}
+
+model empleados {
+  cedula               Int                 @id
+  rif                  String              @db.VarChar(255)
+  tipo_de_empleado     Int
+  codigo_carnet_patria String              @db.VarChar(255)
+  centro_de_votacion   String              @db.VarChar(11)
+  fecha_de_ingreso     DateTime            @default(now()) @db.Timestamp(6)
+  administrativos      administrativos?
+  personas             personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: " persona_fk")
+  centros_de_votacion  centros_de_votacion @relation(fields: [centro_de_votacion], references: [codigo], map: "centro_de_votacion_fk")
+  tipos_de_empleado    tipos_de_empleado   @relation(fields: [tipo_de_empleado], references: [id], map: "tipo_de_empleado_fk")
+  profesores           profesores?
+
+  @@schema("public")
+}
+
+model espacios_academicos {
+  id                               Int                                @id @default(autoincrement())
+  nombre                           String                             @unique(map: "nombre_unique") @db.VarChar(255)
+  electricidad                     Boolean
+  ventilacion                      Boolean
+  internet                         Boolean
+  tipo                             Int
+  capacidad                        Int                                @default(30)
+  metadata                         Json                               @default("{\"slug\": \"\"}")
+  tipos_de_espacio_academico       tipos_de_espacio_academico         @relation(fields: [tipo], references: [id], map: "tipo_de_espacio_fk")
+  recursos_de_un_espacio_academico recursos_de_un_espacio_academico[]
+
+  @@schema("public")
+}
+
+model especialidades {
+  id         Int          @id @default(autoincrement())
+  nombre     String       @db.VarChar(255)
+  profesores profesores[]
+
+  @@schema("public")
+}
+
+model estados_academicos {
+  id          Int           @id(map: "estado_academico_pkey")
+  nombre      String        @db.VarChar(15)
+  estudiantes estudiantes[]
+
+  @@schema("public")
+}
+
+model estados_de_un_recurso {
+  id                               Int                                @id @default(autoincrement())
+  nombre                           String                             @db.VarChar(255)
+  recursos_de_un_espacio_academico recursos_de_un_espacio_academico[]
+
+  @@schema("public")
+}
+
+model estudiantes {
+  cedula                  Int                 @id
+  fecha_de_inscripcion    DateTime?           @db.Date
+  estado_academico        Int                 @default(1)
+  nivel_academico         Int
+  seccion                 String?             @db.VarChar
+  peso                    Int?
+  estatura                Int?
+  calzado                 Int?
+  chemise                 Int?
+  pantalon                Int?
+  ultima_actualizacion    DateTime            @default(now()) @db.Timestamp(0)
+  municipio_de_nacimiento String              @db.VarChar(4)
+  tipo                    Int
+  fecha_de_egreso         DateTime?           @db.Date
+  personas                personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade)
+  estados_academicos      estados_academicos  @relation(fields: [estado_academico], references: [id])
+  municipios              municipios          @relation(fields: [municipio_de_nacimiento], references: [codigo], map: "estudiantes_municipios_fk")
+  niveles_academicos      niveles_academicos  @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction)
+  secciones               secciones?          @relation(fields: [seccion], references: [id], map: "estudiantes_salones_de_clase_fk")
+  tipos_de_estudiante     tipos_de_estudiante @relation(fields: [tipo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tipo_de_estudiante_fk")
+
+  @@schema("public")
+}
+
+model niveles_academicos {
+  numero      Int           @id(map: "nivel_academico_pkey")
+  nombre      String        @unique @db.VarChar(100)
+  estudiantes estudiantes[]
+  pensum      pensum[]
+  secciones   secciones[]
+
+  @@schema("public")
+}
+
+model pensum {
+  id                 Int                @id
+  nivel_academico    Int
+  area_de_formacion  String             @db.VarChar(3)
+  horas              Int
+  areas_de_formacion areas_de_formacion @relation(fields: [area_de_formacion], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  niveles_academicos niveles_academicos @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model personas {
+  cedula              Int              @id(map: "persona_pkey")
+  nombres             String           @db.VarChar(255)
+  apellidos           String           @db.VarChar(255)
+  direccion           String?
+  fecha_de_nacimiento DateTime         @db.Date
+  estado_civil        Int
+  telefono            String           @db.VarChar(11)
+  sexo                String           @db.Char(1)
+  tipo_de_sangre      Int
+  correo              String           @default("none") @db.VarChar(255)
+  administrativos     administrativos?
+  discapacitados      discapacitados?
+  empleados           empleados?
+  estudiantes         estudiantes?
+  estados_civiles     estados_civiles  @relation(fields: [estado_civil], references: [id])
+  sexos               sexos            @relation(fields: [sexo], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tipos_de_sangre     tipos_de_sangre  @relation(fields: [tipo_de_sangre], references: [id])
+  profesores          profesores?
+
+  @@schema("public")
+}
+
+model profesores {
+  cedula                 Int                  @id(map: "docentes_pkey")
+  titulo_de_pregrado     Int
+  plantel_de_dependencia String               @db.VarChar(10)
+  especialidad           Int
+  af_docentes            af_docentes[]
+  personas               personas             @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: "docentes_cedula_fkey")
+  especialidades         especialidades       @relation(fields: [especialidad], references: [id], map: "docentes_especialidad_fkey")
+  planteles_educativos   planteles_educativos @relation(fields: [plantel_de_dependencia], references: [dea], onDelete: NoAction, onUpdate: NoAction, map: "docentes_plantel_de_dependencia_fkey")
+  titulos_de_pregrado    titulos_de_pregrado  @relation(fields: [titulo_de_pregrado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "docentes_titulo_de_pregrado_fkey")
+  empleados              empleados            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: "profesores_empleados_fk")
+  secciones              secciones[]
+
+  @@schema("public")
+}
+
+model recursos {
+  id                               Int                                @id @default(autoincrement())
+  nombre                           String                             @db.VarChar(255)
+  recursos_de_un_espacio_academico recursos_de_un_espacio_academico[]
+
+  @@schema("public")
+}
+
+model recursos_de_un_espacio_academico {
+  id                    Int                   @id @default(autoincrement())
+  recurso               Int
+  espacio_academico     Int
+  estado                Int
+  cantidad              Int                   @default(0)
+  espacios_academicos   espacios_academicos   @relation(fields: [espacio_academico], references: [id], onDelete: Cascade, map: "espacio_academico_fk")
+  estados_de_un_recurso estados_de_un_recurso @relation(fields: [estado], references: [id], map: "estado_del_recurso_fk")
+  recursos              recursos              @relation(fields: [recurso], references: [id], map: "recurso_fk")
+
+  @@schema("public")
+}
+
+model secciones {
+  id                 String             @id(map: "salon_de_clases_pkey") @db.VarChar
+  nivel_academico    Int
+  seccion            String             @db.VarChar
+  profesor_guia      Int?
+  espacio_academico  Int
+  estudiantes        estudiantes[]
+  profesores         profesores?        @relation(fields: [profesor_guia], references: [cedula], onDelete: NoAction, onUpdate: NoAction, map: "profesor_guia_fk")
+  niveles_academicos niveles_academicos @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction, map: "salones_de_clase_nivel_academico_fkey")
+
+  @@schema("public")
+}
+
+model tipos_de_discapacidad {
+  id             Int              @id(map: "tipos_de_discapacidad_pk")
+  nombre         String           @unique(map: "tipos_de_discapacidad_unique") @db.VarChar
+  discapacitados discapacitados[]
+
+  @@schema("public")
+}
+
+model tipos_de_empleado {
+  id        Int         @id @default(autoincrement())
+  nombre    String      @db.VarChar(255)
+  empleados empleados[]
+
+  @@schema("public")
+}
+
+model tipos_de_espacio_academico {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String                @db.VarChar(255)
+  espacios_academicos espacios_academicos[]
+
+  @@schema("public")
+}
+
+model tipos_de_estudiante {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(255)
+  estudiantes estudiantes[]
+
+  @@schema("public")
+}
+
+model tipos_de_sangre {
+  id       Int        @id @default(autoincrement())
+  nombre   String     @db.VarChar(255)
+  personas personas[]
+
+  @@schema("public")
+}
+
+model modulos {
+  nombre      String     @id @db.VarChar(100)
+  descripcion String?    @db.VarChar(400)
+  permisos    permisos[]
+
+  @@schema("sistema")
+}
+
+model permisos {
+  id               Int              @id
+  rol              String           @db.VarChar(25)
+  modulo           String           @db.VarChar(100)
+  puede_editar     Boolean          @default(false)
+  puede_registrar  Boolean          @default(false)
+  puede_consultar  Boolean          @default(true)
+  puede_eliminar   Boolean          @default(false)
+  modulos          modulos          @relation(fields: [modulo], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
+  roles_de_usuario roles_de_usuario @relation(fields: [rol], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("sistema")
+}
+
+model roles_de_usuario {
+  nombre      String     @id @db.VarChar(25)
+  descripcion String     @db.VarChar(100)
+  permisos    permisos[]
+  usuarios    usuarios[]
+
+  @@schema("sistema")
+}
+
+model usuarios {
+  id                String           @id(map: "ususarios_pkey") @db.VarChar(36)
+  nombre_de_usuario String           @unique(map: "usuarios_unique") @db.VarChar(32)
+  clave             String           @db.VarChar(100)
+  rol               String           @db.VarChar(25)
+  cedula            Int
+  roles_de_usuario  roles_de_usuario @relation(fields: [rol], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("sistema")
+}
+
+model centros_de_votacion {
+  codigo           String      @id @db.VarChar(11)
+  nombre           String      @db.VarChar(100)
+  codigo_parroquia String      @db.VarChar(7)
+  empleados        empleados[]
+  parroquias       parroquias  @relation(fields: [codigo_parroquia], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("venezuela")
+}
+
+model estados {
+  codigo               String                 @id @db.VarChar(4)
+  nombre               String                 @unique @db.VarChar(100)
+  municipios           municipios[]
+  planteles_educativos planteles_educativos[]
+
+  @@schema("venezuela")
+}
+
+model estados_civiles {
+  id       Int        @id
+  nombre   String     @db.VarChar(10)
+  personas personas[]
+
+  @@schema("venezuela")
+}
+
+model municipios {
+  codigo        String        @id @db.VarChar(4)
+  nombre        String        @db.VarChar(100)
+  codigo_estado String        @db.VarChar(4)
+  estudiantes   estudiantes[]
+  estados       estados       @relation(fields: [codigo_estado], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  parroquias    parroquias[]
+
+  @@schema("venezuela")
+}
+
+model parroquias {
+  codigo              String                @id @db.VarChar(7)
+  nombre              String                @db.VarChar(100)
+  codigo_municipio    String                @db.VarChar(4)
+  centros_de_votacion centros_de_votacion[]
+  municipios          municipios            @relation(fields: [codigo_municipio], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("venezuela")
+}
+
+model planteles_educativos {
+  dea            String       @id @db.VarChar(10)
+  nombre         String       @db.VarChar(100)
+  zona_educativa String       @db.VarChar(4)
+  profesores     profesores[]
+  estados        estados      @relation(fields: [zona_educativa], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("venezuela")
+}
+
+model sexos {
+  id       String     @id @db.Char(1)
+  nombre   String     @db.VarChar(10)
+  personas personas[]
+
+  @@schema("venezuela")
+}
+
+model titulos_de_pregrado {
+  id              Int               @id
+  nombre          String            @db.VarChar(255)
+  administrativos administrativos[]
+  profesores      profesores[]
+
+  @@schema("venezuela")
+}

@@ -1,0 +1,10 @@
+import { createTRPCRouter } from '../../trpc';
+import { registrar_empleado } from './usecase/command/registrar_empleado.usecase';
+import { obtener_empleados } from './usecase/query/obtener_empleados.usecase';
+import { obtener_cantidad_de_empleados } from './usecase/query/obtener_cantidad_de_empleados.usecase';
+
+export const EMPLEADOS_ROUTER = createTRPCRouter({
+  registrar_empleado,
+  obtener_cantidad_de_empleados,
+  obtener_empleados,
+});

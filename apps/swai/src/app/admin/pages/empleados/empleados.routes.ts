@@ -1,0 +1,46 @@
+import { ResolveFn, Route } from '@angular/router';
+import { EmpleadosPageComponent } from './empleados.page.component';
+import { inject } from '@angular/core';
+import { ApiService } from '../../../services/api.service';
+import { RegistrarEmpleadoPageComponent } from './registrar_empleado/registrar_empleado.page.component';
+import { MenuItem } from 'primeng/api';
+import { EstadosDeVenezuelaISO } from '@swai/core';
+
+export const EMPLEADOS_ROUTES: Route[] = [
+  {
+    path: '',
+    component: EmpleadosPageComponent,
+    resolve: {
+      cantidad_de_empleados: (() =>
+        inject(
+          ApiService
+        ).client.empleados.obtener_cantidad_de_empleados.query()) as ResolveFn<any>,
+      empleados: (() =>
+        inject(
+          ApiService
+        ).client.empleados.obtener_empleados.query()) as ResolveFn<any>,
+    },
+  },
+  {
+    path: 'registrar',
+    component: RegistrarEmpleadoPageComponent,
+    resolve: {
+      municipios: (() =>
+        inject(ApiService).client.venezuela.obtener_municipios.query({
+          por_estado: EstadosDeVenezuelaISO.MONAGAS,
+        })) as ResolveFn<any>,
+      parroquias: (() =>
+        inject(ApiService).client.venezuela.obtener_parroquias.query({
+          por_municipio: 'N-08', // Maturin
+        })) as ResolveFn<any>,
+      titulos_de_pregrado: (() =>
+        inject(
+          ApiService
+        ).client.venezuela.obtener_titulos_de_pregrado.query()) as ResolveFn<any>,
+      breadcrumb: ((_, state) => ({
+        label: 'Registrar',
+        routerLink: state.url,
+      })) as ResolveFn<MenuItem>,
+    },
+  },
+];

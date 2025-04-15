@@ -1,0 +1,410 @@
+<header class="flex justify-between items-center">
+  <div>
+    <h3>Espacios académicos</h3>
+    <p class="text-sm">INSTITUTION_NAME</p>
+  </div>
+  <div class="flex gap-3 items-start">
+    <p-button label="Imprimir" icon="pi pi-print" variant="outlined" />
+    <p-button
+      label="Registrar Espacio"
+      icon="pi pi-plus"
+      (click)="mostrar_modal_de_registro()"
+    />
+    <p-dialog
+      [modal]="true"
+      [draggable]="false"
+      [(visible)]="puede_mostrar_modal"
+      styleClass="w-[36rem]"
+      (onShow)="onDialogShow()"
+      (onHide)="onDialogHide()"
+    >
+      <ng-template #header>
+        <header>
+          <h5>
+            {{
+              puede_mostrar_modal_de_registro
+                ? 'Registrar'
+                : puede_mostrar_modal_de_actualizacion
+                ? 'Actualizar'
+                : null
+            }}
+            Espacio Académico
+          </h5>
+          <p class="mt-1 text-muted-color">
+            @if (puede_mostrar_modal_de_registro) { Complete el formulario para
+            registrar un nuevo espacio académico. } @else if
+            (puede_mostrar_modal_de_actualizacion) { Actualize que decea cambiar
+            del espacio académico. }
+          </p>
+        </header>
+      </ng-template>
+      <form [formGroup]="espacio_academico" class="grid gap-5">
+        <div class="form_input">
+          <label for="nombre">Nombre del Espacio</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            pInputText
+            placeholder="Aula 101"
+            #inputRef
+          />
+        </div>
+        <section class="form_group">
+          <div class="form_input">
+            <label for="capacidad">Capacidad</label>
+            <p-inputnumber inputId="capacidad" formControlName="capacidad" />
+          </div>
+          <div class="form_input">
+            <label for="tipo">Tipo de Espacio</label>
+            <p-select
+              inputId="tipo"
+              [options]="$any(TIPOS_DE_ESPACIO_ACADEMICO)"
+              formControlName="tipo"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccione"
+            >
+              <ng-template #item let-it #selectedItem>
+                <aw-tag-tipo-de-espacio-academico [tipo]="it.id" />
+              </ng-template>
+            </p-select>
+          </div>
+        </section>
+        <section class="form_input">
+          <label>Servicios disponibles</label>
+          <ul class="flex justify-between gap-4">
+            <li
+              class="flex gap-5 border justify-start items-center rounded-md px-5 py-2"
+            >
+              <p-checkbox
+                formControlName="electricidad"
+                inputId="electricidad"
+                [binary]="true"
+              />
+              <div>
+                <label class="font-medium" for="electricidad"
+                  >Electricidad</label
+                >
+                <p class="text-sm text-muted-color">
+                  El espacio cuenta con electricidad
+                </p>
+              </div>
+            </li>
+            <li
+              class="flex gap-5 border justify-start items-center rounded-md px-5 py-2"
+            >
+              <p-checkbox
+                formControlName="ventilacion"
+                inputId="ventilacion"
+                [binary]="true"
+              />
+              <div>
+                <label class="font-medium" for="ventilacion">Ventilación</label>
+                <p class="text-sm text-muted-color">
+                  El espacio cuenta con ventilación
+                </p>
+              </div>
+            </li>
+            <li
+              class="flex gap-5 border justify-start items-center rounded-md px-5 py-2"
+            >
+              <p-checkbox
+                formControlName="internet"
+                inputId="internet"
+                [binary]="true"
+              />
+              <div>
+                <label class="font-medium" for="internet">Internet</label>
+                <p class="text-sm text-muted-color">
+                  El espacio cuenta con internet
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <div class="flex justify-end gap-2">
+          <p-button
+            label="Cancelar"
+            severity="secondary"
+            (click)="puede_mostrar_modal = false"
+          />
+          <p-button
+            [disabled]="espacio_academico.invalid"
+            [label]="
+              puede_mostrar_modal_de_registro
+                ? 'Registrar'
+                : puede_mostrar_modal_de_actualizacion
+                ? 'Actualizar'
+                : 'null'
+            "
+            [loading]="loadings.registrando"
+            (click)="enviar_datos()"
+          />
+        </div>
+      </form>
+    </p-dialog>
+  </div>
+</header>
+
+<div class="flex gap-4 mt-5">
+  <aw-info-card
+    label="Espacios totales"
+    [value]="cantidad_de_espacios_academicos.total"
+    icon="pi pi-sitemap"
+  />
+  <aw-info-card
+    label="Salones de clase"
+    className="bg-blue-100 dark:bg-blue-700"
+    iconContentClassName="bg-blue-200 dark:bg-blue-800"
+    [value]="
+      obtener_cantidad_segun_tipo_de_espacio(
+        TIPO_DE_ESPACIO_ACADEMICO.SALON_DE_CLASES
+      ).total
+    "
+    icon="pi pi-check-circle"
+  />
+  <aw-info-card
+    label="Laboratorios"
+    className="bg-cyan-100 dark:bg-cyan-700"
+    iconContentClassName="bg-cyan-200 dark:bg-cyan-800"
+    [value]="
+      obtener_cantidad_segun_tipo_de_espacio(
+        TIPO_DE_ESPACIO_ACADEMICO.LABORATORIO
+      ).total
+    "
+    icon="pi pi-cog"
+  />
+  <aw-info-card
+    label="Bibliotecas"
+    className="bg-pink-100 dark:bg-pink-700"
+    iconContentClassName="bg-pink-200 dark:bg-pink-800"
+    [value]="
+      obtener_cantidad_segun_tipo_de_espacio(
+        TIPO_DE_ESPACIO_ACADEMICO.BIBLIOTECA
+      ).total
+    "
+    icon="pi pi-book"
+  />
+  <aw-info-card
+    label="Auditorios"
+    className="bg-indigo-100 dark:bg-indigo-700"
+    iconContentClassName="bg-indigo-200 dark:bg-indigo-800"
+    [value]="
+      obtener_cantidad_segun_tipo_de_espacio(
+        TIPO_DE_ESPACIO_ACADEMICO.AUDITORIO
+      ).total
+    "
+    icon="pi pi-box"
+  />
+  <aw-info-card
+    label="Espacios al aire libre"
+    className="bg-green-100 dark:bg-green-700"
+    iconContentClassName="bg-green-200 dark:bg-green-800"
+    [value]="
+      obtener_cantidad_segun_tipo_de_espacio(
+        TIPO_DE_ESPACIO_ACADEMICO.AIRE_LIBRE
+      ).total
+    "
+    icon="pi pi-cloud"
+  />
+</div>
+
+<section class="flex gap-3 mt-5">
+  <section class="card">
+    <p-table
+      selectionMode="single"
+      dataKey="id"
+      [paginator]="true"
+      [rowHover]="true"
+      [showLoader]="false"
+      [rows]="espacios_academicos.limit"
+      [lazy]="true"
+      [value]="espacios_academicos.data"
+      [totalRecords]="espacios_academicos.total"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [loading]="loadings.busqueda"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} espacios académicos"
+      paginatorLocale="es-VE"
+      paginatorStyleClass="justify-end"
+      [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <!-- (onLazyLoad)="cargar_estudiantes($event)" -->
+      <ng-template #caption>
+        <div class="flex">
+          <p-iconfield iconPosition="left" class="ml-auto">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input
+              pInputText
+              type="text"
+              [formControl]="busqueda_input"
+              placeholder="Búsqueda"
+            />
+          </p-iconfield>
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Recursos</th>
+          <th class="text-center">Capacidad</th>
+          <th class="text-end"></th>
+        </tr>
+      </ng-template>
+      <ng-template #loadingbody>
+        @for (n of [].constructor(espacios_academicos.limit); track $index) {
+        <tr>
+          <td></td>
+        </tr>
+
+        }
+      </ng-template>
+      <ng-template #body let-espacio_academico let-i="rowIndex">
+        <tr
+          *ngIf="!loadings.busqueda"
+          [pSelectableRow]="espacio_academico"
+          (dblclick)="
+            navigateOnDoubleClick([
+              'admin',
+              'espacios_academicos',
+              espacio_academico.metadata.slug
+            ])
+          "
+          class="select-none"
+        >
+          <td>
+            <a class="link" [routerLink]="espacio_academico.metadata.slug">
+              #{{ espacio_academico.id }}
+            </a>
+          </td>
+          <td>{{ espacio_academico.nombre }}</td>
+          <td>
+            <aw-tag-tipo-de-espacio-academico
+              [tipo]="espacio_academico.tipo.id"
+            />
+          </td>
+          <td>
+            <div class="flex gap-1">
+              <i
+                *ngIf="espacio_academico.electricidad"
+                class="pi pi-bolt | p-1 text-[1.2rem]"
+                pTooltip="Electricidad"
+                tooltipPosition="top"
+              ></i>
+              <i
+                *ngIf="espacio_academico.ventilacion"
+                class="pi pi-spinner | p-1 text-[1.2rem]"
+                pTooltip="Ventilacion"
+                tooltipPosition="top"
+              ></i>
+              <i
+                *ngIf="espacio_academico.internet"
+                class="pi pi-wifi | p-1 text-[1.2rem]"
+                pTooltip="Internet"
+                tooltipPosition="top"
+              ></i>
+              @for (recurso of obtener_recursos_del_espacio(espacio_academico);
+              track $index) {
+              <i
+                [class]="
+                  $any(recurso_primeicon_map)[recurso.id] +
+                  ' | p-1 text-[1.2rem]'
+                "
+                [pTooltip]="recurso.nombre"
+                tooltipPosition="top"
+              ></i>
+              }
+            </div>
+          </td>
+          <td class="text-center">{{ espacio_academico.capacidad }}</td>
+          <td>
+            <!-- TODO: los comandos no se activan en el primer click -->
+            <div class="">
+              <p-button
+                (click)="menu.toggle($event)"
+                icon="pi pi-ellipsis-h"
+                severity="secondary"
+              />
+              <p-menu
+                #menu
+                [model]="get_opciones(espacio_academico)"
+                [popup]="true"
+                styleClass="!top-[initial] !left-[initial]"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="10" class="pointer-events-none">
+            <div class="grid justify-center justify-items-center py-5 gap-2">
+              <aw-illustration name="no-data" class="h-56" />
+              <p class="font-medium">Sin Resultados</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
+  <section class="card">
+    <header class="flex justify-between items-start gap-5">
+      <div>
+        <h5>Salones de clase</h5>
+        <p class="text-sm">Acceso rápido</p>
+      </div>
+      <div
+        class="bg-blue-200 text-blue-500 dark:bg-blue-700 dark:text-current size-10 rounded-full grid place-items-center"
+      >
+        <i class="pi pi-check-circle text-[1.3rem]"></i>
+      </div>
+    </header>
+    <section class="flex gap-2 mt-5">
+      <aw-info-card
+        routerLink="/admin/niveles_academicos/1"
+        className="text-white bg-blue-600 dark:bg-blue-700 | group transition-colors hover:bg-blue-700 dark:hover:bg-blue-800 | gap-8 min-w-36"
+        iconContentClassName="bg-blue-700 dark:bg-blue-800 | transition-colors bg-blue-800 dark:group-hover:bg-blue-900 | ml-auto"
+        label="1er Año"
+        variant="vertical"
+      />
+      <aw-info-card
+        routerLink="/admin/niveles_academicos/2"
+        className="text-white bg-teal-600 dark:bg-teal-700 | group transition-colors hover:bg-teal-700 dark:hover:bg-teal-800 | gap-8 min-w-36"
+        iconContentClassName="bg-teal-700 dark:bg-teal-800 | transition-colors bg-teal-800 dark:group-hover:bg-teal-900 | ml-auto"
+        label="2do Año"
+        variant="vertical"
+      />
+      <aw-info-card
+        routerLink="/admin/niveles_academicos/3"
+        className="text-white bg-cyan-600 dark:bg-cyan-700 | group transition-colors hover:bg-cyan-700 dark:hover:bg-cyan-800 | gap-8 min-w-36"
+        iconContentClassName="bg-cyan-700 dark:bg-cyan-800 | transition-colors bg-cyan-800 dark:group-hover:bg-cyan-900 | ml-auto"
+        label="3er Año"
+        variant="vertical"
+      />
+      <aw-info-card
+        routerLink="/admin/niveles_academicos/4"
+        className="text-white bg-pink-600 dark:bg-pink-700 | group transition-colors hover:bg-pink-700 dark:hover:bg-pink-800 | gap-8 min-w-36"
+        iconContentClassName="bg-pink-700 dark:bg-pink-800 | transition-colors bg-pink-800 dark:group-hover:bg-pink-900 | ml-auto"
+        label="4to Año"
+        variant="vertical"
+      />
+      <aw-info-card
+        routerLink="/admin/niveles_academicos/5"
+        className="text-white bg-indigo-600 dark:bg-indigo-700 | group transition-colors hover:bg-indigo-700 dark:hover:bg-indigo-800 | gap-8 min-w-36"
+        iconContentClassName="bg-indigo-700 dark:bg-indigo-800 | transition-colors bg-indigo-800 dark:group-hover:bg-indigo-900 | ml-auto"
+        label="5to Año"
+        variant="vertical"
+      />
+    </section>
+  </section>
+</section>
+<aw-modal-eliminar-espacio-acaedemico
+  [spaceName]="espacio_academico.get('nombre')!.value || 'null'"
+  [(visible)]="puede_mostrar_modal_eliminar"
+  (confirm)="handleDelete()"
+></aw-modal-eliminar-espacio-acaedemico>

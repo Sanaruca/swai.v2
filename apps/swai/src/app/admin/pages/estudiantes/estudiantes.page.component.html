@@ -1,0 +1,257 @@
+<header class="flex justify-between items-center">
+  <div>
+    <h3>Estudiantes</h3>
+    <p class="text-sm">INSTITUTION_NAME</p>
+  </div>
+  <div class="flex gap-3">
+    <a routerLink="registrar" pButton>
+      <i class="pi pi-user-plus"></i>
+      <span>Registrar estudiante</span>
+    </a>
+  </div>
+</header>
+
+<nav class="flex mt-5 gap-4 overflow-auto">
+  <aw-info-card
+    label="Total de estudiantes"
+    icon="pi pi-users"
+    [value]="cantidad_de_estudiantes.total"
+  ></aw-info-card>
+
+  <aw-info-card
+    label="Estudiantes Activos"
+    icon="pi pi-check-circle text-green-500"
+    [value]="cantidad_de_estudiantes.activos"
+    className="bg-green-100 dark:bg-green-600"
+    iconContentClassName="bg-green-200"
+  ></aw-info-card>
+
+  <aw-info-card
+    label="Estudiantes No inscritos"
+    icon="pi pi-exclamation-circle text-yellow-600"
+    [value]="cantidad_de_estudiantes.no_inscritos"
+    className="bg-yellow-100 dark:bg-yellow-600"
+    iconContentClassName="bg-yellow-200"
+  ></aw-info-card>
+
+  <aw-info-card
+    label="Estudiantes Retirados"
+    icon="pi pi-external-link text-gray-600"
+    [value]="cantidad_de_estudiantes.retirados"
+    className="bg-gray-100 dark:bg-gray-600"
+    iconContentClassName="bg-gray-200"
+  ></aw-info-card>
+
+  <aw-info-card
+    label="Estudiantes Egresados"
+    icon="pi pi-heart-fill text-indigo-600"
+    [value]="cantidad_de_estudiantes.egresados"
+    className="bg-indigo-100 dark:bg-indigo-600"
+    iconContentClassName="bg-indigo-200"
+  ></aw-info-card>
+</nav>
+
+<nav class="flex gap-3 mt-5">
+  <aw-fast-link
+    title="1er Año"
+    subtitle="Nivel académico"
+    icon="pi pi-circle-fill text-[1.6em] text-blue-600"
+    iconContentClassName="bg-blue-100"
+    [routerLink]="['/admin/niveles_academicos', 1]"
+  ></aw-fast-link>
+  <aw-fast-link
+    title="2do Año"
+    subtitle="Nivel académico"
+    icon="pi pi-circle-fill text-[1.6em] text-teal-600"
+    iconContentClassName="bg-teal-100"
+    [routerLink]="['/admin/niveles_academicos', 2]"
+  ></aw-fast-link>
+  <aw-fast-link
+    title="3er Año"
+    subtitle="Nivel académico"
+    icon="pi pi-circle-fill text-[1.6em] text-cyan-600"
+    iconContentClassName="bg-cyan-100"
+    [routerLink]="['/admin/niveles_academicos', 3]"
+  ></aw-fast-link>
+  <aw-fast-link
+    title="4to Año"
+    subtitle="Nivel académico"
+    icon="pi pi-circle-fill text-[1.6em] text-pink-600"
+    iconContentClassName="bg-pink-100"
+    [routerLink]="['/admin/niveles_academicos', 4]"
+  ></aw-fast-link>
+  <aw-fast-link
+    title="5to Año"
+    subtitle="Nivel académico"
+    icon="pi pi-circle-fill text-[1.6em] text-indigo-600"
+    iconContentClassName="bg-indigo-100"
+    [routerLink]="['/admin/niveles_academicos', 5]"
+  ></aw-fast-link>
+</nav>
+
+<section class="layout_card | mt-5">
+  <h6>Estudiantes</h6>
+  <p-table
+    dataKey="cedula"
+    selectionMode="single"
+    [paginator]="true"
+    [rowHover]="true"
+    [showLoader]="false"
+    [rows]="estudiantes.limit"
+    [lazy]="true"
+    [value]="estudiantes.data"
+    [totalRecords]="estudiantes.total"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [loading]="loading"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+    paginatorLocale="es-VE"
+    paginatorStyleClass="justify-end"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    (onLazyLoad)="cargar_estudiantes($event)"
+  >
+    <ng-template #caption>
+      <div class="flex">
+        <p-iconfield iconPosition="left" class="ml-auto">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            pInputText
+            type="text"
+            [formControl]="busqueda_input"
+            placeholder="Búsqueda"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th>Nombre</th>
+        <th>Cedula</th>
+        <th>Sexo</th>
+        <th class="text-center">Edad</th>
+        <th></th>
+        <th>Estado</th>
+        <th class="text-center">Fecha de Nacimiento</th>
+        <th>Nivel Académico</th>
+        <th class="text-center">Seccion</th>
+        <th>Actualizado</th>
+        <th class="text-end">Fecha de inscripcion</th>
+        <th class="text-end"></th>
+      </tr>
+    </ng-template>
+    <ng-template #loadingbody>
+      @for (n of [].constructor(estudiantes.limit); track $index) {
+      <tr>
+        <td>
+          <div class="flex gap-3">
+            <p-skeleton shape="circle" size="3rem" />
+            <p-skeleton width="10rem" />
+          </div>
+        </td>
+        <td>
+          <p-skeleton width="6rem" />
+        </td>
+        <td><p-skeleton width="6rem" height="1.5rem" borderRadius="16px" /></td>
+        <td class="text-center">
+          <p-skeleton width="2rem" styleClass="m-auto" />
+        </td>
+        <td></td>
+        <td>
+          <p-skeleton width="6rem" height="1.5rem" borderRadius="16px" />
+        </td>
+        <td>
+          <p-skeleton width="5rem" styleClass="m-auto" />
+        </td>
+        <td><p-skeleton width="6rem" height="1.5rem" borderRadius="16px" /></td>
+        <td><p-skeleton width="3rem" height="1.5rem" borderRadius="16px" /></td>
+        <td>
+          <p-skeleton width="5rem" styleClass="m-auto" />
+        </td>
+        <td>
+          <p-skeleton width="5rem" styleClass="ml-auto" />
+        </td>
+        <td></td>
+      </tr>
+
+      }
+    </ng-template>
+    <ng-template #body let-estudiante let-i="rowIndex">
+      <tr
+        *ngIf="!loading"
+        [pSelectableRow]="estudiante"
+        (dblclick)="
+          navigateOnDoubleClick(['admin', 'estudiantes', estudiante.cedula])
+        "
+      >
+        <td>
+          <div
+            class="flex gap-3"
+            [pTooltip]="estudiante.nombres + ' ' + estudiante.apellidos"
+            tooltipPosition="top"
+          >
+            <p-avatar
+              [label]="obtener_iniciales(estudiante)"
+              styleClass="flex-none"
+              size="large"
+              shape="circle"
+            />
+            <p class="font-medium">
+              {{ obtener_nombre(estudiante) }}
+            </p>
+          </div>
+        </td>
+        <td class="font-medium text-nowrap">
+          V-{{ estudiante.cedula | number }}
+        </td>
+        <td><aw-tag-sexo [sexo]="estudiante.sexo" /></td>
+        <td class="text-center font-medium">{{ estudiante.edad }}</td>
+        <!-- TODO: colocar icono de discapasidad si posee -->
+        <td></td>
+        <td>
+          <aw-tag-estado-academico [estado]="estudiante.estado_academico.id" />
+        </td>
+        <td class="text-center">
+          {{ estudiante.fecha_de_nacimiento | date : 'dd/MM/yyyy' }}
+        </td>
+        <td>
+          <aw-tag-nivel-academico [nivel]="estudiante.nivel_academico.numero" />
+        </td>
+        <td class="text-center">
+          <aw-tag-seccion
+            [seccion]="estudiante.seccion?.seccion"
+            [solo_mostrar_letra]="true"
+          />
+        </td>
+        <td>
+          {{ estudiante.ultima_actualizacion | amLocale : 'es' | amTimeAgo }}
+        </td>
+        <td class="text-end">
+          {{ estudiante.fecha_de_inscripcion | date : 'dd/MM/yyyy' }}
+        </td>
+        <td class="text-end">
+          <div class="relative">
+            <p-button
+              (click)="toggle_row_menu($event, i)"
+              icon="pi pi-ellipsis-h"
+              severity="secondary"
+              variant="text"
+            />
+            <p-menu #menu [model]="getActions(estudiante)" [popup]="true" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="12" class="pointer-events-none">
+          <div class="grid justify-center justify-items-center py-5 gap-2">
+            <aw-illustration name="void" class="h-56" />
+            <p class="font-medium">Sin Resultados</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>

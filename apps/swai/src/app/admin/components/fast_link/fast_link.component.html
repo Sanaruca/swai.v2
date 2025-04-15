@@ -1,0 +1,16 @@
+<a class="fast_link" [routerLink]="routerLink">
+  <div class="fast_link__icon" [ngClass]="iconContentClassName">
+    <ng-container *ngIf="iconTemplate; else defaultIcon">
+      <ng-container *ngTemplateOutlet="iconTemplate"></ng-container>
+    </ng-container>
+  </div>
+  <div>
+    <p class="fast_link__title">{{ title }}</p>
+    <p class="fast_link__subtitle">{{ subtitle }}</p>
+  </div>
+  <i class="pi pi-external-link text-lg"></i>
+</a>
+
+<ng-template #defaultIcon>
+  <i [class]="icon"></i>
+</ng-template>

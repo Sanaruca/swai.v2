@@ -1,0 +1,41 @@
+:host {
+  @apply flex flex-col h-screen overflow-hidden;
+}
+
+.bar {
+  @apply bg-surface-50 dark:bg-surface-800;
+}
+.nav {
+  @apply grid p-3 content-start  justify-center w-max border rounded-lg;
+}
+.nav__link {
+  @apply size-11 flex justify-center items-center rounded-lg;
+  @apply hover:bg-primary/20;
+
+  &[data-active='true'] {
+    @apply bg-primary text-white dark:bg-primary-600;
+  }
+}
+
+::ng-deep .layout_card {
+  @apply py-6 pr-4 after:border relative transition-colors;
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:after {
+    width: calc(100% + 1rem);
+    @apply border absolute top-0 left-0 h-full;
+    @apply -left-4;
+    @apply rounded-2xl;
+    @apply pointer-events-none transition-colors;
+    background: inherit;
+    @apply dark:bg-surface-900;
+  }
+
+  &[data-hover='true']:hover {
+    @apply after:bg-surface-50/50 dark:after:bg-surface-900/50;
+  }
+}

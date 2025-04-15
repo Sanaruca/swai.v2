@@ -1,0 +1,115 @@
+<p-dialog
+  header="Añadir Recurso a Espacio Académico"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <form [formGroup]="recurso_del_espacio">
+    <div class="grid gap-5">
+      <div class="form_input">
+        <label for="recurso">Recurso</label>
+        <p-select
+          id="recurso"
+          formControlName="recurso"
+          [options]="recursos"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Seleccionar recurso"
+          [showClear]="true"
+          [class.ng-invalid]="
+            recurso_del_espacio.get('recurso')?.invalid &&
+            recurso_del_espacio.get('recurso')?.touched
+          "
+          [class.ng-dirty]="recurso_del_espacio.get('recurso')?.touched"
+        >
+        </p-select>
+        <small
+          *ngIf="
+            recurso_del_espacio.get('recurso')?.invalid &&
+            recurso_del_espacio.get('recurso')?.touched
+          "
+          class="text-red-500"
+        >
+          Debe seleccionar un recurso
+        </small>
+      </div>
+
+      <div class="form_input">
+        <label for="estado">Estado</label>
+        <p-select
+          id="estado"
+          formControlName="estado"
+          [options]="estados"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Seleccionar estado"
+          [showClear]="true"
+          [class.ng-invalid]="
+            recurso_del_espacio.get('estado')?.invalid &&
+            recurso_del_espacio.get('estado')?.touched
+          "
+          [class.ng-dirty]="recurso_del_espacio.get('estado')?.touched"
+        >
+          <ng-template let-it #item #selectedItem>
+            <aw-tag-estado-de-un-recurso [estado]="it.id" />
+          </ng-template>
+        </p-select>
+        <small
+          *ngIf="
+            recurso_del_espacio.get('estado')?.invalid &&
+            recurso_del_espacio.get('estado')?.touched
+          "
+          class="text-red-500"
+        >
+          Debe seleccionar un estado
+        </small>
+      </div>
+
+      <div class="form_input">
+        <label for="cantidad">Cantidad</label>
+        <p-inputNumber
+          id="cantidad"
+          locale="es-VE"
+          formControlName="cantidad"
+          [showButtons]="true"
+          [min]="1"
+          buttonLayout="horizontal"
+          inputId="cantidad"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-secondary"
+          incrementButtonClass="p-button-secondary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        >
+        </p-inputNumber>
+        <small
+          *ngIf="
+            recurso_del_espacio.get('cantidad')?.invalid &&
+            recurso_del_espacio.get('cantidad')?.touched
+          "
+          class="text-red-500"
+        >
+          La cantidad debe ser al menos 1
+        </small>
+      </div>
+    </div>
+
+    <div class="flex justify-end mt-5 gap-2">
+      <button
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideDialog()"
+      ></button>
+      <p-button
+        label="Añadir"
+        icon="pi pi-check"
+        [loading]="loading"
+        (onClick)="onSubmit()"
+      />
+    </div>
+  </form>
+</p-dialog>

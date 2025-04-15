@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "server/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/server",
+        "main": "server/src/index.ts",
+        "tsConfig": "server/tsconfig.lib.json",
+        "assets": [],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    }
+  }
+}

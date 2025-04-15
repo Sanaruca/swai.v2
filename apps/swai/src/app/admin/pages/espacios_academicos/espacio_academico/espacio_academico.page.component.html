@@ -1,0 +1,288 @@
+<!-- <pre>{{ resumen_cantidad_de_recursos | json }}</pre>
+<pre>{{ cantidad_de_recursos | json }}</pre> -->
+<header class="flex justify-between items-center">
+  <section>
+    <div class="flex items-center gap-4">
+      <h3>{{ espacio_academico.nombre }}</h3>
+      <div class="flex gap-1">
+        <aw-tag-tipo-de-espacio-academico [tipo]="espacio_academico.tipo.id" />
+        <p-tag
+          icon="pi pi-users"
+          class="border bg-transparent text-current"
+          [rounded]="true"
+          [value]="'Max ' + espacio_academico.capacidad"
+        />
+      </div>
+    </div>
+    <p class="text-sm">Espacio académico</p>
+  </section>
+  <section class="flex gap-3 items-center">
+    <p-button label="Imprimir" icon="pi pi-print" variant="outlined" />
+    <p-button
+      label="Añadir recursos"
+      icon="pi pi-plus"
+      (onClick)="amodal.showDialog()"
+    />
+    <aw-modal-anadir-recurso
+      #amodal
+      [espacio_academico]="espacio_academico.id"
+      (success)="on_recursos_anadidos($event)"
+    ></aw-modal-anadir-recurso>
+    <p-button
+      (click)="menu.toggle($event)"
+      icon="pi pi-ellipsis-h"
+      severity="secondary"
+      size="large"
+    />
+    <p-menu #menu [model]="menu_options" [popup]="true" />
+  </section>
+</header>
+<section class="mt-5">
+  <ul class="flex gap-1 flex-wrap">
+    <li *ngIf="espacio_academico.electricidad">
+      <p-tag
+        value="Electicidad"
+        icon="pi pi-bolt"
+        [rounded]="true"
+        class="bg-surface-100 dark:bg-surface-800 text-current min-w-max"
+      />
+    </li>
+    <li *ngIf="espacio_academico.internet">
+      <p-tag
+        value="Internet"
+        icon="pi pi-wifi"
+        [rounded]="true"
+        class="bg-surface-100 dark:bg-surface-800 text-current min-w-max"
+      />
+    </li>
+    <li *ngIf="espacio_academico.ventilacion">
+      <p-tag
+        value="Ventilacion"
+        icon="pi pi-spinner"
+        [rounded]="true"
+        class="bg-surface-100 dark:bg-surface-800 text-current min-w-max"
+      />
+    </li>
+    @for (recurso of cantidad_de_recursos.recursos; track $index) { @if
+    (recurso.total) {
+    <li>
+      <p-tag
+        [value]="recurso.nombre + ' (' + recurso.total + ')'"
+        [icon]="$any(recurso_primeicon_map)[recurso.id]"
+        [rounded]="true"
+        class="bg-surface-100 dark:bg-surface-800 text-current min-w-max"
+      />
+    </li>
+    } }
+  </ul>
+</section>
+
+<section class="flex gap-3 mt-5">
+  <section class="card flex-[2]">
+    <h5>Recursos</h5>
+    <p-table [value]="recursos" dataKey="id" [expandedRowKeys]="expandedRows">
+      <ng-template #header>
+        <tr>
+          <th></th>
+          <th>Recurso</th>
+          <th>Estado</th>
+          <th class="text-center">Cantidad</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-recurso let-expanded="expanded">
+        <tr>
+          <td>
+            <p-button
+              type="button"
+              pRipple
+              [pRowToggler]="recurso"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            />
+          </td>
+          <td>{{ recurso.nombre }}</td>
+          <td>
+            <div class="flex gap-1">
+              @for (estado of recurso.estados; track $index) {
+              <aw-tag-estado-de-un-recurso
+                [estado]="estado"
+                [mostrar_nombre]="false"
+              />
+              }
+            </div>
+          </td>
+          <td class="text-center font-medium">{{ recurso.cantidad }}</td>
+          <td></td>
+        </tr>
+      </ng-template>
+      <ng-template #expandedrow let-recurso>
+        <tr>
+          <td colspan="5">
+            <div class="p-4">
+              <h5>Detalles</h5>
+              <p-table [value]="recurso.detalles" dataKey="id" editMode="row">
+                <ng-template #header>
+                  <tr>
+                    <th>Estado</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-end">Acciones</th>
+                    <th class="text-center">Grafica</th>
+                  </tr>
+                </ng-template>
+                <ng-template
+                  #body
+                  let-detalle
+                  let-i="rowIndex"
+                  let-editing="editing"
+                >
+                  <tr [pEditableRow]="detalle">
+                    <td>
+                      <aw-tag-estado-de-un-recurso
+                        [estado]="detalle.estado.id"
+                      />
+                    </td>
+                    <td class="text-center font-medium">
+                      <p-cellEditor>
+                        <ng-template #input>
+                          <p-inputnumber
+                            locale="es-VE"
+                            [(ngModel)]="detalle.cantidad"
+                            inputStyleClass="max-w-24"
+                          />
+                        </ng-template>
+                        <ng-template #output>
+                          {{ detalle.cantidad || '-' }}
+                        </ng-template>
+                      </p-cellEditor>
+                    </td>
+                    <td class="text-end">
+                      @if (!editing) {
+
+                      <p-button
+                        pInitEditableRow
+                        icon="pi pi-pen-to-square"
+                        pTooltip="Editar"
+                        tooltipPosition="top"
+                        (click)="on_recurso_edit_init(detalle)"
+                        severity="secondary"
+                      />
+                      } @else {
+                      <div class="flex gap-1 justify-end">
+                        <p-button
+                          pSaveEditableRow
+                          icon="pi pi-check"
+                          pTooltip="Listo"
+                          tooltipPosition="top"
+                          (click)="on_recurso_edit_done(detalle)"
+                          severity="secondary"
+                        />
+
+                        <p-button
+                          icon="pi pi-times"
+                          pCancelEditableRow
+                          (click)="on_recurso_edit_cancel(detalle)"
+                          pTooltip="Cancelar"
+                          tooltipPosition="top"
+                          severity="secondary"
+                        />
+                      </div>
+
+                      }
+                    </td>
+                    <td rowspan="5" *ngIf="!i" class="w-64">
+                      <p-chart
+                        type="doughnut"
+                        [data]="init_recursos_chart(recurso.id)"
+                        [options]="options"
+                      />
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="5" class="pointer-events-none">
+            <div class="grid justify-center justify-items-center py-5 gap-2">
+              <aw-illustration name="void" class="h-56" />
+              <p class="font-medium">Sin Recursos</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
+  <section class="card self-start flex-1">
+    <h5>Resumen Total</h5>
+    <p class="text-sm">Resumen del estado de los recursos</p>
+    <section class="flex items-center gap-3 mt-5">
+      <h3>{{ cantidad_de_recursos.total }}</h3>
+      <p>Recursos Totales</p>
+    </section>
+    <section class="flex flex-wrap gap-5 mt-8">
+      @for (estado of resumen_cantidad_de_recursos.estados; track $index) {
+      <div class="gid place-items-center w-24">
+        <h4>{{ estado.porcentaje }}%</h4>
+        <p class="text-center">{{ estado.nombre }}</p>
+      </div>
+      }
+    </section>
+    <section class="mt-5">
+      <div class="w-56 m-auto">
+        <p-chart
+          type="doughnut"
+          [data]="init_resumen_chart()"
+          [options]="options"
+          class="w-full"
+        />
+      </div>
+    </section>
+    <section class="mt-5">
+      <h6>Recursos</h6>
+      <p-table [value]="resumen_cantidad_de_recursos.estados">
+        <ng-template #header>
+          <tr>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Recursos</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-estado>
+          <tr>
+            <td>
+              <div class="flex gap-3 items-center">
+                <aw-tag-estado-de-un-recurso
+                  [estado]="estado.id"
+                  [mostrar_nombre]="false"
+                />
+                <h5>{{ estado.total }}</h5>
+              </div>
+            </td>
+            <td><aw-tag-estado-de-un-recurso [estado]="estado.id" /></td>
+            <td>
+              <div class="flex gap-1">
+                @for (recurso of estado.recursos; track $index) {
+
+                <i
+                  [class]="
+                    $any(recurso_primeicon_map)[recurso.id] + ' | text-[1.2rem]'
+                  "
+                  [pTooltip]="recurso.nombre + ' (' + recurso.total + ')'"
+                  tooltipPosition="top"
+                ></i>
+                }
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+  </section>
+</section>

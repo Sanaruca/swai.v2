@@ -1,0 +1,18 @@
+<a class="host" [ngClass]="hostClasses" [routerLink]="routerLink">
+  <div
+    class="rounded-full size-10 grid place-items-center"
+    [ngClass]="iconContentClassName || 'bg-surface-200 dark:bg-surface-900'"
+  >
+    <i [class]="icon"></i>
+  </div>
+  @if (variant ==='vertical') {
+  <h5>{{ label }}</h5>
+
+  } @else {
+  <div>
+    <p>{{ label }}</p>
+    <h5>{{ value }}</h5>
+  </div>
+
+  }
+</a>
