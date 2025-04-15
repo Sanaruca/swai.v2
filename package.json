@@ -2,7 +2,9 @@
   "name": "@swai/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "prepare": "prisma generate"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "19.2.0",
