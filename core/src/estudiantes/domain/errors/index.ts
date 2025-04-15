@@ -1,4 +1,4 @@
-import { SwaiError, SwaiErrorCode } from 'core/src/common';
+import { SwaiError, SwaiErrorCode } from '../../../common/domain/errors/Error';
 
 export const EstudianteNoExisteError = new SwaiError({
   codigo: SwaiErrorCode.RECURSO_NO_ENCONTRADO,

@@ -1,4 +1,4 @@
-import { SwaiError, SwaiErrorCode } from '../Error';
+import { SwaiError, SwaiErrorCode } from './Error';
 
 export class EntidadExisteError extends SwaiError {
   constructor(entidad: string) {

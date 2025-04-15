@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { TRPCContext } from './context';
 import superjson from 'superjson';
 import { ValiError } from 'valibot';
-import { SwaiError, SwaiErrorCode } from 'core/src/common/domain/Error';
+import { SwaiError, SwaiErrorCode } from '@swai/core';
 import { TrpcToSwaiErrorMapper } from '../adapters/TrpcToSwaiErrorMapper.mapper';
 import { TRPC_ERROR_CODES_BY_KEY, TRPCErrorShape } from '@trpc/server/rpc';
 import { SwaiToTrpcErrorMapper } from '../adapters/SwaiToTrpcErrorMapper.mapper';
