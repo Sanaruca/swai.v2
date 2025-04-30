@@ -79,15 +79,8 @@ export class AuthService {
   }
 
   logout() {
-    this.http.post('/api/logout', {}).subscribe({
-      next: () => {
-        this.setSession(null);
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        console.error('Logout failed', error);
-      },
-    });
+    this.setSession(null);
+    this.router.navigate(['/login']);
   }
 
   protected setSession(usuario: UsuarioPayload | null) {
@@ -95,6 +88,7 @@ export class AuthService {
       sessionStorage.setItem('swai_user', JSON.stringify(usuario));
     } else {
       sessionStorage.removeItem('swai_user');
+      document.cookie = 'swai.auth=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
     }
 
     this.#usuario.next(usuario);

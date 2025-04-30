@@ -34,6 +34,7 @@ export class LoginPageComponent {
   private auth = inject(AuthService)
 
 
+  loading = false;
   loginForm!: FormGroup;
 
 
@@ -46,9 +47,11 @@ export class LoginPageComponent {
 
   onSubmit(): void {
 
-    console.log('onSubmit', this.loginForm.value);
+    if (this.loading) return
 
     if (this.loginForm.valid) {
+
+      this.loading = true
 
       this.auth.login(this.loginForm.value)
 
