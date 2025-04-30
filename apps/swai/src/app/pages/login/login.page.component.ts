@@ -39,8 +39,8 @@ export class LoginPageComponent {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
+      usuario: ['', Validators.required],
+      clave: ['', Validators.required],
     });
   }
 

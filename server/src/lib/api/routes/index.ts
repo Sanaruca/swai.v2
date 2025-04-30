@@ -1,3 +1,4 @@
+export * from './auth';
 export * from './venezuela';
 export * from './root.router';
 export * from './recursos';

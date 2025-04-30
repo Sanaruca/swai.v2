@@ -1,59 +1,80 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  makeStateKey,
+  PLATFORM_ID,
+  REQUEST_CONTEXT,
+  TransferState
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { UsuarioPayload, UsuarioPayloadSchema } from '@swai/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { type LoginDTO } from '@swai/server';
 import { parse } from 'valibot';
+import { ApiService } from './api.service';
+
+
+const USER_KEY = makeStateKey<UsuarioPayload | null>('usuario');
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  #usuario!: BehaviorSubject<UsuarioPayload | null>;
+  usuario!: Observable<UsuarioPayload | null>;
 
   /* ............................... injectables .............................. */
+  private api = inject(ApiService);
+  private ssr_request_context = inject<{ usuario: UsuarioPayload | null }>(
+    REQUEST_CONTEXT
+  );
   private router = inject(Router);
   private http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
+  private transferState = inject(TransferState);
 
   /* ................................. estado ................................. */
-  
+
   constructor() {
 
-    if(isPlatformBrowser(this.platformId)){ 
-      console.log('browser'); 
+    if (isPlatformBrowser(this.platformId)) {
+      const usuario = this.transferState.get<UsuarioPayload | null>(USER_KEY, null);
+
+      console.log('usuario from inicializacion browser', usuario);
+      this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
       
-      const usuario_json = sessionStorage.getItem('swai_user');
+    }
+    
+    if (isPlatformServer(this.platformId)) {
+      const usuario = this.ssr_request_context.usuario;
       
-      if (usuario_json) {
-        const usuario = parse(UsuarioPayloadSchema, JSON.parse(usuario_json));
-        this.#usuario.next(usuario);
+      console.log('usuario from inicializacion server', usuario);
+      this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
+
+      if (usuario) {
+        this.transferState.set<UsuarioPayload | null>(USER_KEY, usuario);
       }
     }
 
+    this.usuario = this.#usuario.asObservable();
   }
 
-  #usuario = new BehaviorSubject<UsuarioPayload | null>(null);
-  usuario = this.#usuario.asObservable();
-
-  login(data: {username: string, password: string}) {
-    this.http.post<{mensaje: string, usuario: UsuarioPayload}>('/api/login', data).subscribe({
-      next: (response) => {
-        sessionStorage.setItem('swai_user', JSON.stringify(response.usuario));
-        this.#usuario.next(response.usuario);
-        this.router.navigate(['/admin/estudiantes']);
-      },
-      error: (error) => {
-        console.error('Login failed', error);
-      },
-    });
+  async login(data: LoginDTO) {
+    try {
+      const usuario = await this.api.client.auth.login.mutate(data);
+      this.setSession(usuario);
+      this.router.navigate(['/admin/estudiantes']);
+    } catch (error) {
+      console.error('Login failed', error);
+    }
   }
-  
+
   logout() {
     this.http.post('/api/logout', {}).subscribe({
       next: () => {
-        sessionStorage.removeItem('swai_user');
-        this.#usuario.next(null);
+        this.setSession(null);
         this.router.navigate(['/login']);
       },
       error: (error) => {
@@ -62,5 +83,13 @@ export class AuthService {
     });
   }
 
+  protected setSession(usuario: UsuarioPayload | null) {
+    if (usuario) {
+      sessionStorage.setItem('swai_user', JSON.stringify(usuario));
+    } else {
+      sessionStorage.removeItem('swai_user');
+    }
 
+    this.#usuario.next(usuario);
+  }
 }

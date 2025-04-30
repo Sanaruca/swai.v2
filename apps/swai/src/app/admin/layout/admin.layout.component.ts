@@ -55,12 +55,7 @@ export class AdminLayoutComponent implements OnInit {
 
   /* ................................. estado ................................. */
 
-  protected usuario: UsuarioPayload = {
-    cedula: 123123,
-    id: '123123',
-    nombre_de_usuario: 'test',
-    rol: ROL.ADMIN
-  };
+  protected usuario!: UsuarioPayload
 
   protected profile_menu: MenuItem[] = [
     {
@@ -100,16 +95,12 @@ export class AdminLayoutComponent implements OnInit {
 
   @ViewChild('main') main!: ElementRef;
 
-  ngOnInit() {
-    // this.auth.usuario.subscribe((usuario) => {
-    //   console.log('usuario', usuario);
-    //   if (usuario) {
-    //     this.usuario = usuario;
-    //   } else {
-    //     this.router.navigate(['/login']);
-    //   }
-    // });
+  constructor() {
+    this.auth.usuario.subscribe((usuario) => {if(usuario){this.usuario = usuario}})
+  }
 
+
+  ngOnInit() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.loading = true; // Inicia la carga

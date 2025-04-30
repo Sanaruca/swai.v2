@@ -1,4 +1,5 @@
 import { createTRPCRouter } from '../trpc';
+import { AUTH_ROUTER } from './auth/auth.router';
 import { EMPLEADOS_ROUTER } from './empleados/empleados.router';
 import { ESPACIOS_ACADEMICOS_ROUTER } from './espacios_academicos/espacios_academicos.router';
 import { ESTUDIANTES_ROUTER } from './estudiantes/estudiantes.router';
@@ -13,6 +14,7 @@ export const ROOT_ROUTER = createTRPCRouter({
   estudiantes: ESTUDIANTES_ROUTER,
   empleados: EMPLEADOS_ROUTER,
   recursos: RECURSOS_ROUTER,
+  auth: AUTH_ROUTER
 });
 // export type definition of API
 export type TRPCRootRouter = typeof ROOT_ROUTER;

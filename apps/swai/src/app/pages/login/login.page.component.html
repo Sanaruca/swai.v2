@@ -11,23 +11,23 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4" action="/api/login" method="post">
       <div class="form_input">
-        <label for="username" class="block text-sm font-medium">Usuario</label>
+        <label for="usuario" class="block text-sm font-medium">Usuario</label>
         <input
           pInputText
-          id="username"
-          formControlName="username"
+          id="usuario"
+          formControlName="usuario"
           placeholder="Ingresa tu nombre de usuario"
           class="w-full"
           [ngClass]="{
             'ng-invalid ng-dirty':
-              loginForm.get('username')?.invalid &&
-              loginForm.get('username')?.touched
+              loginForm.get('usuario')?.invalid &&
+              loginForm.get('usuario')?.touched
           }"
         />
         <small
           *ngIf="
-            loginForm.get('username')?.invalid &&
-            loginForm.get('username')?.touched
+            loginForm.get('usuario')?.invalid &&
+            loginForm.get('usuario')?.touched
           "
           class="text-red-500"
         >
@@ -37,7 +37,7 @@
 
       <div class="form_input">
         <div class="flex items-center justify-between">
-          <label for="password" class="block text-sm font-medium"
+          <label for="clave" class="block text-sm font-medium"
             >Contraseña</label
           >
           <a href="#" class="text-xs text-primary-500 hover:underline"
@@ -46,22 +46,22 @@
         </div>
         <p-password
           id="password"
-          formControlName="password"
+          formControlName="clave"
           [toggleMask]="true"
           placeholder="Ingresa tu contraseña"
           styleClass="w-full"
           [ngClass]="{
             'ng-invalid ng-dirty':
-              loginForm.get('password')?.invalid &&
-              loginForm.get('password')?.touched
+              loginForm.get('clave')?.invalid &&
+              loginForm.get('clave')?.touched
           }"
           inputStyleClass="w-full"
           [feedback]="false"
         ></p-password>
         <small
           *ngIf="
-            loginForm.get('password')?.invalid &&
-            loginForm.get('password')?.touched
+            loginForm.get('clave')?.invalid &&
+            loginForm.get('clave')?.touched
           "
           class="text-red-500"
         >

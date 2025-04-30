@@ -4,15 +4,22 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
+import { TRPCRootRouter } from '@swai/server';
+import type { UsuarioPayload } from '@swai/core';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import superjson from 'superjson';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
+
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+app.use(cookieParser());
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -40,9 +47,37 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use('/**', (req, res, next) => {
-  angularApp
-    .handle(req)
+app.use('/**', async (req, res, next) => {
+
+  const request_context = {
+    usuario: null as UsuarioPayload | null,
+    access_token: null as string | null
+  }
+
+  const access_token = req.cookies['swai.auth']; // Captura la cookie de sesión
+
+  if (access_token) {
+    request_context.access_token = access_token
+    const api = createTRPCClient<TRPCRootRouter>({
+      links: [
+        httpBatchLink({
+          url: `${process.env['NX_API_URL']}/trpc`,
+          transformer: superjson, // Usa superjson para serialización/deserialización
+          headers: {
+            authorization: `Bearer ${access_token}`, // Adjunta la cookie a la petición
+          },
+        }),
+      ],
+    });
+
+    try {
+      const usuario = await api.auth.whoami.query();
+      request_context.usuario = usuario;
+    } catch { /* empty */ }
+  }
+
+  return angularApp
+    .handle(req, request_context)
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next()
     )

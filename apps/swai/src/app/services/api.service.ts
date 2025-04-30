@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject, REQUEST_CONTEXT } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { TRPCRootRouter } from '@swai/server';
@@ -11,6 +11,7 @@ import type {
 } from '@trpc/server/unstable-core-do-not-import';
 import { ISwaiError, SwaiErrorCode } from '@swai/core';
 import { Router } from '@angular/router';
+import { optional } from 'valibot';
 
 const API_BASE_URL = environment.API_URL;
 
@@ -21,6 +22,7 @@ export class ApiService {
   client;
   private toast = inject(MessageService);
   private router = inject(Router);
+  private request_context = inject<{access_token: string | null}>(REQUEST_CONTEXT, {optional: true});
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {
     this.client = createTRPCClient<TRPCRootRouter>({
@@ -29,27 +31,15 @@ export class ApiService {
           url: API_BASE_URL + '/trpc',
           transformer: superjson,
           fetch: async (url, options) => {
-
-            if (options) {
-              options.headers = {
-                ...options?.headers,
-                'TEST': 'application/json',
-              }
-            }else{
-              options = {
-                headers: {
-                  
-                  'TEST': 'no',
-                }
-              }
-            }
-
+            
             // Verificar si estamos en el cliente o en el servidor
             if (isPlatformServer(this.platformId)) {
+              options = {...options, headers: {...options?.headers, authorization: `Bearer ${this.request_context?.access_token}`}};
               return fetch(url, options);
             }
-
+            
             if (isPlatformBrowser(this.platformId)) {
+              options = {...options, credentials: 'include'};
               const response = await fetch(url, options);
 
               if (!response.ok) {
