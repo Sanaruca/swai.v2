@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@swai/core": ["core/src/index.ts"],
-      "@swai/server": ["server/src/index.ts"],
+      "@swai/server": ["server/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

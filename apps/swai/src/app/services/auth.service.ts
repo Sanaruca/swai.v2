@@ -24,6 +24,9 @@ const USER_KEY = makeStateKey<UsuarioPayload | null>('usuario');
 export class AuthService {
   #usuario!: BehaviorSubject<UsuarioPayload | null>;
   usuario!: Observable<UsuarioPayload | null>;
+  snapshot!: {
+    usuario: UsuarioPayload | null
+  }
 
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
@@ -58,7 +61,11 @@ export class AuthService {
       }
     }
 
+    
     this.usuario = this.#usuario.asObservable();
+    this.snapshot = {
+      usuario:  this.#usuario.value
+    }
   }
 
   async login(data: LoginDTO) {
@@ -91,5 +98,6 @@ export class AuthService {
     }
 
     this.#usuario.next(usuario);
+    this.snapshot.usuario = usuario
   }
 }
