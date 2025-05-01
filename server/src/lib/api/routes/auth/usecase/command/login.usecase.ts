@@ -43,7 +43,10 @@ export const login = public_procedure
       expiresIn: '1d'
     })
 
-    ctx.server.response.cookie('swai.auth', token)
+    ctx.server.response.cookie('swai.auth', token, {
+      secure: true,
+      sameSite: 'none',
+    })
     return usuarioPayload
 
   });
