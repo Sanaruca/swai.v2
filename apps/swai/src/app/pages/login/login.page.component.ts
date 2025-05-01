@@ -51,9 +51,10 @@ export class LoginPageComponent {
 
     if (this.loginForm.valid) {
 
-      this.loading = true
-
-      this.auth.login(this.loginForm.value)
+      
+      this.auth.login(this.loginForm.value).finally(()=> {
+        this.loading = false
+      })
 
     } else {
       // Mark all fields as touched to trigger validation display
