@@ -37,6 +37,7 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 
 app.use(async (req, res, next) => {
+  console.log('Request Headers:', req.headers); // Log the request headers
   try {
     const token =
       req.headers.authorization?.split(' ')[1] || req.cookies?.['swai.auth'];

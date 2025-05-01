@@ -49,6 +49,8 @@ app.use(
  */
 app.use('/**', async (req, res, next) => {
 
+  console.log('Request Headers:', req.headers); // Log the request headers
+
   const request_context = {
     usuario: null as UsuarioPayload | null,
     access_token: null as string | null
