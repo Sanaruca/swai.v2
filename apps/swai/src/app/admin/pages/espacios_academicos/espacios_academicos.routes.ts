@@ -4,7 +4,6 @@ import { inject } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { EspacioAcademicoPageComponent } from './espacio_academico/espacio_academico.page.component';
 import { MenuItem } from 'primeng/api';
-import { NotFoundPageComponent } from '../../../pages/not_found/not_found.page.component';
 
 export const ESPACIOS_ACADEMICOS_ROUTES: Route[] = [
   {
