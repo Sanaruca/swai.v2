@@ -50,8 +50,7 @@ export class LoginPageComponent {
     if (this.loading) return
 
     if (this.loginForm.valid) {
-
-      
+      this.loading = true      
       this.auth.login(this.loginForm.value).finally(()=> {
         this.loading = false
       })

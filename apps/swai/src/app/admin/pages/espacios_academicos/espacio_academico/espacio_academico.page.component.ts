@@ -2,7 +2,7 @@ import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { RecursosDeUnEspacioAcademicoDTO, RecursosDeUnEspacioAcademicoSchemaDTO } from '@swai/server';
+import { RecursosDeUnEspacioAcademicoDTO } from '@swai/server';
 import {
   IllustrationComponent,
   TipoDeEspacioAcademicoTagComponent,
@@ -27,11 +27,9 @@ import { MenuItem } from 'primeng/api';
 import { AñadirRecursoModalComponent } from './components';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
-// import { clone_object } from '@swai/server';
 import { ApiService } from '../../../../services/api.service';
 
  function clone_object<T extends object>(obj: T): T {
-   console.log(RecursosDeUnEspacioAcademicoSchemaDTO)
   return JSON.parse(JSON.stringify(obj));
 }
 
@@ -132,6 +130,7 @@ export class EspacioAcademicoPageComponent {
       get porcentaje() {
         return (
           parseFloat(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
             ((this.total / component.cantidad_de_recursos.total) * 100).toFixed(
               2
@@ -238,7 +237,7 @@ export class EspacioAcademicoPageComponent {
 
     if (isPlatformBrowser(this.platformId)) {
       const documentStyle = getComputedStyle(document.documentElement);
-      const textColor = documentStyle.getPropertyValue('--p-text-color');
+      // const textColor = documentStyle.getPropertyValue('--p-text-color');
 
       return {
         datasets: [
