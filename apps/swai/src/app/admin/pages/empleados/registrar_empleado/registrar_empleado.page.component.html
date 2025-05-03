@@ -1,5 +1,5 @@
 <h3>Registrar empleado</h3>
-<p class="text-sm">INSTITUTION_NAME</p>
+<p class="text-sm">{{INSTITUTION_NAME}}</p>
 
 <pre>
   {{ formulario_actual?.getRawValue() | json }}
@@ -139,7 +139,6 @@
           <label for="nombres">Nombres</label>
           <input
             pInputText
-            [autofocus]="true"
             id="nombres"
             placeholder="Juan José"
             formControlName="nombres"
@@ -216,8 +215,9 @@
         </div>
       </section>
       <div class="form_input" data-required>
-        <label>Sexo</label>
+        <label for="sexo">Sexo</label>
         <p-selectbutton
+        id="sexo"
           emptyMessage="Sin resultados"
           [options]="[
             { id: 'M', nombre: 'Masculino' },
@@ -327,7 +327,6 @@
             <label for="rif">RIF</label>
             <input
               pInputText
-              [autofocus]="true"
               id="rif"
               placeholder="RIF"
               formControlName="rif"
@@ -453,8 +452,9 @@
           }}</small>
         </div>
         <div class="form_input" data-required>
-          <label>Correo electrónico</label>
+          <label for="email">Correo electrónico</label>
           <input
+          id="email"
             type="text"
             placeholder="email@email.com"
             pInputText
@@ -501,8 +501,9 @@
       </section>
       <section class="form_group">
         <div class="form_input" data-required>
-          <label>Discapacidad</label>
+          <label for="discapacidad">Discapacidad</label>
           <p-selectbutton
+          id="discapacidad"
             formControlName="discapacidad"
             [options]="[
               { valor: false, nombre: 'No' },

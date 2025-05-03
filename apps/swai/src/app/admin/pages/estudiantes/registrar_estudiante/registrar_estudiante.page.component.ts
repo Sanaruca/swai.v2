@@ -41,6 +41,7 @@ import { merge } from 'rxjs';
 import { TextareaModule } from 'primeng/textarea';
 import { parse, ValiError } from 'valibot';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../../../../environments/environment';
 
 // TODO: renombrar componente
 @Component({
@@ -65,6 +66,10 @@ import { MessageService } from 'primeng/api';
   styleUrl: './registrar_estudiante.page.component.scss',
 })
 export class RegistrarEstudiantePageComponent implements OnInit {
+
+  /* ................................ contantes ............................... */
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
+
   /* ................................. inputs ................................. */
   @Input() modo!: 'registrar' | 'editar';
   @Input() estudiante: EstudianteDTO | null = null;

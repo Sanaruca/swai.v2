@@ -32,6 +32,7 @@ import { ApiService } from '../../../services/api.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { EliminarEspacioAcaedemicoModalComponent } from './components';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'aw-espacios-acedemicos.page',
@@ -60,6 +61,9 @@ import { EliminarEspacioAcaedemicoModalComponent } from './components';
   styleUrl: './espacios_academicos.page.component.scss',
 })
 export class EspaciosAcademicosPageComponent {
+
+  /* ................................ contantes ............................... */
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
   protected TIPOS_DE_ESPACIO_ACADEMICO = TIPOS_DE_ESPACIO_ACADEMICO;
   protected TIPO_DE_ESPACIO_ACADEMICO = TIPO_DE_ESPACIO_ACADEMICO;
   protected recurso_primeicon_map = recurso_primeicon_map;
@@ -195,7 +199,7 @@ export class EspaciosAcademicosPageComponent {
 
   /* ............................ eliminar espacio ............................ */
 
-  puede_mostrar_modal_eliminar: boolean = false;
+  puede_mostrar_modal_eliminar = false;
 
   async handleDelete() {
     try {
@@ -209,8 +213,7 @@ export class EspaciosAcademicosPageComponent {
       });
 
       this.recargar_pagina();
-    } finally {
-    }
+    } finally { /* empty */ }
   }
 
   /* ............................ registrar espacio ........................... */

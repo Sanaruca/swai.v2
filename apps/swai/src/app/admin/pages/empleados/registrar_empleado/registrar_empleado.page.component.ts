@@ -43,6 +43,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { debounceTime } from 'rxjs';
 import { TRPCClientError } from '@trpc/client';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'aw-registrar-empleado.page',
@@ -66,6 +67,10 @@ import { TRPCClientError } from '@trpc/client';
   styleUrl: './registrar_empleado.page.component.scss',
 })
 export class RegistrarEmpleadoPageComponent implements OnInit {
+
+    /* ................................ contantes ............................... */
+  INSTITUTION_NAME = environment.INSTITUTION_NAME
+
   /* ............................... constantes ............................... */
 
   protected ESPECIALIDADES = ESPECIALIDADES;

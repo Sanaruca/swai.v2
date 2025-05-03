@@ -31,6 +31,7 @@ import { Menu, MenuModule } from 'primeng/menu';
 import { InputTextModule } from 'primeng/inputtext';
 import { debounceTime } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'aw-estudiantes.page',
@@ -60,6 +61,10 @@ import { TooltipModule } from 'primeng/tooltip';
   styleUrl: './estudiantes.page.component.scss',
 })
 export class EstudiantesPageComponent implements OnInit {
+
+  /* ................................ contantes ............................... */
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
+
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);

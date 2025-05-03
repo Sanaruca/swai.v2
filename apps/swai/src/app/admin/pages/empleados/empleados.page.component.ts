@@ -11,6 +11,7 @@ import { InplaceModule } from 'primeng/inplace';
 import { TablaDeEmpleadosComponent } from './components/tabla_de_empleados/tabla_de_empleados.component';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'aw-empleados.page',
@@ -29,6 +30,10 @@ import { ApiService } from '../../../services/api.service';
   styleUrl: './empleados.page.component.scss',
 })
 export class EmpleadosPageComponent {
+
+  /* ................................ contantes ............................... */
+  INSTITUTION_NAME = environment.INSTITUTION_NAME
+
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
 
