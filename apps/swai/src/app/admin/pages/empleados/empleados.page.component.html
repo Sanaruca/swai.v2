@@ -51,16 +51,13 @@
     "
   />
 </section>
-
-{{current_tap}}
-
 <section class="mt-5">
   <p-tabs [value]="current_tap">
     <p-tablist>
-      <p-tab [value]="0">Todos</p-tab>
-      <p-tab [value]="1">Aministrativo</p-tab>
-      <p-tab [value]="2">Profesores</p-tab>
-      <p-tab [value]="3">Obreros</p-tab>
+      <p-tab [value]="0" (click)="switch_tap(0)">Todos</p-tab>
+      <p-tab [value]="1" (click)="switch_tap(1)">Aministrativo</p-tab>
+      <p-tab [value]="2" (click)="switch_tap(2)">Profesores</p-tab>
+      <p-tab [value]="3" (click)="switch_tap(3)">Obreros</p-tab>
     </p-tablist>
     <p-tabpanels class="p-0 pt-5" >
       <p-tabpanel [value]="0">

@@ -2,7 +2,8 @@ import { InferOutput, object } from 'valibot';
 import { TituloPregradoSchema } from './titulo_de_pregrado.schema';
 import { EspecialidadSchema } from './especialidad.schema';
 import { PlantelEducativoSchema } from './plantel_educativo.schema';
-import { PersonaSchema, PersonaSchemaDTO } from './persona.schema';
+import { PersonaSchema } from './persona.schema';
+import { EmpleadoSchemaDTO } from './empleado.schema';
 
 export const ProfesorSchema = object({
   cedula: PersonaSchema.entries.cedula,
@@ -16,7 +17,7 @@ export type Profesor = InferOutput<typeof ProfesorSchema>;
 /* ................................... dto .................................. */
 
 export const ProfesorSchemaDTO = object({
-  ...PersonaSchemaDTO.entries,
+  ...EmpleadoSchemaDTO.entries,
   ...ProfesorSchema.entries,
   titulo_de_pregrado: TituloPregradoSchema,
   especialidad: EspecialidadSchema,

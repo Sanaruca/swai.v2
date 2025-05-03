@@ -13,9 +13,10 @@ import {
   PaginationParams,
   PaginationParamsSchema,
 } from '../../../../../schemas';
-import { InferOutput, object, optional, parse, parser } from 'valibot';
+import { enum_, InferOutput, object, optional, parse, parser } from 'valibot';
 
 export const ObtenerEmpleadosSchemaDTO = object({
+  por_tipo: optional(enum_(TIPO_DE_EMPLEADO)),
   paginacion: optional(PaginationParamsSchema),
 });
 
@@ -34,6 +35,9 @@ export const obtener_empleados = admin_procedure
         ctx.prisma.empleados.findMany({
           skip: (paginacion.page - 1) * paginacion.limit, // Saltar los resultados de las páginas anteriores
           take: paginacion.limit, // Tomar el número de resultados especificado
+          where: {
+            tipo_de_empleado: input?.por_tipo,
+          },
           include: {
             personas: {
               include: {
