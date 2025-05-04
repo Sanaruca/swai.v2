@@ -1,0 +1,112 @@
+<h3>{{INSTITUTION_NAME}}</h3>
+<p class="text-sm">Vista Rápida</p>
+
+<nav class="flex gap-3 mt-5">
+    <aw-fast-link
+      title="1er Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-blue-600"
+      iconContentClassName="bg-blue-100"
+      [routerLink]="['/admin/niveles_academicos', 1]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="2do Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-teal-600"
+      iconContentClassName="bg-teal-100"
+      [routerLink]="['/admin/niveles_academicos', 2]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="3er Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-cyan-600"
+      iconContentClassName="bg-cyan-100"
+      [routerLink]="['/admin/niveles_academicos', 3]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="4to Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-pink-600"
+      iconContentClassName="bg-pink-100"
+      [routerLink]="['/admin/niveles_academicos', 4]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="5to Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-indigo-600"
+      iconContentClassName="bg-indigo-100"
+      [routerLink]="['/admin/niveles_academicos', 5]"
+    ></aw-fast-link>
+  </nav>
+
+  <nav class="flex mt-5 gap-4 overflow-auto">
+  
+    <aw-info-card
+      label="Espacios académicos"
+      icon="pi pi-sitemap text-green-500"
+      [value]="12"
+      className="bg-green-100 dark:bg-green-600"
+      iconContentClassName="bg-green-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Estudiantes Activos"
+      icon="pi pi-book text-cyan-600"
+      [value]="12"
+      className="bg-cyan-100 dark:bg-cyan-600"
+      iconContentClassName="bg-cyan-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Recursos Totales"
+      icon="pi pi-book text-purple-600"
+      [value]="12"
+      className="bg-purple-100 dark:bg-purple-600"
+      iconContentClassName="bg-purple-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Profesores"
+      icon="pi pi-book text-blue-600"
+      [value]="12"
+      className="bg-blue-100 dark:bg-blue-600"
+      iconContentClassName="bg-blue-200"
+    ></aw-info-card>
+
+    <aw-info-card
+    label="Personal Administrativo"
+    icon="pi pi-briefcase text-pink-600"
+    [value]="12"
+    className="bg-pink-100 dark:bg-pink-700"
+    iconContentClassName="bg-pink-200"
+  />
+
+  <aw-info-card
+    label="Personal Obrero"
+    icon="pi pi-building text-indigo-600"
+    [value]="12"
+    className="bg-indigo-100 dark:bg-indigo-700"
+    iconContentClassName="bg-indigo-200"
+  />
+
+  </nav>
+
+  <section class="flex gap-3 mt-5 items-start">
+
+    
+    <div class="card flex-[2]">
+      
+      <p-selectbutton [(ngModel)]="grafica_actual" [options]="graficas"  optionLabel="titulo" optionValue="value" aria-labelledby="basic" />
+      
+      <h5 class="my-5">{{graficas[grafica_actual].titulo}}</h5>
+
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem" ></p-chart>
+
+    </div>
+    
+    <div class="card | flex-[1]">      
+      <h5>Actividad Reciente</h5>
+
+
+    </div>
+</section>

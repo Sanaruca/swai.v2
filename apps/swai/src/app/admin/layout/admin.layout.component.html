@@ -70,7 +70,7 @@
   <nav class="nav bar">
     <ul class="gap-2 grid">
       <li>
-        <a routerLink="/" class="nav__link | font-bold" pTooltip="Inicio">
+        <a routerLink="/admin/dashboard" class="nav__link | font-bold" pTooltip="Inicio" [attr.data-active]="current_url.startsWith('/admin/dashboard')">
           <i class="pi pi-home"></i>
         </a>
       </li>

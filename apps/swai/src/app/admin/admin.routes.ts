@@ -1,12 +1,23 @@
 import { ResolveFn, Route } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin.layout.component';
 import { MenuItem } from 'primeng/api';
+import { DashboardPageComponent } from './pages/dashboard/dashboard.page.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
     path: '',
     component: AdminLayoutComponent,
     children: [
+      {
+        path: 'dashboard',
+        component: DashboardPageComponent,
+        resolve: {
+          breadcrumb: ((route) => ({
+            label: 'Vista Rápida',
+            routerLink: [route.url.toString()],
+          })) as ResolveFn<MenuItem>,
+        },
+      },
       {
         path: 'estudiantes',
         loadChildren: () =>
