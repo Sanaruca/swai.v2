@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
     @apply block;
   }    
   `,
-  host: { class: 'layout_card' },
+  host: { class: 'card' },
 })
 export class SeccionCampoValorComponent {
   @Input() titulo = 'Sin titulo';
