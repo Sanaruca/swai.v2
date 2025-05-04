@@ -61,7 +61,7 @@ export const generar_constancia_de_estudios = async (estudiante: EstudianteDTO) 
     // Texto principal con los datos del estudiante
     const contentText = 
       "Quien suscribe, Director del Plantel: Prof. Luis E. Martínez P. CI: V-15.788.669; " +
-      "por medio de la presente, hace constar que el estudiante: " +
+      "por medio de la presente, hace constar que el (la) estudiante: " +
       `${estudiante.nombres} ${estudiante.apellidos}, ` +
       `titular de la cedula de identidad N°.V-${estudiante.cedula.toLocaleString('es-VE')}, ` +
       `Estudia en esta institución para este año escolar: ${año_anterior}-${año_actual}, como cursante de ` +
@@ -75,7 +75,7 @@ export const generar_constancia_de_estudios = async (estudiante: EstudianteDTO) 
     const { day, month } = getDayAndMonth();
     const bottomText = 
       `Constancia que se expide a solicitud de la parte interesada, en Maturín a los (${day}) ` +
-      `días del mes de ${month} del año 2025`;
+      `días del mes de ${month} del año ${año_actual}`;
     
     // Dividir el texto inferior en múltiples líneas
     const splitBottomText = doc.splitTextToSize(bottomText, contentWidth);

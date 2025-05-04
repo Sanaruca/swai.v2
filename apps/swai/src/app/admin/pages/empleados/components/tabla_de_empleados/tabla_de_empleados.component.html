@@ -1,4 +1,4 @@
-<p-table [value]="empleados.data" dataKey="cedula" styleClass="mt-3">
+<p-table [value]="empleados.data" dataKey="cedula" styleClass="mt-3" selectionMode="single">
     <ng-template #header>
       <tr>
         <th>Nombre</th>
@@ -11,7 +11,12 @@
       </tr>
     </ng-template>
     <ng-template #body let-empleado>
-      <tr>
+      <tr
+      [pSelectableRow]="empleado"
+      (dblclick)="
+          navigateOnDoubleClick(['admin', 'empleados', empleado.cedula])
+        "
+      >
         <td>{{ empleado | nombre }}</td>
         <td>V-{{ empleado.cedula | number }}</td>
         <td>

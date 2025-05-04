@@ -1,0 +1,30 @@
+<aw-perfil [persona]="empleado">
+    <ng-template #tags>
+        <li>
+            <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
+        </li>
+
+    </ng-template>
+    <ng-template #headerRight>
+        <div class="flex gap-3">
+          <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+          <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+          <a routerLink="editar" pButton>
+            <i class="pi pi-user-edit"></i>
+            <span>Editar empleado</span>
+          </a>
+        </div>
+      </ng-template>
+
+
+      <aw-seccion-campo-valor titulo="Información Laboral">
+        <aw-campo-valor
+          campo="Cargo"
+          [valor]="empleado.tipo_de_empleado.nombre"
+        />
+        <aw-campo-valor
+          campo="RIF"
+          [valor]="empleado.rif"
+        />
+      </aw-seccion-campo-valor>
+</aw-perfil>

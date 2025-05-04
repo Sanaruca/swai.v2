@@ -7,11 +7,13 @@ import { ROL } from '@swai/core';
  * redirigira tienen este guardia registrado
  * 
  * TODO: Arreglar la advertencia
+ * TODO: Arreglar las redirecciones al regargar
 */
 export const redirectingGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  const usuario = auth.snapshot.usuario;
+  const usuario = auth.snapshot.usuario;  
+  
 
   if (!usuario) {
     if (state.url === '/login') {

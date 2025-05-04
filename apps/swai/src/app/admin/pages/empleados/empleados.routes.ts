@@ -5,6 +5,7 @@ import { ApiService } from '../../../services/api.service';
 import { RegistrarEmpleadoPageComponent } from './registrar_empleado/registrar_empleado.page.component';
 import { MenuItem } from 'primeng/api';
 import { EstadosDeVenezuelaISO } from '@swai/core';
+import { PerfilEmpleadoPageComponent } from './perfil_empleado/perfil_empleado.page.component';
 
 export const EMPLEADOS_ROUTES: Route[] = [
   {
@@ -43,4 +44,27 @@ export const EMPLEADOS_ROUTES: Route[] = [
       })) as ResolveFn<MenuItem>,
     },
   },
+  {
+    path: ':cedula',
+    component: PerfilEmpleadoPageComponent,
+    resolve: {
+      empleado: ((r) =>
+        inject(
+          ApiService
+        ).client.empleados.obtener_empleado.query(+r.params['cedula'])) as ResolveFn<any>,
+        breadcrumb: (async (r) => {
+          const empleado = await inject(
+            ApiService
+          ).client.empleados.obtener_empleado.query(+r.params['cedula']);
+  
+          return {
+            label:
+              empleado.nombres.split(' ').at(0)! +
+              ' ' +
+              empleado.apellidos.split(' ').at(0),
+            routerLink: ['/admin/estudiantes', empleado.cedula],
+          };
+        }) as ResolveFn<MenuItem>,
+    },
+  }
 ];

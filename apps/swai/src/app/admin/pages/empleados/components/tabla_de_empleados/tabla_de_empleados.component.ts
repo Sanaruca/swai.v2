@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { EmpleadoDTO } from '@swai/core';
@@ -10,6 +10,7 @@ import {
 } from '../../../../../common/components';
 import { Inplace } from 'primeng/inplace';
 import { Button } from 'primeng/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'aw-tabla-de-empleados',
@@ -29,4 +30,14 @@ export class TablaDeEmpleadosComponent {
   @Input() empleados!: Paginated<EmpleadoDTO>;
   @Input() tipo: 'default' | 'administrativo' | 'docente' | 'obrero' = 'default';
   @Input() loading = false;
+
+  /* ............................... injectables .............................. */
+
+  private router = inject(Router);
+
+  /* ................................. metodos ................................ */
+
+  protected async navigateOnDoubleClick(comands: any[]) {
+    await this.router.navigate(comands);
+  }
 }
