@@ -12,6 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'aw-login.page',
@@ -22,6 +23,7 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     PasswordModule,
     ButtonModule,
+    ToastModule,
   ],
   templateUrl: './login.page.component.html',
   styleUrl: './login.page.component.scss',
