@@ -2,6 +2,9 @@ import { ResolveFn, Route } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin.layout.component';
 import { MenuItem } from 'primeng/api';
 import { DashboardPageComponent } from './pages/dashboard/dashboard.page.component';
+import { resolve_cantidad_de_estudiantes } from '../resolvers';
+import { inject } from '@angular/core';
+import { ApiService } from '../services/api.service';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -12,6 +15,11 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'dashboard',
         component: DashboardPageComponent,
         resolve: {
+          registros_recientes: ()=> inject(ApiService).client.institucion.obtener_registros_recientes.query(),
+          cantidad_de_estudiantes: resolve_cantidad_de_estudiantes,
+          cantidad_de_empleados: ()=> inject(ApiService).client.empleados.obtener_cantidad_de_empleados.query(),
+          cantidad_de_espacios_academicos: ()=> inject(ApiService).client.espacios_academicos.obtener_cantidad_de_espacios_academicos.query(),
+          cantidad_de_recursos: ()=> inject(ApiService).client.recursos.obtener_cantidad_de_recursos.query(),
           breadcrumb: ((route) => ({
             label: 'Vista Rápida',
             routerLink: [route.url.toString()],

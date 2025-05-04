@@ -29,10 +29,10 @@ export const redirectingGuard: CanActivateFn = (route, state) => {
   
   // Redirect based on user role
   if (rol === ROL.ADMIN) {
-    if (state.url === '/admin/estudiantes') {
+    if (state.url === '/admin/dashboard') {
       return true; // Prevent infinite loop if already on the login page
     }
-    return new RedirectCommand(router.parseUrl('/admin/estudiantes'), {onSameUrlNavigation: 'ignore'});
+    return new RedirectCommand(router.parseUrl('/admin/dashboard'), {onSameUrlNavigation: 'ignore'});
   }
 
   return true;

@@ -6,7 +6,7 @@ import { Persona } from '@swai/core';
 })
 export class NombrePipe implements PipeTransform {
   transform(
-    persona: Persona,
+    persona: Pick<Persona, 'nombres' | 'apellidos'>,
     modo: 'corto' | 'iniciales' | 'completo' = 'corto'
   ): string {
     if (modo === 'iniciales')

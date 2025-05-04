@@ -6,6 +6,13 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
 import { ChartData, ChartOptions } from '../../../types/chart';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CantidadDeEmpleadosDTO, CantidadDeEspaciosAcademicosDTO, CantidadDeEstudiantesDTO, CantidadDeRecursosDTO, RegistroRecienteDTO } from '@swai/server';
+import { TIPO_DE_EMPLEADO } from '@swai/core';
+import { NombrePipe } from '../../../common/pipes/nombre.pipe';
+import { TipoDeEmpleadoTagComponent } from '../../../common/components';
+import { Tag } from 'primeng/tag';
+import { Avatar } from 'primeng/avatar';
 
 @Component({
   selector: 'aw-dashboard.page',
@@ -15,7 +22,12 @@ import { ChartData, ChartOptions } from '../../../types/chart';
     InfoCardComponent,
     SelectButtonModule,
     FormsModule,
-    ChartModule
+    ChartModule,
+    NombrePipe,
+    TipoDeEmpleadoTagComponent,
+    Tag,
+    Avatar,
+    RouterLink
   ],
   templateUrl: './dashboard.page.component.html',
   styleUrl: './dashboard.page.component.sass',
@@ -24,19 +36,28 @@ export class DashboardPageComponent implements OnInit {
 
   /* ............................... injectables .............................. */
   private platformId = inject(PLATFORM_ID)
+  private route = inject(ActivatedRoute)
 
   /* ............................... constantes ............................... */
 
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  protected TIPO_DE_EMPLEADO = TIPO_DE_EMPLEADO;
+
+  /* .............................. data inicial .............................. */
+  protected registros_recientes = this.route.snapshot.data['registros_recientes'] as RegistroRecienteDTO[]
+  protected cantidad_de_estudiantes = this.route.snapshot.data['cantidad_de_estudiantes'] as CantidadDeEstudiantesDTO
+  protected cantidad_de_empleados = this.route.snapshot.data['cantidad_de_empleados'] as CantidadDeEmpleadosDTO
+  protected cantidad_de_espacios_academicos = this.route.snapshot.data['cantidad_de_espacios_academicos'] as CantidadDeEspaciosAcademicosDTO
+  protected cantidad_de_recursos = this.route.snapshot.data['cantidad_de_recursos'] as CantidadDeRecursosDTO
 
   /* .................................. state ................................. */
 
   protected grafica_actual = 1;
 
-  protected graficas: { titulo: string, value: number }[] = [
-    { titulo: 'Recursos', value: 0 },
-    { titulo: 'Estudiantes', value: 1 },
-    { titulo: 'Empleados', value: 2 },
+  protected graficas: { titulo: string, value: number, disabled: boolean }[] = [
+    { titulo: 'Recursos', value: 0, disabled: true },
+    { titulo: 'Estudiantes', value: 1, disabled: false },
+    { titulo: 'Empleados', value: 2, disabled: true },
   ];
 
 
@@ -44,7 +65,14 @@ export class DashboardPageComponent implements OnInit {
   chartOptions!: ChartOptions
 
   ngOnInit(): void {
+
     this.initChart()
+
+    if (isPlatformBrowser(this.platformId)) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => this.initChart();
+      mediaQuery.addEventListener('change', listener);
+    }
   }
 
 
@@ -72,7 +100,16 @@ export class DashboardPageComponent implements OnInit {
       datasets: [
         {
           label: "Estudiantes",
-          data: [1200, 900, 300, 550, 650, 50, 30, 120],
+          data: [
+            this.cantidad_de_estudiantes.total,
+            this.cantidad_de_estudiantes.activos,
+            this.cantidad_de_estudiantes.no_inscritos,
+            this.cantidad_de_estudiantes.masculino,
+            this.cantidad_de_estudiantes.femenino,
+            this.cantidad_de_estudiantes.discapacitados,
+            this.cantidad_de_estudiantes.en_gestacion,
+            this.cantidad_de_estudiantes.repitientes,
+          ],
           backgroundColor: [
             "#1e293b", // Total
             "#22c55e", // Activos
@@ -89,6 +126,7 @@ export class DashboardPageComponent implements OnInit {
     }
 
     this.chartOptions = {
+      locale: 'es-VE',
       plugins: {
         legend: {
           display: false,
@@ -110,6 +148,9 @@ export class DashboardPageComponent implements OnInit {
           grid: {
             display: false,
           },
+          ticks:{
+            display: false // Hides only the labels of the x-axis 
+        }        
         },
       },
     }

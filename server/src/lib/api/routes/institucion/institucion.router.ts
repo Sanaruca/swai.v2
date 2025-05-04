@@ -5,6 +5,7 @@ import { obtener_pensum } from './usecase/query/obtener_pensum.usecase';
 import { obtener_persona } from './usecase/query/obtener_persona.usecase';
 import { obtener_niveles_academicos } from './usecase/query/obtener_niveles_academicos.usecase';
 import { obtener_seccion_academica } from './usecase/query/obtener_seccion_academica.usecase';
+import { obtener_registros_recientes } from './usecase/query/obtener_registros_recientes.usecase';
 
 export const INSTUTUCION_ROUTER = createTRPCRouter({
   obtener_cantidad_de_estudiantes_por_nivel_academico,
@@ -13,4 +14,5 @@ export const INSTUTUCION_ROUTER = createTRPCRouter({
   obtener_persona,
   obtener_niveles_academicos,
   obtener_seccion_academica,
+  obtener_registros_recientes
 });

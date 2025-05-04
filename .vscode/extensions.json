@@ -3,6 +3,7 @@
     "nrwl.angular-console",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "kuscamara.remove-unused-imports"
+    "kuscamara.remove-unused-imports",
+    "gruntfuggly.todo-tree"
   ]
 }

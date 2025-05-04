@@ -3,6 +3,7 @@ import {
   NIVEL_ACADEMICO,
   NivelAcademicoSchema,
   SeccionSchema,
+  TIPO_DE_ESTUDIANTE,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
 import { object, number, array, InferOutput, parse } from 'valibot';
@@ -12,6 +13,11 @@ export const CantidadDeEstudiantesSchemaDTO = object({
   no_inscritos: number(),
   retirados: number(),
   egresados: number(),
+  masculino: number(),
+  femenino: number(),
+  discapacitados: number(),
+  en_gestacion: number(),
+  repitientes: number(),
   total: number(),
   niveles_academicos: array(
     object({
@@ -39,56 +45,90 @@ export type CantidadDeEstudiantesDTO = InferOutput<
 
 export const obtener_cantidad_de_estudiantes =
   admin_procedure.query<CantidadDeEstudiantesDTO>(async ({ ctx }) => {
-    const [activos, egresados, no_inscritos, retirados, niveles_academicos] =
-      await ctx.prisma.$transaction([
-        ctx.prisma.estudiantes.count({
-          where: {
-            estado_academico: ESTADO_ACADEMICO.ACTIVO,
+    const [
+      activos,
+      egresados,
+      no_inscritos,
+      masculino,
+      femenino,
+      [discapacitados],
+      repitientes,
+      retirados,
+      niveles_academicos,
+    ] = await ctx.prisma.$transaction([
+      ctx.prisma.estudiantes.count({
+        where: {
+          estado_academico: ESTADO_ACADEMICO.ACTIVO,
+        },
+      }),
+      ctx.prisma.estudiantes.count({
+        where: {
+          estado_academico: ESTADO_ACADEMICO.EGRESADO,
+        },
+      }),
+      ctx.prisma.estudiantes.count({
+        where: {
+          estado_academico: ESTADO_ACADEMICO.NO_INSCRITO,
+        },
+      }),
+      ctx.prisma.estudiantes.count({
+        where: {
+          personas: {
+            sexo: 'M',
           },
-        }),
-        ctx.prisma.estudiantes.count({
-          where: {
-            estado_academico: ESTADO_ACADEMICO.EGRESADO,
+        },
+      }),
+      ctx.prisma.estudiantes.count({
+        where: {
+          personas: {
+            sexo: 'F',
           },
-        }),
-        ctx.prisma.estudiantes.count({
-          where: {
-            estado_academico: ESTADO_ACADEMICO.NO_INSCRITO,
-          },
-        }),
-        ctx.prisma.estudiantes.count({
-          where: {
-            estado_academico: ESTADO_ACADEMICO.RETIRADO,
-          },
-        }),
-        ctx.prisma.niveles_academicos.findMany({
-          where: {
-            numero: { not: NIVEL_ACADEMICO.Egresado },
-          },
-          orderBy: {
-            numero: 'asc',
-          },
-          include: {
-            _count: {
-              select: {
-                estudiantes: true,
-              },
+        },
+      }),
+      ctx.prisma.$queryRaw<[{ total: bigint }]>`
+    SELECT COUNT(*) as total
+    FROM estudiantes e
+    JOIN personas p ON e.cedula = p.cedula
+    JOIN discapacitados d ON p.cedula = d.cedula;
+`,
+      ctx.prisma.estudiantes.count({
+        where: {
+          tipo: TIPO_DE_ESTUDIANTE.REPITIENTE,
+        },
+      }),
+      ctx.prisma.estudiantes.count({
+        where: {
+          estado_academico: ESTADO_ACADEMICO.RETIRADO,
+        },
+      }),
+      ctx.prisma.niveles_academicos.findMany({
+        where: {
+          numero: { not: NIVEL_ACADEMICO.Egresado },
+        },
+        orderBy: {
+          numero: 'asc',
+        },
+        include: {
+          _count: {
+            select: {
+              estudiantes: true,
             },
-            secciones: {
-              orderBy: {
-                seccion: 'asc',
-              },
-              include: {
-                _count: {
-                  select: {
-                    estudiantes: {},
-                  },
+          },
+          secciones: {
+            orderBy: {
+              seccion: 'asc',
+            },
+            include: {
+              _count: {
+                select: {
+                  estudiantes: {},
                 },
               },
             },
           },
-        }),
-      ]);
+        },
+      }),
+    ]);
 
     const total = activos + no_inscritos + egresados + retirados;
 
@@ -151,6 +191,12 @@ export const obtener_cantidad_de_estudiantes =
       no_inscritos,
       egresados,
       retirados,
+      masculino,
+      femenino,
+      discapacitados: Number(discapacitados.total),
+      // TODO: Cambiar cuando se implemente la funcionalidad de gestación
+      en_gestacion: 0,
+      repitientes,
       total,
       niveles_academicos: niveles_academicos.map((nivel_academico, i) => {
         const [activos, no_inscritos, retirados] = niveles_con_estados[i];
