@@ -1,6 +1,7 @@
 import {
   Component,
   ElementRef,
+  HostListener,
   inject,
   OnInit,
   ViewChild,
@@ -24,9 +25,13 @@ import { ToastModule } from 'primeng/toast';
 import { MenuItem } from 'primeng/api';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { AuthService } from '../../services/auth.service';
-import { ROL, UsuarioPayload } from '@swai/core';
+import { UsuarioPayload } from '@swai/core';
 import { Avatar } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
+import { InputIcon } from 'primeng/inputicon';
+import { IconField } from 'primeng/iconfield';
+import { InputText } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
 // For dynamic progressbar demo
 
 @Component({
@@ -41,13 +46,18 @@ import { MenuModule } from 'primeng/menu';
     ToastModule,
     ProgressBarModule,
     Avatar,
-    MenuModule
-
+    MenuModule,
+    InputIcon,
+    IconField,
+    InputText,
+    FormsModule
   ],
   templateUrl: './admin.layout.component.html',
   styleUrl: './admin.layout.component.scss',
 })
 export class AdminLayoutComponent implements OnInit {
+  /* ............................... injectables .............................. */
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
@@ -55,17 +65,17 @@ export class AdminLayoutComponent implements OnInit {
 
   /* ................................. estado ................................. */
 
-  protected usuario!: UsuarioPayload
+  protected usuario!: UsuarioPayload;
 
   protected profile_menu: MenuItem[] = [
     {
       label: 'Cerrar sesión',
       icon: 'pi pi-sign-out',
       command: () => {
-        this.auth.logout()
+        this.auth.logout();
       },
     },
-  ]
+  ];
 
   loading = false;
 
@@ -95,10 +105,52 @@ export class AdminLayoutComponent implements OnInit {
 
   @ViewChild('main') main!: ElementRef;
 
-  constructor() {
-    this.auth.usuario.subscribe((usuario) => {if(usuario){this.usuario = usuario}})
+  @ViewChild("searchInput") searchInput!: ElementRef
+  isSearchOpen = false
+  searchText = ""
+
+  @HostListener("window:keydown", ["$event"])
+  handleKeyDown(event: KeyboardEvent): void {
+    // Check for Command+K (Mac) or Ctrl+K (Windows/Linux)
+    if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+      event.preventDefault()
+      this.focusSearch()
+    }
+
+    // Close search on escape
+    if (event.key === "Escape") {
+      this.isSearchOpen = false
+      setTimeout(() => {
+        this.searchInput.nativeElement.blur()
+      }, 0)
+    }
   }
 
+  focusSearch(): void {
+    this.isSearchOpen = true
+    setTimeout(() => {
+      this.searchInput.nativeElement.focus()
+    }, 0)
+  }
+
+  onSearchFocus(): void {
+    this.isSearchOpen = true
+  }
+
+  onSearchBlur(): void {
+    this.isSearchOpen = false
+  }
+
+
+
+  /* .............................. ciclo de vida ............................. */
+  constructor() {
+    this.auth.usuario.subscribe((usuario) => {
+      if (usuario) {
+        this.usuario = usuario;
+      }
+    });
+  }
 
   ngOnInit() {
     this.router.events.subscribe((event) => {

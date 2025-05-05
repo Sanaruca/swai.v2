@@ -40,9 +40,29 @@
       }
     </ng-template>
   </p-breadcrumb>
-  <p class="uppercase text-red-500 font-semibold m-auto">
-    Atento: Esta es una versión en desarrollo del sistema, <a class="underline text-blue-500" href="mailto:sanaruca@gmail.com?subject=Sistema%20Sanz">informe sobre cualquier problema encontrado</a>
-  </p>
+  <div class="m-auto bg-red-50 w-[40rem]">
+    <p-iconfield iconPosition="left" class="ml-auto">
+      <p-inputicon>
+        <i class="pi pi-search"></i>
+      </p-inputicon>
+      <input
+      #searchInput
+      pInputText
+      [(ngModel)]="searchText"
+      pSize="small"
+      type="text"
+      class="w-full pr-32"
+      placeholder="Búsqueda rápida [no implementado]"
+      />
+      <p-inputicon styleClass="min-w-max flex items-center">
+        <div class="shortcut-keys">
+          <span class="key-button">⌘</span>
+          <span class="key-plus">+</span>
+          <span class="key-button">K</span>
+        </div>
+      </p-inputicon>
+    </p-iconfield>
+  </div>
   <div class="flex gap-1 items-center ml-auto">
     <p-avatar [label]="usuario.nombre_de_usuario.at(0)" />
     <div class="text-sm">
@@ -136,5 +156,10 @@
     <!-- <p-scrollpanel styleClass="w-full h-full pr-4"> -->
     <router-outlet></router-outlet>
     <!-- </p-scrollpanel> -->
+     <footer class="flex p-4 mt-5">
+      <p class="uppercase text-red-500 font-semibold m-auto">
+        Atento: Esta es una versión en desarrollo del sistema, <a class="underline text-blue-500" href="mailto:sanaruca@gmail.com?subject=Sistema%20Sanz">informe sobre cualquier problema encontrado</a>
+      </p>
+     </footer>
   </main>
 </section>
