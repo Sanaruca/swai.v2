@@ -26,6 +26,7 @@ export const EMPLEADOS_ROUTES: Route[] = [
     path: 'registrar',
     component: RegistrarEmpleadoPageComponent,
     resolve: {
+      inputs: () => ({ modo: 'registrar' }),
       municipios: (() =>
         inject(ApiService).client.venezuela.obtener_municipios.query({
           por_estado: EstadosDeVenezuelaISO.MONAGAS,
@@ -46,25 +47,53 @@ export const EMPLEADOS_ROUTES: Route[] = [
   },
   {
     path: ':cedula',
-    component: PerfilEmpleadoPageComponent,
     resolve: {
       empleado: ((r) =>
-        inject(
+        inject(ApiService).client.empleados.obtener_empleado.query(
+          +r.params['cedula']
+        )) as ResolveFn<any>,
+      breadcrumb: (async (r) => {
+        const empleado = await inject(
           ApiService
-        ).client.empleados.obtener_empleado.query(+r.params['cedula'])) as ResolveFn<any>,
-        breadcrumb: (async (r) => {
-          const empleado = await inject(
-            ApiService
-          ).client.empleados.obtener_empleado.query(+r.params['cedula']);
-  
-          return {
-            label:
-              empleado.nombres.split(' ').at(0)! +
-              ' ' +
-              empleado.apellidos.split(' ').at(0),
-            routerLink: ['/admin/estudiantes', empleado.cedula],
-          };
-        }) as ResolveFn<MenuItem>,
+        ).client.empleados.obtener_empleado.query(+r.params['cedula']);
+
+        return {
+          label:
+            empleado.nombres.split(' ').at(0)! +
+            ' ' +
+            empleado.apellidos.split(' ').at(0),
+          routerLink: ['/admin/empleados', empleado.cedula],
+        };
+      }) as ResolveFn<MenuItem>,
     },
-  }
+    children: [
+      {
+        path: '',
+        component: PerfilEmpleadoPageComponent,
+      },
+      {
+        path: 'editar',
+        component: RegistrarEmpleadoPageComponent,
+        resolve: {
+          inputs: () => ({ modo: 'editar' }),
+          municipios: (() =>
+            inject(ApiService).client.venezuela.obtener_municipios.query({
+              por_estado: EstadosDeVenezuelaISO.MONAGAS,
+            })) as ResolveFn<any>,
+          parroquias: (() =>
+            inject(ApiService).client.venezuela.obtener_parroquias.query({
+              por_municipio: 'N-08', // Maturin
+            })) as ResolveFn<any>,
+          titulos_de_pregrado: (() =>
+            inject(
+              ApiService
+            ).client.venezuela.obtener_titulos_de_pregrado.query()) as ResolveFn<any>,
+          breadcrumb: ((_, state) => ({
+            label: 'Editar',
+            routerLink: state.url,
+          })) as ResolveFn<MenuItem>,
+        },
+      },
+    ],
+  },
 ];

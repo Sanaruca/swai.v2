@@ -9,10 +9,9 @@ import {
   TransferState
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { UsuarioPayload, UsuarioPayloadSchema } from '@swai/core';
+import { UsuarioPayload } from '@swai/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { type LoginDTO } from '@swai/server';
-import { parse } from 'valibot';
 import { ApiService } from './api.service';
 
 
@@ -72,7 +71,7 @@ export class AuthService {
     try {
       const usuario = await this.api.client.auth.login.mutate(data);
       this.setSession(usuario);
-      this.router.navigate(['/admin/estudiantes']);
+      this.router.navigate(['/admin/dashboard']);
     } catch (error) {
       console.error('Login failed', error);
     }

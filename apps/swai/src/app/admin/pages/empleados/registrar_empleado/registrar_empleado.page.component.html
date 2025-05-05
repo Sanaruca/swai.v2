@@ -1,4 +1,4 @@
-<h3>Registrar empleado</h3>
+<h3>{{modo === 'editar'? 'Editar' : 'Registrar'}} empleado</h3>
 <p class="text-sm">{{INSTITUTION_NAME}}</p>
 
 <section class="flex gap-5 mt-5">
@@ -565,10 +565,10 @@
       <p-button
         icon="pi pi-check"
         iconPos="right"
-        label="Registrar"
+        [label]="modo === 'editar'? 'Editar' : 'Registrar'"
         [disabled]="!puede_enviar_formulario"
-        [loading]="loadings.registrando"
-        (click)="registrar()"
+        [loading]="loadings.enviando"
+        (click)="enviar_datos()"
       />
       } @else {
       <p-button

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -7,7 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  AdministrativoDTO,
   CentroDeVotacion,
+  EmpleadoDTO,
   ESPECIALIDADES,
   ESTADOS_CIVILES,
   ESTADOS_FEDERALES,
@@ -16,6 +18,7 @@ import {
   Municipio,
   Parroquia,
   PlantelEducativo,
+  ProfesorDTO,
   SEXO,
   SwaiErrorCode,
   TIPO_DE_EMPLEADO,
@@ -34,7 +37,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { TipoDeEmpleadoTagComponent } from '../../../../common/components';
 import { validateIf } from '../../../../common/utils/angular/forms/validateif';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PasswordModule } from 'primeng/password';
 import { ApiService } from '../../../../services/api.service';
 import { date, parse } from 'valibot';
@@ -45,6 +48,7 @@ import { debounceTime } from 'rxjs';
 import { TRPCClientError } from '@trpc/client';
 import { environment } from '../../../../../environments/environment';
 
+// TODO: Renombrar componente
 @Component({
   selector: 'aw-registrar-empleado.page',
   imports: [
@@ -67,9 +71,13 @@ import { environment } from '../../../../../environments/environment';
   styleUrl: './registrar_empleado.page.component.scss',
 })
 export class RegistrarEmpleadoPageComponent implements OnInit {
+  /* ................................ contantes ............................... */
+  INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
-    /* ................................ contantes ............................... */
-  INSTITUTION_NAME = environment.INSTITUTION_NAME
+  /* ................................. inputs ................................. */
+  @Input() modo!: 'registrar' | 'editar';
+  @Input() empleado: EmpleadoDTO | AdministrativoDTO | ProfesorDTO | null =
+    null;
 
   /* ............................... constantes ............................... */
 
@@ -85,6 +93,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
 
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private toast = inject(MessageService);
 
   /* .............................. data inicial .............................. */
@@ -106,7 +115,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   protected plantel: PlantelEducativo | null = null;
 
   protected loadings = {
-    registrando: false,
+    enviando: false,
     centros_de_votacion: false,
     plantel: false,
   };
@@ -145,7 +154,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   protected datos_personales = new FormGroup({
     nombres: new FormControl('', { validators: [Validators.required] }),
     apellidos: new FormControl('', { validators: [Validators.required] }),
-    estado_civil: new FormControl<string | null>(null, {
+    estado_civil: new FormControl<number | null>(null, {
       validators: [Validators.required],
     }),
     cedula: new FormControl<string | null>(null, {
@@ -177,7 +186,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   /* ........................... Datos de empleo .......................... */
 
   protected datos_de_empleo = new FormGroup({
-    tipo_de_empleado: new FormControl<null | string>(null, {
+    tipo_de_empleado: new FormControl<number | null>(null, {
       validators: [Validators.required],
     }),
     fecha_de_ingreso: new FormControl('', [Validators.required]),
@@ -185,7 +194,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
     codigo_carnet_patria: new FormControl('', {
       validators: [Validators.required],
     }),
-    titulo_de_pregrado: new FormControl<string | null>(null),
+    titulo_de_pregrado: new FormControl<number | null>(null),
     /* ................................. docente ................................ */
     especialidad: new FormControl<number | null>(null),
     plantel_de_dependencia: new FormControl<string | null>(null),
@@ -203,9 +212,9 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
 
   /* ............................. Datos de salud ............................. */
   protected datos_de_salud = new FormGroup({
-    tipo_de_sangre: new FormControl<string | null>(null, [Validators.required]),
+    tipo_de_sangre: new FormControl<number | null>(null, [Validators.required]),
     discapacidad: new FormControl<boolean>(false),
-    tipo_de_discapacidad: new FormControl<string | null>(null),
+    tipo_de_discapacidad: new FormControl<number | null>(null),
     descripcion_discapacidad: new FormControl<string | null>(null),
   });
   /* ................................. on init ................................ */
@@ -285,10 +294,91 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
         this.datos_de_salud.controls.tipo_de_discapacidad.updateValueAndValidity();
       }
     );
+
+    this.route.data.subscribe((data) => {
+      const modo: 'registrar' | 'editar' | undefined = data['inputs']?.modo;
+      const empleado: EmpleadoDTO | undefined =
+        data['inputs']?.empleado ?? data['empleado'];
+
+      if (modo && modo !== 'registrar' && modo !== 'editar')
+        throw new Error(
+          'Debe asignar un `modo` para este componente: "registrar" | "editar"'
+        );
+
+      if (modo === 'editar' && !empleado)
+        throw new Error('Debe debe proporcionar `empleado` en `modo` editar');
+
+      this.modo = modo!;
+      this.empleado = empleado ?? null;
+
+      this.init_modo(modo!);
+    });
   }
 
-  protected async registrar() {
-    this.loadings.registrando = true;
+  /* ................................ init modo ............................... */
+  private init_modo(modo: 'registrar' | 'editar') {
+    if (modo === 'editar') {
+      const empleado = this.empleado!;
+
+      this.datos_personales.setValue({
+        nombres: empleado.nombres,
+        apellidos: empleado.apellidos,
+        cedula: empleado.cedula + '',
+        fecha_de_nacimiento: empleado.fecha_de_nacimiento as any,
+        sexo: empleado.sexo,
+        estado_civil: empleado.estado_civil.id,
+      });
+
+      this.datos_personales.controls.cedula.disable();
+      this.datos_personales.controls.fecha_de_nacimiento.disable();
+      this.datos_personales.controls.sexo.disable();
+
+      this.centro_de_votacion.controls.parroquia.setValue(
+        empleado.centro_de_votacion.codigo_parroquia
+      );
+      this.centro_de_votacion.controls.centro.setValue(
+        empleado.centro_de_votacion.codigo
+      );
+
+      this.datos_de_empleo.setValue({
+        tipo_de_empleado: empleado.tipo_de_empleado.id,
+        rif: empleado.rif,
+        codigo_carnet_patria: empleado.codigo_carnet_patria,
+        fecha_de_ingreso: empleado.fecha_de_ingreso as any,
+        titulo_de_pregrado:
+          (empleado as ProfesorDTO).titulo_de_pregrado?.id ?? null,
+        especialidad: (empleado as ProfesorDTO).especialidad?.id ?? null,
+        plantel_de_dependencia:
+          (empleado as ProfesorDTO).plantel_de_dependencia?.dea ?? null,
+      });
+
+      this.datos_de_contacto.setValue({
+        telefono: empleado.telefono,
+        email: empleado.correo,
+        direccion: empleado.direccion ?? null,
+      });
+
+      this.datos_de_salud.setValue({
+        tipo_de_sangre: empleado.tipo_de_sangre.id,
+        discapacidad: !!empleado.discapacidad,
+        tipo_de_discapacidad:
+          empleado.discapacidad?.tipo_de_discapacidad.id ?? null,
+        descripcion_discapacidad: empleado.discapacidad?.descripcion ?? null,
+      });
+    }
+  }
+
+  protected enviar_datos() {
+    if (this.modo === 'registrar') {
+      this.registrar();
+    } else {
+      this.editar();
+    }
+  }
+
+  /* ................................ registrar ............................... */
+  private async registrar() {
+    this.loadings.enviando = true;
     try {
       const empleado =
         await this.api.client.empleados.registrar_empleado.mutate({
@@ -327,7 +417,71 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
         severity: 'success',
       });
     } finally {
-      this.loadings.registrando = false;
+      this.loadings.enviando = false;
+    }
+  }
+
+  /* ................................. editar ................................. */
+  private editar() {
+    // TODO: Implementar editar empleado
+
+    this.loadings.enviando = true;
+
+    try {
+      this.api.client.empleados.actualizar_empelado.mutate({
+        cedula: +this.datos_personales.controls.cedula.value!,
+        datos: {
+          nombres: this.datos_personales.controls.nombres.value! || undefined,
+          apellidos:
+            this.datos_personales.controls.apellidos.value! || undefined,
+          estado_civil:
+            +this.datos_personales.controls.estado_civil.value! || undefined,
+          correo: this.datos_de_contacto.controls.email.value! || undefined,
+          tipo_de_sangre:
+            +this.datos_de_salud.controls.tipo_de_sangre.value! || undefined,
+            direccion: this.datos_de_contacto.controls.direccion.value! || undefined,
+          telefono:
+            this.datos_de_contacto.controls.telefono.value! || undefined,
+          rif: this.datos_de_empleo.controls.rif.value! || undefined,
+          codigo_carnet_patria:
+            this.datos_de_empleo.controls.codigo_carnet_patria.value! ||
+            undefined,
+          especialidad:
+            this.datos_de_empleo.controls.especialidad.value! || undefined,
+          plantel_de_dependencia:
+            this.datos_de_empleo.controls.plantel_de_dependencia.value! ||
+            undefined,
+          centro_de_votacion:
+            this.centro_de_votacion.controls.centro.value! || undefined,
+          titulo_de_pregrado:
+            +this.datos_de_empleo.controls.titulo_de_pregrado.value! ||
+            undefined,
+          fecha_de_ingreso: parse(
+            date(),
+            this.datos_de_empleo.controls.fecha_de_ingreso.value
+          ),
+          discapacidad: this.datos_de_salud.controls.discapacidad.value
+            ? {
+                tipo_de_discapacidad:
+                  this.datos_de_salud.controls.tipo_de_discapacidad.value!,
+                descripcion:
+                  this.datos_de_salud.controls.descripcion_discapacidad.value,
+              }
+            : null,
+        },
+      });
+      
+      this.toast.add({
+        summary: 'Empleado ha sido actualizado con exito',
+        severity: 'success',
+      });
+
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([`/admin/empleados/${this.empleado!.cedula}`]);
+      });
+
+    } finally {
+      this.loadings.enviando = false;
     }
   }
 }

@@ -12,7 +12,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'admin',
-    canActivate: [redirectingGuard, adminGuard],
+    canActivate: [adminGuard],
     loadChildren: () =>
       import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },

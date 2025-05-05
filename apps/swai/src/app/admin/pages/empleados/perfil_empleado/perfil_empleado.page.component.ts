@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerfilLayoutComponent } from '../../../../common/layouts/perfil/perfil.layout.component';
 import { SeccionCampoValorComponent, CampoValorComponent } from '../../../../common/layouts/perfil/components';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdministrativoDTO, EmpleadoDTO, generar_constancia_de_prestacion_de_servicio, ProfesorDTO, TIPO_DE_EMPLEADO } from '@swai/core';
 import { TipoDeEmpleadoTagComponent } from '../../../../common/components';
 import { Tag } from 'primeng/tag';
@@ -12,7 +12,7 @@ import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'aw-perfil-empleado.page',
-  imports: [CommonModule, SeccionCampoValorComponent, CampoValorComponent, PerfilLayoutComponent, TipoDeEmpleadoTagComponent, Tag, MenuModule, ButtonModule],
+  imports: [CommonModule, SeccionCampoValorComponent, CampoValorComponent, PerfilLayoutComponent, TipoDeEmpleadoTagComponent, Tag, MenuModule, ButtonModule, RouterLink],
   templateUrl: './perfil_empleado.page.component.html',
   styleUrl: './perfil_empleado.page.component.sass',
 })
