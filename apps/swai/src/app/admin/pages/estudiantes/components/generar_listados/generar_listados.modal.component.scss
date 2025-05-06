@@ -1,0 +1,15 @@
+.selectable {
+    @apply flex py-4 px-3 rounded-xl border border-2 border-slate-200 items-center justify-start text-start gap-5 transition-colors;
+    @apply hover:border-primary-300 hover:bg-slate-50;
+
+    &__icon {
+        @apply size-16 bg-slate-300 rounded-full flex-none;
+    }
+
+    &__title {
+        @apply font-semibold;
+    }
+    &__subtitle {
+        @apply text-sm;
+    }
+}

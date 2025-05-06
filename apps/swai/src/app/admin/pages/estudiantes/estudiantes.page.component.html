@@ -4,6 +4,8 @@
     <p class="text-sm">{{INSTITUTION_NAME}}</p>
   </div>
   <div class="flex gap-3">
+    <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+      <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
     <a routerLink="registrar" pButton>
       <i class="pi pi-user-plus"></i>
       <span>Registrar estudiante</span>
@@ -255,3 +257,4 @@
     </ng-template>
   </p-table>
 </section>
+<aw-modal-generar-listados/>

@@ -32,6 +32,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { debounceTime } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
 import { environment } from '../../../../environments/environment';
+import { MenuItem } from 'primeng/api';
+import { GenerarListadosModalComponent } from './components/generar_listados/generar_listados.modal.component';
 
 @Component({
   selector: 'aw-estudiantes.page',
@@ -56,14 +58,21 @@ import { environment } from '../../../../environments/environment';
     IllustrationComponent,
     NivelAcademicoTagComponent,
     TooltipModule,
+    GenerarListadosModalComponent
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
 })
 export class EstudiantesPageComponent implements OnInit {
-
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+
+  protected imprimir_menu: MenuItem[] = [
+    {
+      label: 'Listados',
+      icon: 'pi pi-copy',
+    },
+  ];
 
   /* ............................... injectables .............................. */
   private api = inject(ApiService);

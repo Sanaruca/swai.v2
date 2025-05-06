@@ -1,0 +1,26 @@
+<p-dialog header="Generar Listados" [modal]="true" [(visible)]="visible" [draggable]="false" [style]="{ width: '25rem' }">
+    <h6>¿Qué tipo de listados necesitas?</h6>
+    <ul class="mt-5 grid gap-3">
+        <li>
+            <button class="selectable">
+                <div class="selectable__icon"></div>
+                <div>
+                    <p class="selectable__title">Por sección académica</p>
+                    <p class="selectable__subtitle">Listado de estudiantes por <span class="font-semibold">sección académica</span></p>
+                </div>
+            </button>
+        </li>
+        <li>
+            <button class="selectable">
+                <div class="selectable__icon"></div>
+                <div>
+                    <p class="selectable__title">Por nivel académico</p>
+                    <p class="selectable__subtitle">Listado de estudiantes por <span class="font-semibold">nivel académico</span></p>
+                </div>
+            </button>
+        </li>
+    </ul>
+    <div class="flex justify-end gap-2 mt-5">
+        <button pButton >Siguiente</button>
+    </div>
+</p-dialog>
