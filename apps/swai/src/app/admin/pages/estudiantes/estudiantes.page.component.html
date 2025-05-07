@@ -116,24 +116,6 @@
       <div class="flex">
         <div class="filter-content | flex gap-2 items-center">
           <i class="pi pi-filter w-6"></i>
-          <ul class="filters | flex items-center gap-2">
-            @for (filtro of filtros; let i = $index; track $index) {
-              <li class="flex gap-1" *ngIf="i === 0">
-                <!-- campo -->
-                <p-select [options]="CAMPOS" size="small" placeholder="Campo" />
-                <!-- condicion -->
-                <p-select [options]="getCondicionesSegunCampo(filtro.campo)" size="small" optionLabel="name" optionValue="value" />
-                <!-- valor -->
-                 @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
-                    <p-select [options]="OPCIONES_SEGUN_CAMPO[filtro.campo]" size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
-                 } @else {
-                   <input type="text" pInputText placeholder="Valor" pSize="small" />
-                 }
-                <!-- remover -->
-                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)"  />
-              </li>
-            }
-          </ul>
           <p-button  variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length === 0"/>
         </div>
         <p-iconfield iconPosition="left" class="ml-auto">
@@ -150,17 +132,17 @@
       </div>
       <div class="pl-8 grid gap-2 mt-2">
 
-        @for (filtro of filtros; let i = $index; track $index) {
-          <li class="flex gap-1" *ngIf="i !== 0">
+        @for (filtro of filtros.controls; let i = $index; track $index) {
+          <li class="flex gap-1">
             <!-- campo -->
             <p-select [options]="CAMPOS" size="small" placeholder="Campo"/>
             <!-- condicion -->
-            <p-select [options]="getCondicionesSegunCampo(filtro.campo)" size="small" optionLabel="name" optionValue="value" />
+            <p-select [formControl]="filtro.controls.campo" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" [disabled]="!filtro.controls.campo.value" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
             <!-- valor -->
-            @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
-              <p-select [options]="OPCIONES_SEGUN_CAMPO[filtro.campo]" size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+            @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
+              <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]" [disabled]="!filtro.controls.campo.value"  size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
            } @else {
-             <input type="text" pInputText placeholder="Valor" pSize="small" />
+             <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small" [disabled]="!filtro.controls.campo.value"  />
            }
           <!-- remover -->
           <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)" />

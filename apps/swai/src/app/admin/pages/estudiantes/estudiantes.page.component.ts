@@ -15,7 +15,7 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { obtener_color_seccion_class } from '../niveles_academicos/utils';
 import { ApiService } from '../../../services/api.service';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { Avatar } from 'primeng/avatar';
@@ -82,7 +82,7 @@ type Condicion =
   | DateCondicion
   | SelectableCondicion;
 
-  type Selectable<T = unknown> = Array<T>
+type Selectable<T = unknown> = Array<T>
 
 enum TIPO_DE_CONDICION {
   STRING = 'string',
@@ -140,6 +140,7 @@ interface Wrapper<T> {
     GenerarListadosModalComponent,
     ChipModule,
     SelectModule,
+    ReactiveFormsModule
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
@@ -265,7 +266,7 @@ export class EstudiantesPageComponent implements OnInit {
       });
   }
 
-  protected filtros: Filtro[] = [];
+  protected filtros = new FormArray<FormGroup<Record<keyof Filtro, FormControl>>>([]);
 
   /* .................................. tabla ................................. */
 
@@ -371,28 +372,27 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................. metodos ................................ */
 
   add_filtro() {
-    this.filtros.push({
-      campo: 'sexo',
-      condicion: SelectableCondicion.IGUAL,
-      valor: ['Pedro'],
-    } as Filtro<Selectable<string>>);
+
+    this.filtros.push(
+      new FormGroup({
+        campo: new FormControl(null),
+        condicion: new FormControl(null),
+        valor: new FormControl(null),
+      }
+    )
+
+    );
   }
   remove_filtro(index: number) {
-    if (index >= 0 && index < this.filtros.length) {
-      const newFiltros = [...this.filtros];
-      newFiltros.splice(index, 1);
-      this.filtros = newFiltros;
-    }
+    this.filtros.removeAt(index);
   }
 
   /* ................................. helpers ................................ */
 
-  protected getCondicionesSegunCampo(campo: string): Wrapper<Condicion>[] {
+  protected getCondicionesSegunCampo(campo: string): Wrapper<Condicion>[] | void {
     switch (campo) {
       case 'sexo':
         return this.SELECTABLE_CONDICIONES;
-      default:
-        throw new Error(`Campo desconocido: ${campo}`);
     }
   }
 }
