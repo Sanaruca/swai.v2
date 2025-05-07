@@ -16,18 +16,20 @@
   <p-breadcrumb
     class="max-w-max"
     styleClass="bg-transparent p-0"
+    
     [model]="breadcrumb_items"
   >
     <ng-template #separator
-      ><span class="text-black dark:text-white">/</span></ng-template
+      ><span class="text-surface-300 dark:text-surface-600 text-xl select-none px-2">/</span></ng-template
     >
     <ng-template #item let-item let-i="">
       @if (item.routerLink) {
       <a
         [routerLink]="item.routerLink"
-        class="p-breadcrumb-item-link | text-current | hover:text-primary-400"
+        class="p-breadcrumb-item-link | hover:text-primary-500 hover:underline"
         [class]="{
           'font-bold': item.active,
+          'text-muted-color': !item.active,
           'text-primary': item.active,
         }"
       >
