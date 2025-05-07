@@ -88,7 +88,7 @@
     <ul class="gap-2 grid">
       <li>
         <a routerLink="/admin/dashboard" class="nav__link | font-bold" pTooltip="Inicio" [attr.data-active]="current_url.startsWith('/admin/dashboard')">
-          <i class="pi pi-home"></i>
+          <i class="ti ti-layout-dashboard"></i>
         </a>
       </li>
       <li>
@@ -147,6 +147,10 @@
         </a>
       </li> -->
     </ul>
+
+      <p-button class="mt-auto" icon="ti ti-layout-sidebar-left-expand" [rounded]="true" [text]="true" severity="secondary" />
+
+
   </nav>
 
   <main class="flex-1 pr-3 pt-10 pl-6 overflow-y-auto overflow-x-hidden" #main>

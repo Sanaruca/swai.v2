@@ -1,4 +1,6 @@
 @import 'primeicons/primeicons.css';
+@import 'node_modules/@tabler/icons-webfont/dist/tabler-icons.scss';
+
 @layer tailwind-base, primeng, tailwind-utilities;
 
 @layer tailwind-base {
@@ -17,6 +19,12 @@
     @apply dark:border-surface-800;
   }
 }
+
+/* .................................. icons ................................. */
+.ti {
+  @apply text-lg;
+}
+
 /* You can add global styles to this file, and also import other style files */
 
 html {
