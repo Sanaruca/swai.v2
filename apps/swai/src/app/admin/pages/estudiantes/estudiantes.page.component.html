@@ -114,17 +114,59 @@
   >
     <ng-template #caption>
       <div class="flex">
+        <div class="filter-content | flex gap-2 items-center">
+          <i class="pi pi-filter w-6"></i>
+          <ul class="filters | flex items-center gap-2">
+            @for (filtro of filtros; let i = $index; track $index) {
+              <li class="flex gap-1" *ngIf="i === 0">
+                <!-- campo -->
+                <p-select [options]="CAMPOS" size="small" placeholder="Campo" />
+                <!-- condicion -->
+                <p-select [options]="getCondicionesSegunCampo(filtro.campo)" size="small" optionLabel="name" optionValue="value" />
+                <!-- valor -->
+                 @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
+                    <p-select [options]="OPCIONES_SEGUN_CAMPO[filtro.campo]" size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+                 } @else {
+                   <input type="text" pInputText placeholder="Valor" pSize="small" />
+                 }
+                <!-- remover -->
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)"  />
+              </li>
+            }
+          </ul>
+          <p-button  variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length === 0"/>
+        </div>
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
             <i class="pi pi-search"></i>
           </p-inputicon>
           <input
-            pInputText
-            type="text"
-            [formControl]="busqueda_input"
-            placeholder="Búsqueda"
+          pInputText
+          type="text"
+          [formControl]="busqueda_input"
+          placeholder="Búsqueda"
           />
         </p-iconfield>
+      </div>
+      <div class="pl-8 grid gap-2 mt-2">
+
+        @for (filtro of filtros; let i = $index; track $index) {
+          <li class="flex gap-1" *ngIf="i !== 0">
+            <!-- campo -->
+            <p-select [options]="CAMPOS" size="small" placeholder="Campo"/>
+            <!-- condicion -->
+            <p-select [options]="getCondicionesSegunCampo(filtro.campo)" size="small" optionLabel="name" optionValue="value" />
+            <!-- valor -->
+            @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
+              <p-select [options]="OPCIONES_SEGUN_CAMPO[filtro.campo]" size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+           } @else {
+             <input type="text" pInputText placeholder="Valor" pSize="small" />
+           }
+          <!-- remover -->
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)" />
+        </li>
+      }
+      <p-button class="justify-self-start"   variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length > 0"/>
       </div>
     </ng-template>
     <ng-template #header>

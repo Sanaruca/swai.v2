@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FastLinkComponent, InfoCardComponent } from '../../components';
 import { CantidadDeEstudiantesDTO, Paginated } from '@swai/server';
-import { EstudianteDTO } from '@swai/core';
+import { EstudianteDTO, SEXOS } from '@swai/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { obtener_color_seccion_class } from '../niveles_academicos/utils';
@@ -34,6 +34,85 @@ import { TooltipModule } from 'primeng/tooltip';
 import { environment } from '../../../../environments/environment';
 import { MenuItem } from 'primeng/api';
 import { GenerarListadosModalComponent } from './components/generar_listados/generar_listados.modal.component';
+import { ChipModule } from 'primeng/chip';
+import { SelectModule } from 'primeng/select';
+
+enum SelectableCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTO = 'DISTINTO',
+}
+
+enum StringCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTO = 'DISTINTO',
+  CONTIENE = 'CONTIENE',
+  MAYOR_QUE = 'MAYOR_QUE',
+  MENOR_QUE = 'MENOR_QUE',
+}
+
+
+
+enum NumberCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTO = 'DISTINTO',
+  MAYOR_QUE = 'MAYOR_QUE',
+  MENOR_QUE = 'MENOR_QUE',
+}
+
+
+enum BooleanCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTO = 'DISTINTO',
+}
+
+
+
+enum DateCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTA = 'DISTINTA',
+  DESPUES_DE = 'DESPUES_DE',
+  ANTES_DE = 'ANTES_DE',
+}
+
+
+type Condicion =
+  | StringCondicion
+  | NumberCondicion
+  | BooleanCondicion
+  | DateCondicion
+  | SelectableCondicion;
+
+  type Selectable<T = unknown> = Array<T>
+
+enum TIPO_DE_CONDICION {
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  DATE = 'date',
+  SELECTABLE = 'selectable',
+}
+type TipoDeCampo<T = unknown> = string | number | boolean | Date | Selectable<T>;
+
+interface Filtro<T extends TipoDeCampo = TipoDeCampo> {
+  campo: string;
+  condicion: T extends string
+    ? StringCondicion
+    : T extends number
+    ? NumberCondicion
+    : T extends boolean
+    ? BooleanCondicion
+    : T extends Date
+    ? DateCondicion
+    : T extends Date
+    ? SelectableCondicion
+    : Condicion;
+  valor: T;
+}
+
+interface Wrapper<T> {
+  name: string;
+  value: T;
+}
 
 @Component({
   selector: 'aw-estudiantes.page',
@@ -58,7 +137,9 @@ import { GenerarListadosModalComponent } from './components/generar_listados/gen
     IllustrationComponent,
     NivelAcademicoTagComponent,
     TooltipModule,
-    GenerarListadosModalComponent
+    GenerarListadosModalComponent,
+    ChipModule,
+    SelectModule,
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
@@ -66,6 +147,89 @@ import { GenerarListadosModalComponent } from './components/generar_listados/gen
 export class EstudiantesPageComponent implements OnInit {
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+
+  protected CAMPOS = ['sexo'];
+
+  protected TIPO_DE_CONDICION = TIPO_DE_CONDICION
+  protected OPCIONES_SEGUN_CAMPO: {
+    [key: string]: Wrapper<unknown>[];
+  } = {
+    sexo: SEXOS.map((sexo) => ({
+      name: sexo.nombre,
+      value: sexo.id,
+    })),
+  };
+  
+  protected SELECTABLE_CONDICIONES: Wrapper<SelectableCondicion>[] = [
+    {
+      name: 'Igual',
+      value: SelectableCondicion.IGUAL,
+    },
+    {
+      name: 'Distinto',
+      value: SelectableCondicion.DISTINTO,
+    },
+  ];
+  protected STRING_CONDICIONES: Wrapper<StringCondicion>[] = [
+    {
+      name: 'Igual',
+      value: StringCondicion.IGUAL,
+    },
+    {
+      name: 'Distinto',
+      value: StringCondicion.DISTINTO,
+    },
+    {
+      name: 'Contiene',
+      value: StringCondicion.CONTIENE,
+    },
+  ];
+  protected NUMBER_CONDICIONES: Wrapper<NumberCondicion>[] = [
+    {
+      name: 'Igual',
+      value: NumberCondicion.DISTINTO,
+    },
+    {
+      name: 'Distinto',
+      value: NumberCondicion.IGUAL,
+    },
+    {
+      name: 'Mayor que',
+      value: NumberCondicion.MAYOR_QUE,
+    },
+    {
+      name: 'Menor que',
+      value: NumberCondicion.MENOR_QUE,
+    },
+  ];
+  protected BOOLEAN_CONDICIONES: Wrapper<BooleanCondicion>[] = [
+    {
+      name: 'Igual',
+      value: BooleanCondicion.IGUAL,
+    },
+    {
+      name: 'Distinto',
+      value: BooleanCondicion.DISTINTO,
+    },
+  ];
+  protected DATE_CONDICIONES: Wrapper<DateCondicion>[] = [
+    {
+      name: 'Igual',
+      value: DateCondicion.IGUAL,
+    },
+    {
+      name: 'Distinta',
+      value: DateCondicion.DISTINTA,
+    },
+    {
+      name: 'Después de',
+      value: DateCondicion.DESPUES_DE,
+    },
+    {
+      name: 'Antes de',
+      value: DateCondicion.ANTES_DE,
+    },
+  ];
 
   protected imprimir_menu: MenuItem[] = [
     {
@@ -100,6 +264,8 @@ export class EstudiantesPageComponent implements OnInit {
         this.busqueda(input + '');
       });
   }
+
+  protected filtros: Filtro[] = [];
 
   /* .................................. tabla ................................. */
 
@@ -200,5 +366,33 @@ export class EstudiantesPageComponent implements OnInit {
   }
   async navigateOnDoubleClick(comands: any[]) {
     await this.router.navigate(comands);
+  }
+
+  /* ................................. metodos ................................ */
+
+  add_filtro() {
+    this.filtros.push({
+      campo: 'sexo',
+      condicion: SelectableCondicion.IGUAL,
+      valor: ['Pedro'],
+    } as Filtro<Selectable<string>>);
+  }
+  remove_filtro(index: number) {
+    if (index >= 0 && index < this.filtros.length) {
+      const newFiltros = [...this.filtros];
+      newFiltros.splice(index, 1);
+      this.filtros = newFiltros;
+    }
+  }
+
+  /* ................................. helpers ................................ */
+
+  protected getCondicionesSegunCampo(campo: string): Wrapper<Condicion>[] {
+    switch (campo) {
+      case 'sexo':
+        return this.SELECTABLE_CONDICIONES;
+      default:
+        throw new Error(`Campo desconocido: ${campo}`);
+    }
   }
 }
