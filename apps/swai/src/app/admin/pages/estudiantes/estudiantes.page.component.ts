@@ -10,12 +10,29 @@ import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FastLinkComponent, InfoCardComponent } from '../../components';
 import { CantidadDeEstudiantesDTO, Paginated } from '@swai/server';
-import { EstudianteDTO, SEXOS } from '@swai/core';
+import {
+  BooleanCondicion,
+  Condicion,
+  DateCondicion,
+  EstudianteDTO,
+  Filtro,
+  NumberCondicion,
+  SelectableCondicion,
+  SEXOS,
+  StringCondicion,
+  TIPO_DE_CONDICION,
+} from '@swai/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { obtener_color_seccion_class } from '../niveles_academicos/utils';
 import { ApiService } from '../../../services/api.service';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { Avatar } from 'primeng/avatar';
@@ -36,78 +53,6 @@ import { MenuItem } from 'primeng/api';
 import { GenerarListadosModalComponent } from './components/generar_listados/generar_listados.modal.component';
 import { ChipModule } from 'primeng/chip';
 import { SelectModule } from 'primeng/select';
-
-enum SelectableCondicion {
-  IGUAL = 'IGUAL',
-  DISTINTO = 'DISTINTO',
-}
-
-enum StringCondicion {
-  IGUAL = 'IGUAL',
-  DISTINTO = 'DISTINTO',
-  CONTIENE = 'CONTIENE',
-  MAYOR_QUE = 'MAYOR_QUE',
-  MENOR_QUE = 'MENOR_QUE',
-}
-
-
-
-enum NumberCondicion {
-  IGUAL = 'IGUAL',
-  DISTINTO = 'DISTINTO',
-  MAYOR_QUE = 'MAYOR_QUE',
-  MENOR_QUE = 'MENOR_QUE',
-}
-
-
-enum BooleanCondicion {
-  IGUAL = 'IGUAL',
-  DISTINTO = 'DISTINTO',
-}
-
-
-
-enum DateCondicion {
-  IGUAL = 'IGUAL',
-  DISTINTA = 'DISTINTA',
-  DESPUES_DE = 'DESPUES_DE',
-  ANTES_DE = 'ANTES_DE',
-}
-
-
-type Condicion =
-  | StringCondicion
-  | NumberCondicion
-  | BooleanCondicion
-  | DateCondicion
-  | SelectableCondicion;
-
-type Selectable<T = unknown> = Array<T>
-
-enum TIPO_DE_CONDICION {
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  DATE = 'date',
-  SELECTABLE = 'selectable',
-}
-type TipoDeCampo<T = unknown> = string | number | boolean | Date | Selectable<T>;
-
-interface Filtro<T extends TipoDeCampo = TipoDeCampo> {
-  campo: string;
-  condicion: T extends string
-    ? StringCondicion
-    : T extends number
-    ? NumberCondicion
-    : T extends boolean
-    ? BooleanCondicion
-    : T extends Date
-    ? DateCondicion
-    : T extends Date
-    ? SelectableCondicion
-    : Condicion;
-  valor: T;
-}
 
 interface Wrapper<T> {
   name: string;
@@ -140,7 +85,7 @@ interface Wrapper<T> {
     GenerarListadosModalComponent,
     ChipModule,
     SelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
@@ -151,7 +96,7 @@ export class EstudiantesPageComponent implements OnInit {
 
   protected CAMPOS = ['sexo'];
 
-  protected TIPO_DE_CONDICION = TIPO_DE_CONDICION
+  protected TIPO_DE_CONDICION = TIPO_DE_CONDICION;
   protected OPCIONES_SEGUN_CAMPO: {
     [key: string]: Wrapper<unknown>[];
   } = {
@@ -160,24 +105,24 @@ export class EstudiantesPageComponent implements OnInit {
       value: sexo.id,
     })),
   };
-  
+
   protected SELECTABLE_CONDICIONES: Wrapper<SelectableCondicion>[] = [
     {
-      name: 'Igual',
+      name: 'Igual a',
       value: SelectableCondicion.IGUAL,
     },
     {
-      name: 'Distinto',
+      name: 'Distinto de',
       value: SelectableCondicion.DISTINTO,
     },
   ];
   protected STRING_CONDICIONES: Wrapper<StringCondicion>[] = [
     {
-      name: 'Igual',
+      name: 'Igual a',
       value: StringCondicion.IGUAL,
     },
     {
-      name: 'Distinto',
+      name: 'Distinto de',
       value: StringCondicion.DISTINTO,
     },
     {
@@ -191,7 +136,7 @@ export class EstudiantesPageComponent implements OnInit {
       value: NumberCondicion.DISTINTO,
     },
     {
-      name: 'Distinto',
+      name: 'Distinto de',
       value: NumberCondicion.IGUAL,
     },
     {
@@ -205,21 +150,21 @@ export class EstudiantesPageComponent implements OnInit {
   ];
   protected BOOLEAN_CONDICIONES: Wrapper<BooleanCondicion>[] = [
     {
-      name: 'Igual',
+      name: 'Igual a',
       value: BooleanCondicion.IGUAL,
     },
     {
-      name: 'Distinto',
+      name: 'Distinto de',
       value: BooleanCondicion.DISTINTO,
     },
   ];
   protected DATE_CONDICIONES: Wrapper<DateCondicion>[] = [
     {
-      name: 'Igual',
+      name: 'Igual a',
       value: DateCondicion.IGUAL,
     },
     {
-      name: 'Distinta',
+      name: 'Distinta de',
       value: DateCondicion.DISTINTA,
     },
     {
@@ -266,7 +211,9 @@ export class EstudiantesPageComponent implements OnInit {
       });
   }
 
-  protected filtros = new FormArray<FormGroup<Record<keyof Filtro, FormControl>>>([]);
+  protected filtros = new FormArray<
+    FormGroup<Record<keyof Filtro, FormControl>>
+  >([]);
 
   /* .................................. tabla ................................. */
 
@@ -372,24 +319,37 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................. metodos ................................ */
 
   add_filtro() {
-
     this.filtros.push(
       new FormGroup({
-        campo: new FormControl(null),
-        condicion: new FormControl(null),
-        valor: new FormControl(null),
-      }
-    )
-
+        campo: new FormControl(null, [Validators.required]),
+        condicion: new FormControl(null, [Validators.required]),
+        valor: new FormControl(null, [Validators.required]),
+      })
     );
   }
   remove_filtro(index: number) {
     this.filtros.removeAt(index);
   }
 
+  remove_all_filtros() {
+    this.filtros.clear();
+  }
+
+  aplicar_filtro(index: number) {
+    // TODO: implementar la logica de aplicacion de filtros
+  }
+  aplicar_filtros() {
+    console.log('Aplicar filtros', this.filtros.value);
+    this.api.client.estudiantes.obtener_estudiantes.query({
+      filtros: this.filtros.value as Filtro<never>[],
+    }).then(response => this.estudiantes = response)
+  }
+
   /* ................................. helpers ................................ */
 
-  protected getCondicionesSegunCampo(campo: string): Wrapper<Condicion>[] | void {
+  protected getCondicionesSegunCampo(
+    campo: string
+  ): Wrapper<Condicion>[] | void {
     switch (campo) {
       case 'sexo':
         return this.SELECTABLE_CONDICIONES;

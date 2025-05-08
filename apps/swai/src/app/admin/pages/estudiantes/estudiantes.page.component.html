@@ -116,6 +116,7 @@
       <div class="flex">
         <div class="filter-content | flex gap-2 items-center">
           <i class="pi pi-filter w-6"></i>
+          <p class="font-semibold" *ngIf="filtros.length">Filtrado de datos</p>
           <p-button  variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length === 0"/>
         </div>
         <p-iconfield iconPosition="left" class="ml-auto">
@@ -135,20 +136,26 @@
         @for (filtro of filtros.controls; let i = $index; track $index) {
           <li class="flex gap-1">
             <!-- campo -->
-            <p-select [options]="CAMPOS" size="small" placeholder="Campo"/>
+            <p-select [formControl]="filtro.controls.campo" [options]="CAMPOS" size="small" placeholder="Campo"/>
             <!-- condicion -->
-            <p-select [formControl]="filtro.controls.campo" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" [disabled]="!filtro.controls.campo.value" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
+            <p-select [formControl]="filtro.controls.condicion" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
             <!-- valor -->
             @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
-              <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]" [disabled]="!filtro.controls.campo.value"  size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+              <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]"   size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
            } @else {
-             <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small" [disabled]="!filtro.controls.campo.value"  />
+             <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small"   />
            }
+          <!-- aplicar -->
+          <p-button icon="pi pi-check" pTooltip="Aplicar [no implementado]" [disabled]="true" [rounded]="true" [text]="true" severity="secondary" (click)="aplicar_filtro(i)" />
           <!-- remover -->
-          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)" />
+          <p-button icon="pi pi-trash" pTooltip="Remover" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)" />
         </li>
       }
-      <p-button class="justify-self-start"   variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length > 0"/>
+      <p-button class="justify-self-start" variant="outlined" label="Añadir filtro" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length > 0"/>
+      <div class="justify-self-end flex gap-2">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="remove_all_filtros()" *ngIf="filtros.length > 0"/>
+        <p-button label="Aplicar filtros" icon="pi pi-check" [disabled]="filtros.invalid" [rounded]="true" (click)="aplicar_filtros()" *ngIf="filtros.length > 0"/>
+      </div>
       </div>
     </ng-template>
     <ng-template #header>
