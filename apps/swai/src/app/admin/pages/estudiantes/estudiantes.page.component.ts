@@ -220,6 +220,8 @@ export class EstudiantesPageComponent implements OnInit {
     FormGroup<Record<keyof Filtro, FormControl>>
   >([]);
 
+  protected filtros_activos: Filtro[] = [];
+
   /* .................................. tabla ................................. */
 
   viewStudent(student: any) {
@@ -311,6 +313,7 @@ export class EstudiantesPageComponent implements OnInit {
       .query({
         paginacion: { page: page + 1, limit },
         por_nombre: this.busqueda_input.value || '',
+        filtros: this.filtros_activos as Filtro<never>[]
       })
       .then((data) => {
         this.estudiantes = data;
@@ -343,11 +346,25 @@ export class EstudiantesPageComponent implements OnInit {
   aplicar_filtro(index: number) {
     // TODO: implementar la logica de aplicacion de filtros
   }
-  aplicar_filtros() {
-    console.log('Aplicar filtros', this.filtros.value);
-    this.api.client.estudiantes.obtener_estudiantes.query({
-      filtros: this.filtros.value as Filtro<never>[],
-    }).then(response => this.estudiantes = response)
+  async aplicar_filtros() {
+    this.loading = true;
+
+    try {
+      this.estudiantes =
+        await this.api.client.estudiantes.obtener_estudiantes.query({
+          filtros: this.filtros.value as Filtro<never>[],
+        });
+
+      this.filtros_activos = this.filtros.value.map((it) => ({
+        campo: it.campo,
+        condicion: it.condicion,
+        valor: it.valor,
+      }));
+
+      this.filtros.clear();
+    } finally {
+      this.loading = false;
+    }
   }
 
   /* ................................. helpers ................................ */
