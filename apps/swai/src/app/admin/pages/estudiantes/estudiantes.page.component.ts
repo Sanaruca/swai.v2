@@ -22,6 +22,7 @@ import {
   SEXOS,
   StringCondicion,
   TIPO_DE_CONDICION,
+  TIPOS_DE_SANGRE,
 } from '@swai/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -95,7 +96,7 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
-  protected CAMPOS = ['sexo', 'estado_academico'];
+  protected CAMPOS = ['sexo', 'estado_academico', 'tipo_de_sangre'];
 
   protected TIPO_DE_CONDICION = TIPO_DE_CONDICION;
   protected OPCIONES_SEGUN_CAMPO: {
@@ -106,6 +107,10 @@ export class EstudiantesPageComponent implements OnInit {
       value: sexo.id,
     })),
     estado_academico: ESTADOS_ACADEMICOS.map((it) => ({
+      name: it.nombre,
+      value: it.id,
+    })),
+    tipo_de_sangre: TIPOS_DE_SANGRE.map((it) => ({
       name: it.nombre,
       value: it.id,
     })),
@@ -375,6 +380,7 @@ export class EstudiantesPageComponent implements OnInit {
     switch (campo) {
       case 'sexo':
       case 'estado_academico':
+      case 'tipo_de_sangre':
         return this.SELECTABLE_CONDICIONES;
     }
   }

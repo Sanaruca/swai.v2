@@ -230,8 +230,9 @@
         "
       >
         <td>
-          <div
-            class="flex gap-3"
+          <a
+            [routerLink]="['/admin/estudiantes', estudiante.cedula]"
+            class="flex gap-3 hover:underline"
             [pTooltip]="estudiante.nombres + ' ' + estudiante.apellidos"
             tooltipPosition="top"
           >
@@ -244,10 +245,12 @@
             <p class="font-medium">
               {{ obtener_nombre(estudiante) }}
             </p>
-          </div>
+          </a>
         </td>
         <td class="font-medium text-nowrap">
-          V-{{ estudiante.cedula | number }}
+          <a [routerLink]="['/admin/estudiantes', estudiante.cedula]" class="hover:underline">
+            V-{{ estudiante.cedula | number }}
+          </a>
         </td>
         <td><aw-tag-sexo [sexo]="estudiante.sexo" /></td>
         <td class="text-center font-medium">{{ estudiante.edad }}</td>
