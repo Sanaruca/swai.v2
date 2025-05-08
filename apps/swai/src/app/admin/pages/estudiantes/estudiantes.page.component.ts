@@ -14,6 +14,7 @@ import {
   BooleanCondicion,
   Condicion,
   DateCondicion,
+  ESTADOS_ACADEMICOS,
   EstudianteDTO,
   Filtro,
   NumberCondicion,
@@ -94,7 +95,7 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
-  protected CAMPOS = ['sexo'];
+  protected CAMPOS = ['sexo', 'estado_academico'];
 
   protected TIPO_DE_CONDICION = TIPO_DE_CONDICION;
   protected OPCIONES_SEGUN_CAMPO: {
@@ -103,6 +104,10 @@ export class EstudiantesPageComponent implements OnInit {
     sexo: SEXOS.map((sexo) => ({
       name: sexo.nombre,
       value: sexo.id,
+    })),
+    estado_academico: ESTADOS_ACADEMICOS.map((it) => ({
+      name: it.nombre,
+      value: it.id,
     })),
   };
 
@@ -352,6 +357,7 @@ export class EstudiantesPageComponent implements OnInit {
   ): Wrapper<Condicion>[] | void {
     switch (campo) {
       case 'sexo':
+      case 'estado_academico':
         return this.SELECTABLE_CONDICIONES;
     }
   }

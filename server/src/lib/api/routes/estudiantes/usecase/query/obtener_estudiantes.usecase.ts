@@ -5,7 +5,11 @@ import {
   EstudianteDTO,
   EstudianteSchemaDTO,
   SeccionSchema,
-  generateFiltroSchema, PersonaSchema
+  generateFiltroSchema,
+  PersonaSchema,
+  Persona,
+  Estudiante,
+  EstudianteSchema,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
 import {
@@ -34,7 +38,13 @@ export const ObtenerEstudiantesSchemaDTO = object({
   por_nivel_academico: optional(array(NivelAcademicoSchema.entries.numero)),
   por_secion: optional(array(SeccionSchema.entries.seccion)),
   por_estado_academico: optional(array(EstadoAcademicoSchema.entries.id)),
-  filtros: optional(array(generateFiltroSchema({campos_validos: ['sexo']}))),
+  filtros: optional(
+    array(
+      generateFiltroSchema<keyof Persona | keyof Estudiante>({
+        campos_validos: ['sexo', 'estado_academico'],
+      })
+    )
+  ),
   paginacion: optional(partial(PaginationParamsSchema)),
 });
 
@@ -56,7 +66,6 @@ export const obtener_estudiantes = admin_procedure
       PaginationParamsSchema,
       input?.paginacion ?? {}
     ) as Required<PaginationParams>;
-
 
     const filtros: Prisma.estudiantesWhereInput = {
       estado_academico: { in: input?.por_estado_academico },
@@ -80,10 +89,18 @@ export const obtener_estudiantes = admin_procedure
           },
         ],
 
-        AND: input?.filtros?.filter(it => Object.keys(PersonaSchema.entries).includes(it.campo))?.map(filtro => {
-          return CoreFiltroToPrismaFilterMapper.map(filtro)
-        })
+        AND: input?.filtros
+          ?.filter((it) =>
+            Object.keys(PersonaSchema.entries).includes(it.campo)
+          )
+          ?.map((filtro) => CoreFiltroToPrismaFilterMapper.map(filtro)),
       },
+
+      AND: input?.filtros
+        ?.filter((it) =>
+          Object.keys(EstudianteSchema.entries).includes(it.campo)
+        )
+        ?.map((filtro) => CoreFiltroToPrismaFilterMapper.map(filtro)),
     };
 
     const [estudiantes, total] = await ctx.prisma.$transaction([
