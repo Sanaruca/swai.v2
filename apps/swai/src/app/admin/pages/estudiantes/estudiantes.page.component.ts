@@ -391,4 +391,8 @@ export class EstudiantesPageComponent implements OnInit {
         return this.SELECTABLE_CONDICIONES;
     }
   }
+
+  protected FindValueDeOpciones<T>(value: T, opciones: Wrapper<T>[]) {
+    return opciones.find(it=> it.value === value)
+  }
 }

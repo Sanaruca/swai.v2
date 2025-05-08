@@ -120,7 +120,13 @@
           <ul class="filters | flex gap-2">
             @for (filtro of filtros_activos; track $index) {
               <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm">
-                {{CAMPO_MAP[filtro.campo]}} {{CONDICION_MAP[filtro.condicion].toLowerCase()}} <span class="font-semibold">{{filtro.valor}}</span>
+                {{CAMPO_MAP[filtro.campo]}} {{CONDICION_MAP[filtro.condicion].toLowerCase()}} <span class="font-semibold">
+                  @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
+                    {{FindValueDeOpciones(filtro.valor, OPCIONES_SEGUN_CAMPO[filtro.campo])?.name}}
+                  } @else {
+                    {{filtro.valor}}
+                  }
+                </span>
                 <button class="ml-2">
                   <i class="pi pi-times text-xs"></i>
                 </button>
