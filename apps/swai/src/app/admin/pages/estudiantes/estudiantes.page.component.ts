@@ -347,8 +347,14 @@ export class EstudiantesPageComponent implements OnInit {
       })
     );
   }
+  
   remove_filtro(index: number) {
     this.filtros.removeAt(index);
+  }
+
+  remove_filtro_activo(index: number) {
+    this.filtros_activos.splice(index,1)
+    this.aplicar_filtros(this.filtros_activos)
   }
 
   remove_all_filtros() {
@@ -372,22 +378,22 @@ export class EstudiantesPageComponent implements OnInit {
       this.loading = false;
     }
   }
-  async aplicar_filtros() {
-    this.loading = true;
+  async aplicar_filtros_form() {
+    
+    await this.aplicar_filtros(this.filtros.value as Filtro<never>[])
 
+    this.filtros.clear()
+  }
+
+  async aplicar_filtros<C extends string>(filtros: Filtro<C>[]) {
+    this.loading = true;
     try {
       this.estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
-          filtros: this.filtros.value as Filtro<never>[],
+          filtros: filtros as Filtro<never>[],
         });
 
-      this.filtros_activos = this.filtros.value.map((it) => ({
-        campo: it.campo,
-        condicion: it.condicion,
-        valor: it.valor,
-      }));
-
-      this.filtros.clear();
+      this.filtros_activos = filtros
     } finally {
       this.loading = false;
     }

@@ -127,7 +127,7 @@
                     {{filtro.valor}}
                   }
                 </span>
-                <button class="ml-2">
+                <button class="ml-2" (click)="remove_filtro_activo($index)">
                   <i class="pi pi-times text-xs"></i>
                 </button>
               </li>
@@ -170,7 +170,7 @@
       <p-button class="justify-self-start" variant="outlined" label="Añadir filtro" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length > 0"/>
       <div class="justify-self-end flex gap-2">
         <p-button label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="remove_all_filtros()" *ngIf="filtros.length > 0"/>
-        <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros.invalid" [rounded]="true" (click)="aplicar_filtros()" *ngIf="filtros.length > 0"/>
+        <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros.invalid" [rounded]="true" (click)="aplicar_filtros_form()" *ngIf="filtros.length > 0"/>
       </div>
       </form>
       <p>Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
