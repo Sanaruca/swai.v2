@@ -44,7 +44,6 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const usuario = this.transferState.get<UsuarioPayload | null>(USER_KEY, null);
 
-      console.log('usuario from inicializacion browser', usuario);
       this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
       
     }
@@ -52,7 +51,6 @@ export class AuthService {
     if (isPlatformServer(this.platformId)) {
       const usuario = this.ssr_request_context.usuario;
       
-      console.log('usuario from inicializacion server', usuario);
       this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
 
       if (usuario) {
