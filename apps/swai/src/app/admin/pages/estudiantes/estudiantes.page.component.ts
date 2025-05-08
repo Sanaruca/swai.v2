@@ -355,8 +355,22 @@ export class EstudiantesPageComponent implements OnInit {
     this.filtros.clear();
   }
 
-  aplicar_filtro(index: number) {
-    // TODO: implementar la logica de aplicacion de filtros
+  async aplicar_filtro(index: number) {
+    this.loading = true;
+
+    const filtro = this.filtros.at(index)
+
+    try {
+      this.estudiantes =
+        await this.api.client.estudiantes.obtener_estudiantes.query({
+          filtros: [...this.filtros_activos, filtro.value] as Filtro<never>[],
+        });
+
+      this.filtros_activos =  [...this.filtros_activos, filtro.value as Filtro<never>]
+      this.filtros.removeAt(index);
+    } finally {
+      this.loading = false;
+    }
   }
   async aplicar_filtros() {
     this.loading = true;

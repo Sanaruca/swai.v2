@@ -162,7 +162,7 @@
              <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small"   />
            }
           <!-- aplicar -->
-          <p-button icon="pi pi-check" pTooltip="Aplicar [no implementado]" [disabled]="true" [rounded]="true" [text]="true" severity="secondary" (click)="aplicar_filtro(i)" />
+          <p-button icon="pi pi-check" pTooltip="Aplicar" [disabled]="filtro.invalid" [rounded]="true" [text]="true" severity="secondary" (click)="aplicar_filtro(i)" />
           <!-- remover -->
           <p-button icon="pi pi-trash" pTooltip="Remover" [rounded]="true" [text]="true" severity="secondary" (click)="remove_filtro(i)" />
         </li>
