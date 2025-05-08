@@ -1,19 +1,19 @@
 import {
-    any,
-    array,
-    BaseIssue,
-    BaseSchema,
-    boolean,
-    custom,
-    date,
-    enum_,
-    never,
-    number,
-    object,
-    parse,
-    picklist,
-    safeParse,
-    string,
+  any,
+  array,
+  BaseIssue,
+  BaseSchema,
+  boolean,
+  custom,
+  date,
+  enum_,
+  never,
+  number,
+  object,
+  parse,
+  picklist,
+  safeParse,
+  string,
 } from 'valibot';
 
 export enum SelectableCondicion {
@@ -54,6 +54,17 @@ export type Condicion =
   | BooleanCondicion
   | DateCondicion
   | SelectableCondicion;
+
+export const CONDICION_MAP: Record<Condicion, string> = {
+  IGUAL: 'Igual a',
+  ANTES_DE: 'Antes de',
+  CONTIENE: 'Contiene',
+  DESPUES_DE: 'Despues de',
+  DISTINTA: 'Distinta a',
+  DISTINTO: 'Distinto de',
+  MAYOR_QUE: 'Mayor que',
+  MENOR_QUE: 'Menor que',
+}
 
 export type Selectable<T = unknown> = Array<T>;
 

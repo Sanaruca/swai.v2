@@ -13,6 +13,7 @@ import { CantidadDeEstudiantesDTO, Paginated } from '@swai/server';
 import {
   BooleanCondicion,
   Condicion,
+  CONDICION_MAP,
   DateCondicion,
   ESTADOS_ACADEMICOS,
   EstudianteDTO,
@@ -96,9 +97,15 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
-  protected CAMPOS = ['sexo', 'estado_academico', 'tipo_de_sangre'];
+  protected CAMPOS: Wrapper<string>[] = [
+    {name: 'Sexo',value: 'sexo'},
+    {name: 'Estado académico',value: 'estado_academico'},
+    {name: 'Tipo de sangre',value: 'tipo_de_sangre'}
+  ];
+  protected CAMPO_MAP: Record<string,string> = this.CAMPOS.reduce((acc, c)=> ({...acc, [c.value]: c.name}), {});
 
   protected TIPO_DE_CONDICION = TIPO_DE_CONDICION;
+  protected CONDICION_MAP = CONDICION_MAP;
   protected OPCIONES_SEGUN_CAMPO: {
     [key: string]: Wrapper<unknown>[];
   } = {
