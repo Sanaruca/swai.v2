@@ -120,7 +120,7 @@
           <ul class="filters | flex gap-2">
             @for (filtro of filtros_activos.controls; track $index) {
               <!-- TODO: solo si se presiona spacebar o enter -->
-              <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm"
+              <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm select-none"
               (click)="op.toggle($event)" role="button" tabindex="0"
               (keydown)="$event.preventDefault();op.toggle($event)"
               >
