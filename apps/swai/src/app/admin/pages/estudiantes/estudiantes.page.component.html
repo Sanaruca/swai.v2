@@ -118,18 +118,43 @@
           <i class="pi pi-filter w-6"></i>
           <p class="font-semibold" *ngIf="filtros.length && filtros_activos.length === 0">Filtrado de datos</p>
           <ul class="filters | flex gap-2">
-            @for (filtro of filtros_activos; track $index) {
-              <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm">
-                {{CAMPO_MAP[filtro.campo]}} {{CONDICION_MAP[filtro.condicion].toLowerCase()}} <span class="font-semibold">
-                  @if (OPCIONES_SEGUN_CAMPO[filtro.campo]) {
-                    {{FindValueDeOpciones(filtro.valor, OPCIONES_SEGUN_CAMPO[filtro.campo])?.name}}
+            @for (filtro of filtros_activos.controls; track $index) {
+              <!-- TODO: solo si se presiona spacebar o enter -->
+              <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm"
+              (click)="op.toggle($event)" role="button" tabindex="0"
+              (keydown)="$event.preventDefault();op.toggle($event)"
+              >
+                {{CAMPO_MAP[filtro.controls.campo.value]}} {{($any(CONDICION_MAP)[filtro.controls.condicion.value]).toLowerCase()}} <span class="font-semibold">
+                  @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
+                    {{FindValueDeOpciones(filtro.controls.valor.value, OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value])?.name}}
                   } @else {
-                    {{filtro.valor}}
+                    {{filtro.controls.valor.value}}
                   }
                 </span>
                 <button class="ml-2" (click)="remove_filtro_activo($index)">
                   <i class="pi pi-times text-xs"></i>
                 </button>
+                <p-popover #op>
+                  <form>
+                    <!-- TODO: se debe clonar el estado anterior para evitar que el filtro activo cambie en la ui si no se han aplicado los filtros -->
+                    <div class="flex gap-1">
+                      <!-- campo -->
+                      <p-select [formControl]="filtro.controls.campo" [options]="CAMPOS" optionLabel="name" optionValue="value" size="small" placeholder="Campo"/>
+                      <!-- condicion -->
+                      <p-select [formControl]="filtro.controls.condicion" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
+                      <!-- valor -->
+                      @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
+                        <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]"   size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+                      } @else {
+                        <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small"   />
+                      }
+                    </div>
+                    <div class="flex gap-2 justify-end mt-5">
+                      <p-button size="small" label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="op.toggle($event)"/>
+                      <p-button size="small" label="Aplicar" icon="pi pi-check" [loading]="loading" [rounded]="true" (click)="aplicar_filtros($any(filtros_activos.value))"/>
+                    </div>
+                  </form>
+                </p-popover>
               </li>
             }
           </ul>

@@ -56,6 +56,7 @@ import { MenuItem } from 'primeng/api';
 import { GenerarListadosModalComponent } from './components/generar_listados/generar_listados.modal.component';
 import { ChipModule } from 'primeng/chip';
 import { SelectModule } from 'primeng/select';
+import { PopoverModule } from 'primeng/popover';
 
 interface Wrapper<T> {
   name: string;
@@ -89,6 +90,7 @@ interface Wrapper<T> {
     ChipModule,
     SelectModule,
     ReactiveFormsModule,
+    PopoverModule
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
@@ -232,7 +234,9 @@ export class EstudiantesPageComponent implements OnInit {
     FormGroup<Record<keyof Filtro, FormControl>>
   >([]);
 
-  protected filtros_activos: Filtro[] = [];
+  protected filtros_activos = new FormArray<
+    FormGroup<Record<keyof Filtro, FormControl>>
+  >([]);;
 
   /* .................................. tabla ................................. */
 
@@ -325,7 +329,7 @@ export class EstudiantesPageComponent implements OnInit {
       .query({
         paginacion: { page: page + 1, limit },
         por_nombre: this.busqueda_input.value || '',
-        filtros: this.filtros_activos as Filtro<never>[]
+        filtros: this.filtros_activos.value as Filtro<never>[]
       })
       .then((data) => {
         this.estudiantes = data;
@@ -353,8 +357,8 @@ export class EstudiantesPageComponent implements OnInit {
   }
 
   remove_filtro_activo(index: number) {
-    this.filtros_activos.splice(index,1)
-    this.aplicar_filtros(this.filtros_activos)
+    this.filtros_activos.removeAt(index)
+    this.aplicar_filtros(this.filtros_activos.value as Filtro[])
   }
 
   remove_all_filtros() {
@@ -369,10 +373,18 @@ export class EstudiantesPageComponent implements OnInit {
     try {
       this.estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
-          filtros: [...this.filtros_activos, filtro.value] as Filtro<never>[],
+          filtros: [...this.filtros_activos.value, filtro.value] as Filtro<never>[],
         });
 
-      this.filtros_activos =  [...this.filtros_activos, filtro.value as Filtro<never>]
+
+      this.filtros_activos.push(
+        new FormGroup({
+          campo: new FormControl(filtro.controls.campo.value),
+          condicion: new FormControl(filtro.controls.condicion.value),
+          valor: new FormControl(filtro.controls.valor.value),
+        }),
+      )
+
       this.filtros.removeAt(index);
     } finally {
       this.loading = false;
@@ -393,7 +405,7 @@ export class EstudiantesPageComponent implements OnInit {
           filtros: filtros as Filtro<never>[],
         });
 
-      this.filtros_activos = filtros
+      this.filtros_activos.setValue(filtros)
     } finally {
       this.loading = false;
     }
