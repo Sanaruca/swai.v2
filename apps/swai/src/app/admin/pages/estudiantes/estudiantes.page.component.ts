@@ -23,6 +23,7 @@ import {
   SEXOS,
   StringCondicion,
   TIPO_DE_CONDICION,
+  TIPOS_DE_ESTUDIANTE,
   TIPOS_DE_SANGRE,
 } from '@swai/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -57,6 +58,8 @@ import { GenerarListadosModalComponent } from './components/generar_listados/gen
 import { ChipModule } from 'primeng/chip';
 import { SelectModule } from 'primeng/select';
 import { PopoverModule } from 'primeng/popover';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 interface Wrapper<T> {
   name: string;
@@ -90,7 +93,9 @@ interface Wrapper<T> {
     ChipModule,
     SelectModule,
     ReactiveFormsModule,
-    PopoverModule
+    PopoverModule,
+    DatePickerModule,
+    InputNumberModule
   ],
   templateUrl: './estudiantes.page.component.html',
   styleUrl: './estudiantes.page.component.scss',
@@ -99,12 +104,41 @@ export class EstudiantesPageComponent implements OnInit {
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
-  protected CAMPOS: Wrapper<string>[] = [
-    {name: 'Sexo',value: 'sexo'},
-    {name: 'Estado académico',value: 'estado_academico'},
-    {name: 'Tipo de sangre',value: 'tipo_de_sangre'}
+  protected CAMPOS: (Wrapper<string> & { type: TIPO_DE_CONDICION })[] = [
+    { name: 'Sexo', value: 'sexo', type: TIPO_DE_CONDICION.SELECTABLE },
+    {
+      name: 'Estado académico',
+      value: 'estado_academico',
+      type: TIPO_DE_CONDICION.SELECTABLE,
+    },
+    {
+      name: 'Tipo de sangre',
+      value: 'tipo_de_sangre',
+      type: TIPO_DE_CONDICION.SELECTABLE,
+    },
+    { name: 'Tipo', value: 'tipo', type: TIPO_DE_CONDICION.SELECTABLE },
+    { name: 'Estatura', value: 'estatura', type: TIPO_DE_CONDICION.NUMBER },
+    { name: 'Peso', value: 'peso', type: TIPO_DE_CONDICION.NUMBER },
+    { name: 'Chemise', value: 'chemise', type: TIPO_DE_CONDICION.NUMBER },
+    {
+      name: 'Fecha de inscripción',
+      value: 'fecha_de_inscripcion',
+      type: TIPO_DE_CONDICION.DATE,
+    },
+    {
+      name: 'Fecha de nacimiento',
+      value: 'fecha_de_nacimiento',
+      type: TIPO_DE_CONDICION.DATE,
+    },
   ];
-  protected CAMPO_MAP: Record<string,string> = this.CAMPOS.reduce((acc, c)=> ({...acc, [c.value]: c.name}), {});
+  protected CAMPO_MAP: Record<string, string> = this.CAMPOS.reduce(
+    (acc, c) => ({ ...acc, [c.value]: c.name }),
+    {}
+  );
+  protected TIPO_DE_CONDICION_SEGUN_CAMPO: Record<string, TIPO_DE_CONDICION> = this.CAMPOS.reduce(
+    (acc, c) => ({ ...acc, [c.value]: c.type }),
+    {}
+  );
 
   protected TIPO_DE_CONDICION = TIPO_DE_CONDICION;
   protected CONDICION_MAP = CONDICION_MAP;
@@ -120,6 +154,10 @@ export class EstudiantesPageComponent implements OnInit {
       value: it.id,
     })),
     tipo_de_sangre: TIPOS_DE_SANGRE.map((it) => ({
+      name: it.nombre,
+      value: it.id,
+    })),
+    tipo: TIPOS_DE_ESTUDIANTE.map((it) => ({
       name: it.nombre,
       value: it.id,
     })),
@@ -152,11 +190,11 @@ export class EstudiantesPageComponent implements OnInit {
   protected NUMBER_CONDICIONES: Wrapper<NumberCondicion>[] = [
     {
       name: 'Igual',
-      value: NumberCondicion.DISTINTO,
+      value: NumberCondicion.IGUAL,
     },
     {
       name: 'Distinto de',
-      value: NumberCondicion.IGUAL,
+      value: NumberCondicion.DISTINTO,
     },
     {
       name: 'Mayor que',
@@ -195,6 +233,33 @@ export class EstudiantesPageComponent implements OnInit {
       value: DateCondicion.ANTES_DE,
     },
   ];
+
+  protected CONDICIONES_SEGUN_CAMPO: Record<string, Wrapper<Condicion>[]> = this.CAMPOS.reduce((map, c)=> {
+
+
+    let condiciones:  Wrapper<Condicion>[] = []
+
+    switch (c.type) {
+      case TIPO_DE_CONDICION.BOOLEAN:
+        condiciones = this.BOOLEAN_CONDICIONES
+        break;
+      case TIPO_DE_CONDICION.DATE:
+        condiciones = this.DATE_CONDICIONES
+        break;
+      case TIPO_DE_CONDICION.NUMBER:
+        condiciones = this.NUMBER_CONDICIONES
+        break;
+      case TIPO_DE_CONDICION.SELECTABLE:
+        condiciones = this.SELECTABLE_CONDICIONES
+        break;
+      case TIPO_DE_CONDICION.STRING:
+        condiciones = this.STRING_CONDICIONES
+        break;
+    }
+
+
+    return {...map, [c.value]: condiciones}
+  }, {})
 
   protected imprimir_menu: MenuItem[] = [
     {
@@ -236,7 +301,9 @@ export class EstudiantesPageComponent implements OnInit {
 
   protected filtros_activos = new FormArray<
     FormGroup<Record<keyof Filtro, FormControl>>
-  >([]);;
+  >([]);
+
+  protected filtros_activos_snapshoot = [] as Filtro[];
 
   /* .................................. tabla ................................. */
 
@@ -329,7 +396,7 @@ export class EstudiantesPageComponent implements OnInit {
       .query({
         paginacion: { page: page + 1, limit },
         por_nombre: this.busqueda_input.value || '',
-        filtros: this.filtros_activos.value as Filtro<never>[]
+        filtros: this.filtros_activos.value as Filtro<never>[],
       })
       .then((data) => {
         this.estudiantes = data;
@@ -351,14 +418,14 @@ export class EstudiantesPageComponent implements OnInit {
       })
     );
   }
-  
+
   remove_filtro(index: number) {
     this.filtros.removeAt(index);
   }
 
   remove_filtro_activo(index: number) {
-    this.filtros_activos.removeAt(index)
-    this.aplicar_filtros(this.filtros_activos.value as Filtro[])
+    this.filtros_activos.removeAt(index);
+    this.aplicar_filtros(this.filtros_activos.value as Filtro[]);
   }
 
   remove_all_filtros() {
@@ -368,22 +435,27 @@ export class EstudiantesPageComponent implements OnInit {
   async aplicar_filtro(index: number) {
     this.loading = true;
 
-    const filtro = this.filtros.at(index)
+    const filtro = this.filtros.at(index);
 
     try {
       this.estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
-          filtros: [...this.filtros_activos.value, filtro.value] as Filtro<never>[],
+          filtros: [
+            ...this.filtros_activos.value,
+            filtro.value,
+          ] as Filtro<never>[],
         });
-
 
       this.filtros_activos.push(
         new FormGroup({
           campo: new FormControl(filtro.controls.campo.value),
           condicion: new FormControl(filtro.controls.condicion.value),
           valor: new FormControl(filtro.controls.valor.value),
-        }),
-      )
+        })
+      );
+      this.filtros_activos_snapshoot = JSON.parse(
+        JSON.stringify(this.filtros_activos.value)
+      );
 
       this.filtros.removeAt(index);
     } finally {
@@ -391,10 +463,11 @@ export class EstudiantesPageComponent implements OnInit {
     }
   }
   async aplicar_filtros_form() {
-    
-    await this.aplicar_filtros(this.filtros.value as Filtro<never>[])
+    const new_filtros = [...this.filtros_activos.value, ...this.filtros.value];
 
-    this.filtros.clear()
+    await this.aplicar_filtros(new_filtros as Filtro<never>[]);
+
+    this.filtros.clear();
   }
 
   async aplicar_filtros<C extends string>(filtros: Filtro<C>[]) {
@@ -405,7 +478,18 @@ export class EstudiantesPageComponent implements OnInit {
           filtros: filtros as Filtro<never>[],
         });
 
-      this.filtros_activos.setValue(filtros)
+      console.log(filtros);
+      this.filtros_activos_snapshoot = filtros;
+      this.filtros_activos = new FormArray(
+        filtros.map(
+          (f) =>
+            new FormGroup({
+              campo: new FormControl(f.campo),
+              condicion: new FormControl(f.condicion),
+              valor: new FormControl(f.valor),
+            })
+        )
+      );
     } finally {
       this.loading = false;
     }
@@ -413,18 +497,12 @@ export class EstudiantesPageComponent implements OnInit {
 
   /* ................................. helpers ................................ */
 
-  protected getCondicionesSegunCampo(
-    campo: string
-  ): Wrapper<Condicion>[] | void {
-    switch (campo) {
-      case 'sexo':
-      case 'estado_academico':
-      case 'tipo_de_sangre':
-        return this.SELECTABLE_CONDICIONES;
-    }
+  protected findValueDeOpciones<T>(value: T, opciones: Wrapper<T>[]) {
+    return opciones.find((it) => it.value === value);
   }
 
-  protected FindValueDeOpciones<T>(value: T, opciones: Wrapper<T>[]) {
-    return opciones.find(it=> it.value === value)
+  // TODO: esta funcion esta ejecutandoce veces inesesarias
+  protected comparar_objetos(a: object, b: object) {
+    return JSON.stringify(a) === JSON.stringify(b);
   }
 }

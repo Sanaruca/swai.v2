@@ -1,5 +1,5 @@
-@import 'primeicons/primeicons.css';
-@import 'node_modules/@tabler/icons-webfont/dist/tabler-icons.scss';
+@use 'primeicons/primeicons.css';
+@use 'node_modules/@tabler/icons-webfont/dist/tabler-icons.scss';
 
 @layer tailwind-base, primeng, tailwind-utilities;
 

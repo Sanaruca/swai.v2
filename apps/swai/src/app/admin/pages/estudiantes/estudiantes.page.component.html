@@ -117,20 +117,31 @@
         <div class="filter-content | flex gap-2 items-center">
           <i class="pi pi-filter w-6"></i>
           <p class="font-semibold" *ngIf="filtros.length && filtros_activos.length === 0">Filtrado de datos</p>
-          <ul class="filters | flex gap-2">
+          <ul class="filters | flex gap-2 items-center">
             @for (filtro of filtros_activos.controls; track $index) {
               <!-- TODO: solo si se presiona spacebar o enter -->
               <li class="rounded-full px-2 py-1 bg-primary/10 border border-primary text-primary-500 text-sm select-none"
+              [class]="{
+                'bg-yellow-500/20': !comparar_objetos(filtro.value, filtros_activos_snapshoot[$index]),
+                'border-yellow-500': !comparar_objetos(filtro.value, filtros_activos_snapshoot[$index]),
+                'text-yellow-600': !comparar_objetos(filtro.value, filtros_activos_snapshoot[$index]),
+                'animate-pulse': !comparar_objetos(filtro.value, filtros_activos_snapshoot[$index]),
+              }"
               (click)="op.toggle($event)" role="button" tabindex="0"
               (keydown)="$event.preventDefault();op.toggle($event)"
+              pTooltip="! Este filtro no se ha aplicado"
+              [tooltipDisabled]="comparar_objetos(filtro.value, filtros_activos_snapshoot[$index])"
               >
                 {{CAMPO_MAP[filtro.controls.campo.value]}} {{($any(CONDICION_MAP)[filtro.controls.condicion.value]).toLowerCase()}} <span class="font-semibold">
                   @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
-                    {{FindValueDeOpciones(filtro.controls.valor.value, OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value])?.name}}
+                    {{findValueDeOpciones(filtro.controls.valor.value, OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value])?.name}}
+                  } @else if(TIPO_DE_CONDICION_SEGUN_CAMPO[filtro.controls.campo.value] === TIPO_DE_CONDICION.DATE) {
+                    {{filtro.controls.valor.value | date}}
                   } @else {
                     {{filtro.controls.valor.value}}
                   }
                 </span>
+                <i class="pi pi-exclamation-triangle" *ngIf="!comparar_objetos(filtro.value, filtros_activos_snapshoot[$index])"></i>
                 <button class="ml-2" (click)="remove_filtro_activo($index)">
                   <i class="pi pi-times text-xs"></i>
                 </button>
@@ -141,10 +152,14 @@
                       <!-- campo -->
                       <p-select [formControl]="filtro.controls.campo" [options]="CAMPOS" optionLabel="name" optionValue="value" size="small" placeholder="Campo"/>
                       <!-- condicion -->
-                      <p-select [formControl]="filtro.controls.condicion" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
+                      <p-select [formControl]="filtro.controls.condicion" [options]="CONDICIONES_SEGUN_CAMPO[filtro.controls.campo.value]" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
                       <!-- valor -->
                       @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
-                        <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]"   size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+                         <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]"   size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+                      } @else if (TIPO_DE_CONDICION_SEGUN_CAMPO[filtro.controls.campo.value] === TIPO_DE_CONDICION.DATE) {
+                       <p-datepicker size="small" placeholder="Fecha"  [formControl]="filtro.controls.valor" [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" />
+                      } @else if (TIPO_DE_CONDICION_SEGUN_CAMPO[filtro.controls.campo.value] === TIPO_DE_CONDICION.NUMBER) {
+                       <p-inputnumber [formControl]="filtro.controls.valor" size="small" placeholder="Valor" locale="es-VE" />
                       } @else {
                         <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small"   />
                       }
@@ -153,9 +168,11 @@
                       <p-button size="small" label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="op.toggle($event)"/>
                       <p-button size="small" label="Aplicar" icon="pi pi-check" [loading]="loading" [rounded]="true" (click)="aplicar_filtros($any(filtros_activos.value))"/>
                     </div>
+                    <p class="text-xs text-muted-color">Presione "Aplicar" para reflejar los cambios</p>
                   </form>
                 </p-popover>
               </li>
+              <span class="text-sm text-muted-color opacity-50 select-none" *ngIf="$index < filtros_activos.length - 1">Y</span>
             }
           </ul>
           <p-button  variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros.length === 0"/>
@@ -175,14 +192,20 @@
       <form class="pl-8 grid gap-2 mt-2">
         <p class="font-semibold" *ngIf="filtros.length && filtros_activos.length > 0">Filtrado de datos</p>
         @for (filtro of filtros.controls; let i = $index; track $index) {
-          <li class="flex gap-1">
+          <li class="flex gap-1 items-center">
+            <!-- operador -->
+            <span class="text-muted-color opacity-60 select-none w-5" *ngIf="$index > 0">Y</span>
             <!-- campo -->
             <p-select [formControl]="filtro.controls.campo" [options]="CAMPOS" optionLabel="name" optionValue="value" size="small" placeholder="Campo"/>
             <!-- condicion -->
-            <p-select [formControl]="filtro.controls.condicion" [options]="getCondicionesSegunCampo(filtro.controls.campo.value) ?? []" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
+            <p-select [formControl]="filtro.controls.condicion" [options]="CONDICIONES_SEGUN_CAMPO[filtro.controls.campo.value]" size="small" optionLabel="name" optionValue="value" placeholder="Condición" />
             <!-- valor -->
             @if (OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]) {
               <p-select [formControl]="filtro.controls.valor" [options]="OPCIONES_SEGUN_CAMPO[filtro.controls.campo.value]"   size="small" optionLabel="name" optionValue="value" placeholder="Valor" />
+           } @else if (TIPO_DE_CONDICION_SEGUN_CAMPO[filtro.controls.campo.value] === TIPO_DE_CONDICION.DATE) {
+            <p-datepicker size="small" placeholder="Fecha"  [formControl]="filtro.controls.valor" [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" />
+           } @else if (TIPO_DE_CONDICION_SEGUN_CAMPO[filtro.controls.campo.value] === TIPO_DE_CONDICION.NUMBER) {
+            <p-inputnumber [formControl]="filtro.controls.valor" size="small" placeholder="Valor" locale="es-VE" />
            } @else {
              <input type="text" [formControl]="filtro.controls.valor" pInputText placeholder="Valor" pSize="small"   />
            }
@@ -198,7 +221,7 @@
         <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros.invalid" [rounded]="true" (click)="aplicar_filtros_form()" *ngIf="filtros.length > 0"/>
       </div>
       </form>
-      <p>Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
+      <p class="mt-5">Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
     </ng-template>
     <ng-template #header>
       <tr>
