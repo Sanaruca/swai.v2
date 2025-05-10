@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -88,6 +88,14 @@ interface Wrapper<T> {
   styleUrl: './tabla_de_estudiantes.component.sass',
 })
 export class TablaDeEstudiantesComponent {
+
+  @Input() filtros_estaticos: Filtro[] = []
+
+  get filtros(): Filtro[] {
+    return [...this.filtros_estaticos, ...this.filtros_activos]
+  }
+
+
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
@@ -257,15 +265,15 @@ export class TablaDeEstudiantesComponent {
 
   loading = false;
 
-  protected filtros = new FormArray<
+  protected filtros_form = new FormArray<
     FormGroup<Record<keyof Filtro, FormControl>>
   >([]);
 
-  protected filtros_activos = new FormArray<
+  protected filtros_activos_form = new FormArray<
     FormGroup<Record<keyof Filtro, FormControl>>
   >([]);
 
-  protected filtros_activos_snapshoot = [] as Filtro[];
+  protected filtros_activos = [] as Filtro[];
 
   /* .............................. ciclo de vida ............................. */
 
@@ -276,7 +284,7 @@ export class TablaDeEstudiantesComponent {
   }
 
   add_filtro() {
-    this.filtros.push(
+    this.filtros_form.push(
       new FormGroup({
         campo: new FormControl(null, [Validators.required]),
         condicion: new FormControl(null, [Validators.required]),
@@ -286,54 +294,56 @@ export class TablaDeEstudiantesComponent {
   }
 
   remove_filtro(index: number) {
-    this.filtros.removeAt(index);
+    this.filtros_form.removeAt(index);
   }
 
   remove_filtro_activo(index: number) {
-    this.filtros_activos.removeAt(index);
-    this.aplicar_filtros(this.filtros_activos.value as Filtro[]);
+    this.filtros_activos_form.removeAt(index);
+    this.filtros_activos.splice(index, 1)
+    this.filtros_activos = [...this.filtros_activos]
+    this.aplicar_filtros(this.filtros);
   }
 
   remove_all_filtros() {
-    this.filtros.clear();
+    this.filtros_form.clear();
   }
 
   async aplicar_filtro(index: number) {
     this.loading = true;
 
-    const filtro = this.filtros.at(index);
+    const filtro = this.filtros_form.at(index);
 
     try {
       this.estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
           filtros: [
-            ...this.filtros_activos.value,
+            ...this.filtros_activos_form.value,
             filtro.value,
           ] as Filtro<never>[],
         });
 
-      this.filtros_activos.push(
+      this.filtros_activos_form.push(
         new FormGroup({
           campo: new FormControl(filtro.controls.campo.value),
           condicion: new FormControl(filtro.controls.condicion.value),
           valor: new FormControl(filtro.controls.valor.value),
         })
       );
-      this.filtros_activos_snapshoot = JSON.parse(
-        JSON.stringify(this.filtros_activos.value)
+      this.filtros_activos = JSON.parse(
+        JSON.stringify(this.filtros_activos_form.value)
       );
 
-      this.filtros.removeAt(index);
+      this.filtros_form.removeAt(index);
     } finally {
       this.loading = false;
     }
   }
   async aplicar_filtros_form() {
-    const new_filtros = [...this.filtros_activos.value, ...this.filtros.value];
+    const new_filtros = [...this.filtros, ...this.filtros_form.value];
 
     await this.aplicar_filtros(new_filtros as Filtro<never>[]);
 
-    this.filtros.clear();
+    this.filtros_form.clear();
   }
 
   async aplicar_filtros<C extends string>(filtros: Filtro<C>[]) {
@@ -344,9 +354,8 @@ export class TablaDeEstudiantesComponent {
           filtros: filtros as Filtro<never>[],
         });
 
-      console.log(filtros);
-      this.filtros_activos_snapshoot = filtros;
-      this.filtros_activos = new FormArray(
+      this.filtros_activos = filtros;
+      this.filtros_activos_form = new FormArray(
         filtros.map(
           (f) =>
             new FormGroup({
