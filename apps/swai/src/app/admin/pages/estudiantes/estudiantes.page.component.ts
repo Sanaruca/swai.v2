@@ -105,6 +105,8 @@ export class EstudiantesPageComponent implements OnInit {
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
   protected CAMPOS: (Wrapper<string> & { type: TIPO_DE_CONDICION })[] = [
+    { name: 'Nombres', value: 'nombres', type: TIPO_DE_CONDICION.STRING },
+    { name: 'Apellidos', value: 'apellidos', type: TIPO_DE_CONDICION.STRING },
     { name: 'Sexo', value: 'sexo', type: TIPO_DE_CONDICION.SELECTABLE },
     {
       name: 'Estado académico',

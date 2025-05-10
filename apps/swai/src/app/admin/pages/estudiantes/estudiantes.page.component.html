@@ -146,7 +146,7 @@
                   <i class="pi pi-times text-xs"></i>
                 </button>
                 <p-popover #op>
-                  <form>
+                  <form (submit)="$event.preventDefault();aplicar_filtros($any(filtros_activos.value))">
                     <!-- TODO: se debe clonar el estado anterior para evitar que el filtro activo cambie en la ui si no se han aplicado los filtros -->
                     <div class="flex gap-1">
                       <!-- campo -->
@@ -166,7 +166,7 @@
                     </div>
                     <div class="flex gap-2 justify-end mt-5">
                       <p-button size="small" label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="op.toggle($event)"/>
-                      <p-button size="small" label="Aplicar" icon="pi pi-check" [loading]="loading" [rounded]="true" (click)="aplicar_filtros($any(filtros_activos.value))"/>
+                      <p-button size="small" label="Aplicar" icon="pi pi-check" [loading]="loading" [rounded]="true" type="submit"/>
                     </div>
                     <p class="text-xs text-muted-color">Presione "Aplicar" para reflejar los cambios</p>
                   </form>

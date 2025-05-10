@@ -1,11 +1,11 @@
 import type { Prisma } from '@prisma/client';
 import {
-    BooleanCondicion,
-    DateCondicion,
-    Filtro,
-    NumberCondicion,
-    SelectableCondicion,
-    StringCondicion,
+  BooleanCondicion,
+  DateCondicion,
+  Filtro,
+  NumberCondicion,
+  SelectableCondicion,
+  StringCondicion,
 } from '@swai/core';
 
 type PrismaFilterType =
@@ -26,16 +26,19 @@ export class CoreFiltroToPrismaFilterMapper {
         case StringCondicion.DISTINTO:
           condicion = {
             not: { equals: filtro.valor },
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
           } as Prisma.StringFilter;
           break;
         case StringCondicion.IGUAL:
           condicion = {
             equals: filtro.valor,
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
           } as Prisma.StringFilter;
           break;
         case StringCondicion.CONTIENE:
           condicion = {
             contains: filtro.valor,
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
           } as Prisma.StringFilter;
           break;
       }

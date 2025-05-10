@@ -42,6 +42,8 @@ export const ObtenerEstudiantesSchemaDTO = object({
     array(
       generateFiltroSchema<keyof Persona | keyof Estudiante>({
         campos_validos: [
+          'nombres',
+          'apellidos',
           'sexo',
           'estado_academico',
           'tipo_de_sangre',
