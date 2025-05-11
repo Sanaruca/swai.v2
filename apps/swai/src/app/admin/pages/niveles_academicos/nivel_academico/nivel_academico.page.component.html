@@ -54,5 +54,5 @@
 
 <section class="card | mt-5">
   <h6>Estudiantes</h6>
-  <aw-tabla-de-estudiantes [filtros_estaticos]="[{campo: 'nivel_academico', condicion: NumberCondicion.IGUAL, valor: NIVEL_ACADEMICO}]"/>
+  <aw-tabla-de-estudiantes [filtros_estaticos]="[{campo: 'nivel_academico', condicion: NumberCondicion.IGUAL, valor: NIVEL_ACADEMICO}]" [omitir_campos_filtros]="['nivel_academico']"/>
 </section>

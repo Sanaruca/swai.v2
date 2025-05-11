@@ -90,6 +90,7 @@ interface Wrapper<T> {
 })
 export class TablaDeEstudiantesComponent {
   @Input() filtros_estaticos: Filtro[] = [];
+  @Input() omitir_campos_filtros: string[] = [];
 
   get filtros(): Filtro[] {
     return [...this.filtros_estaticos, ...this.filtros_activos];
@@ -101,40 +102,50 @@ export class TablaDeEstudiantesComponent {
   private router = inject(Router);
 
   /* ............................... constantes ............................... */
-  protected CAMPOS: (Wrapper<string> & { type: TIPO_DE_CONDICION })[] = [
-    { name: 'Nombres', value: 'nombres', type: TIPO_DE_CONDICION.STRING },
-    { name: 'Apellidos', value: 'apellidos', type: TIPO_DE_CONDICION.STRING },
-    {
-      name: 'Nivel académico',
-      value: 'nivel_academico',
-      type: TIPO_DE_CONDICION.SELECTABLE,
-    },
-    { name: 'Sexo', value: 'sexo', type: TIPO_DE_CONDICION.SELECTABLE },
-    {
-      name: 'Estado académico',
-      value: 'estado_academico',
-      type: TIPO_DE_CONDICION.SELECTABLE,
-    },
-    {
-      name: 'Tipo de sangre',
-      value: 'tipo_de_sangre',
-      type: TIPO_DE_CONDICION.SELECTABLE,
-    },
-    { name: 'Tipo', value: 'tipo', type: TIPO_DE_CONDICION.SELECTABLE },
-    { name: 'Estatura', value: 'estatura', type: TIPO_DE_CONDICION.NUMBER },
-    { name: 'Peso', value: 'peso', type: TIPO_DE_CONDICION.NUMBER },
-    { name: 'Chemise', value: 'chemise', type: TIPO_DE_CONDICION.NUMBER },
-    {
-      name: 'Fecha de inscripción',
-      value: 'fecha_de_inscripcion',
-      type: TIPO_DE_CONDICION.DATE,
-    },
-    {
-      name: 'Fecha de nacimiento',
-      value: 'fecha_de_nacimiento',
-      type: TIPO_DE_CONDICION.DATE,
-    },
-  ];
+  protected get CAMPOS(): (Wrapper<string> & { type: TIPO_DE_CONDICION })[] {
+    return [
+      { name: 'Nombres', value: 'nombres', type: TIPO_DE_CONDICION.STRING },
+      { name: 'Apellidos', value: 'apellidos', type: TIPO_DE_CONDICION.STRING },
+      {
+        name: 'Nivel académico',
+        value: 'nivel_academico',
+        type: TIPO_DE_CONDICION.SELECTABLE,
+      },
+      { name: 'Sexo', value: 'sexo', type: TIPO_DE_CONDICION.SELECTABLE },
+      {
+        name: 'Seccion académica',
+        value: 'seccion',
+        type: TIPO_DE_CONDICION.STRING,
+      },
+      {
+        name: 'Estado académico',
+        value: 'estado_academico',
+        type: TIPO_DE_CONDICION.SELECTABLE,
+      },
+      {
+        name: 'Tipo de sangre',
+        value: 'tipo_de_sangre',
+        type: TIPO_DE_CONDICION.SELECTABLE,
+      },
+      { name: 'Tipo', value: 'tipo', type: TIPO_DE_CONDICION.SELECTABLE },
+      { name: 'Estatura', value: 'estatura', type: TIPO_DE_CONDICION.NUMBER },
+      { name: 'Peso', value: 'peso', type: TIPO_DE_CONDICION.NUMBER },
+      { name: 'Chemise', value: 'chemise', type: TIPO_DE_CONDICION.NUMBER },
+      {
+        name: 'Fecha de inscripción',
+        value: 'fecha_de_inscripcion',
+        type: TIPO_DE_CONDICION.DATE,
+      },
+      {
+        name: 'Fecha de nacimiento',
+        value: 'fecha_de_nacimiento',
+        type: TIPO_DE_CONDICION.DATE,
+      },
+    ].filter((it) => {
+      return !this.omitir_campos_filtros.includes(it.value);
+    });
+  }
+
   protected CAMPO_MAP: Record<string, string> = this.CAMPOS.reduce(
     (acc, c) => ({ ...acc, [c.value]: c.name }),
     {}
@@ -321,13 +332,17 @@ export class TablaDeEstudiantesComponent {
   }
 
   async aplicar_filtro(index: number) {
-    this.loading = true;
 
     const filtro = this.filtros_form.at(index);
 
     await this.aplicar_filtros([...this.filtros, filtro.value as Filtro]);
 
     this.filtros_form.removeAt(index);
+  }
+
+  async aplicar_filtros_activos() {
+    await this.aplicar_filtros([...this.filtros_estaticos, ...this.filtros_activos_form.value as Filtro[]]);
+
   }
   async aplicar_filtros_form() {
     const new_filtros = [...this.filtros, ...this.filtros_form.value];

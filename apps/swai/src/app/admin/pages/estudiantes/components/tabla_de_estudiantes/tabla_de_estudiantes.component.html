@@ -51,7 +51,7 @@
                   <i class="pi pi-times text-xs"></i>
                 </button>
                 <p-popover #op>
-                  <form (submit)="$event.preventDefault();aplicar_filtros($any(filtros_activos_form.value))">
+                  <form (submit)="$event.preventDefault();aplicar_filtros_activos()">
                     <!-- TODO: se debe clonar el estado anterior para evitar que el filtro activo cambie en la ui si no se han aplicado los filtros -->
                     <div class="flex gap-1">
                       <!-- campo -->

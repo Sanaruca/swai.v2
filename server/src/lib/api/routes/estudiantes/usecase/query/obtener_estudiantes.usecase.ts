@@ -54,6 +54,7 @@ export const ObtenerEstudiantesSchemaDTO = object({
           'chemise',
           'fecha_de_inscripcion',
           'fecha_de_nacimiento',
+          'seccion'
         ],
       })
     )
