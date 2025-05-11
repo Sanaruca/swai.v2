@@ -31,7 +31,7 @@ export const ESTUDIANTES_ROUTES: Route[] = [
         routerLink: state.url,
       })) as ResolveFn<MenuItem>,
       inputs: () => ({
-        modo: 'registar',
+        modo: 'registrar',
       }),
     },
   },

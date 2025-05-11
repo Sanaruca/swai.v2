@@ -1,8 +1,5 @@
 <h3>{{ modo === 'registrar' ? 'Registrar' : 'Actualizar' }} estudiante</h3>
 <p class="text-sm">{{INSTITUTION_NAME}}</p>
-<pre>
-  {{ formulario_actual?.getRawValue() | json }}
-</pre>
 
 <section class="flex gap-5 mt-5">
   <section class="w-60">
@@ -153,7 +150,6 @@
         <div class="form_input" data-required>
           <label for="nombres">Nombres</label>
           <input
-            [autofocus]="true"
             pInputText
             id="nombres"
             placeholder="Juan José"
