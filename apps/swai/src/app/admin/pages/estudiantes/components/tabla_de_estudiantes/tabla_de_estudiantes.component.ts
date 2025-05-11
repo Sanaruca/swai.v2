@@ -11,6 +11,7 @@ import {
   ESTADOS_ACADEMICOS,
   EstudianteDTO,
   Filtro,
+  NIVELES_ACADEMICOS,
   NumberCondicion,
   SelectableCondicion,
   SEXOS,
@@ -88,13 +89,11 @@ interface Wrapper<T> {
   styleUrl: './tabla_de_estudiantes.component.sass',
 })
 export class TablaDeEstudiantesComponent {
-
-  @Input() filtros_estaticos: Filtro[] = []
+  @Input() filtros_estaticos: Filtro[] = [];
 
   get filtros(): Filtro[] {
-    return [...this.filtros_estaticos, ...this.filtros_activos]
+    return [...this.filtros_estaticos, ...this.filtros_activos];
   }
-
 
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
@@ -105,6 +104,11 @@ export class TablaDeEstudiantesComponent {
   protected CAMPOS: (Wrapper<string> & { type: TIPO_DE_CONDICION })[] = [
     { name: 'Nombres', value: 'nombres', type: TIPO_DE_CONDICION.STRING },
     { name: 'Apellidos', value: 'apellidos', type: TIPO_DE_CONDICION.STRING },
+    {
+      name: 'Nivel académico',
+      value: 'nivel_academico',
+      type: TIPO_DE_CONDICION.SELECTABLE,
+    },
     { name: 'Sexo', value: 'sexo', type: TIPO_DE_CONDICION.SELECTABLE },
     {
       name: 'Estado académico',
@@ -150,6 +154,10 @@ export class TablaDeEstudiantesComponent {
     estado_academico: ESTADOS_ACADEMICOS.map((it) => ({
       name: it.nombre,
       value: it.id,
+    })),
+    nivel_academico: NIVELES_ACADEMICOS.map((it) => ({
+      name: it.nombre,
+      value: it.numero,
     })),
     tipo_de_sangre: TIPOS_DE_SANGRE.map((it) => ({
       name: it.nombre,
@@ -299,9 +307,13 @@ export class TablaDeEstudiantesComponent {
 
   remove_filtro_activo(index: number) {
     this.filtros_activos_form.removeAt(index);
-    this.filtros_activos.splice(index, 1)
-    this.filtros_activos = [...this.filtros_activos]
+    this.filtros_activos.splice(index, 1);
+    this.filtros_activos = [...this.filtros_activos];
     this.aplicar_filtros(this.filtros);
+  }
+
+  revertir_filtro_activo(index: number) {
+    this.filtros_activos_form.at(index)?.setValue(this.filtros_activos[index]);
   }
 
   remove_all_filtros() {
@@ -313,30 +325,9 @@ export class TablaDeEstudiantesComponent {
 
     const filtro = this.filtros_form.at(index);
 
-    try {
-      this.estudiantes =
-        await this.api.client.estudiantes.obtener_estudiantes.query({
-          filtros: [
-            ...this.filtros_activos_form.value,
-            filtro.value,
-          ] as Filtro<never>[],
-        });
+    await this.aplicar_filtros([...this.filtros, filtro.value as Filtro]);
 
-      this.filtros_activos_form.push(
-        new FormGroup({
-          campo: new FormControl(filtro.controls.campo.value),
-          condicion: new FormControl(filtro.controls.condicion.value),
-          valor: new FormControl(filtro.controls.valor.value),
-        })
-      );
-      this.filtros_activos = JSON.parse(
-        JSON.stringify(this.filtros_activos_form.value)
-      );
-
-      this.filtros_form.removeAt(index);
-    } finally {
-      this.loading = false;
-    }
+    this.filtros_form.removeAt(index);
   }
   async aplicar_filtros_form() {
     const new_filtros = [...this.filtros, ...this.filtros_form.value];
@@ -347,6 +338,7 @@ export class TablaDeEstudiantesComponent {
   }
 
   async aplicar_filtros<C extends string>(filtros: Filtro<C>[]) {
+    console.table(filtros);
     this.loading = true;
     try {
       this.estudiantes =
@@ -354,9 +346,25 @@ export class TablaDeEstudiantesComponent {
           filtros: filtros as Filtro<never>[],
         });
 
-      this.filtros_activos = filtros;
+      // * aqui ocultaremos los filtros estaticos omitiendo añadirlos a filtros activos
+
+      const omited_indexes = [] as number[];
+      const aux_filtros = filtros.filter(
+        (a) =>
+          !this.filtros_estaticos.some((b, i) => {
+            if (omited_indexes.includes(i)) {
+              return false;
+            }
+            omited_indexes.push(i);
+
+            return this.comparar_objetos(a, b);
+          })
+      );
+
+      this.filtros_activos = aux_filtros;
+
       this.filtros_activos_form = new FormArray(
-        filtros.map(
+        aux_filtros.map(
           (f) =>
             new FormGroup({
               campo: new FormControl(f.campo),

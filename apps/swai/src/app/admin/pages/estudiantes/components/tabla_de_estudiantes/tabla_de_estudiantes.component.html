@@ -70,7 +70,11 @@
                       }
                     </div>
                     <div class="flex gap-2 justify-end mt-5">
-                      <p-button size="small" label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="op.toggle($event)"/>
+                      @if (comparar_objetos(filtro.value, filtros_activos[$index])) {
+                        <p-button size="small" label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="op.toggle($event)"/>
+                      } @else {
+                        <p-button size="small" label="Revertir" icon="pi pi-undo" severity="secondary"  [rounded]="true" (click)="revertir_filtro_activo($index)"/>
+                      }
                       <p-button size="small" label="Aplicar" icon="pi pi-check" [loading]="loading" [rounded]="true" type="submit"/>
                     </div>
                     <p class="text-xs text-muted-color">Presione "Aplicar" para reflejar los cambios</p>
