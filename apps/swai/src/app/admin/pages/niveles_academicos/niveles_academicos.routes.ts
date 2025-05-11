@@ -31,9 +31,6 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
           estudiantes: (route: ActivatedRouteSnapshot) =>
             inject(ApiService).client.estudiantes.obtener_estudiantes.query({
               por_nivel_academico: [+route.paramMap.get('nivel_academico')!],
-              paginacion: {
-                limit: 5,
-              },
             }),
           cantidad_de_estudiantes: ((route) => {
             return inject(
@@ -64,9 +61,6 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
             })) as ResolveFn<SeccionDTO>,
           estudiantes: ((r) =>
             inject(ApiService).client.estudiantes.obtener_estudiantes.query({
-              paginacion: {
-                limit: 5,
-              },
               por_nivel_academico: [+r.paramMap.get('nivel_academico')!],
               por_secion: [r.paramMap.get('seccion')!.toUpperCase()],
             })) as ResolveFn<Paginated<EstudianteDTO>>,

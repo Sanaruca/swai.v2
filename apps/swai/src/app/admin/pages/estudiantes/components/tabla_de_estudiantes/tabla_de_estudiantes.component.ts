@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Paginated } from '@swai/server';
+import { Paginated, PaginationParams } from '@swai/server';
 import {
   BooleanCondicion,
   Condicion,
@@ -298,8 +298,13 @@ export class TablaDeEstudiantesComponent {
 
   /* ................................. metodos ................................ */
 
+  // TODO: esta funcion no deberia ejecutarce la primera vez
   async cargar_estudiantes(event: TableLazyLoadEvent) {
-    //TODO: implementar
+    // Parámetros de paginación
+    const page = event.first! / event.rows! + 1;
+    const limit = event.rows!;
+
+    await this.aplicar_filtros(this.filtros, { page, limit });
   }
 
   add_filtro() {
@@ -332,7 +337,6 @@ export class TablaDeEstudiantesComponent {
   }
 
   async aplicar_filtro(index: number) {
-
     const filtro = this.filtros_form.at(index);
 
     await this.aplicar_filtros([...this.filtros, filtro.value as Filtro]);
@@ -341,8 +345,10 @@ export class TablaDeEstudiantesComponent {
   }
 
   async aplicar_filtros_activos() {
-    await this.aplicar_filtros([...this.filtros_estaticos, ...this.filtros_activos_form.value as Filtro[]]);
-
+    await this.aplicar_filtros([
+      ...this.filtros_estaticos,
+      ...(this.filtros_activos_form.value as Filtro[]),
+    ]);
   }
   async aplicar_filtros_form() {
     const new_filtros = [...this.filtros, ...this.filtros_form.value];
@@ -352,13 +358,16 @@ export class TablaDeEstudiantesComponent {
     this.filtros_form.clear();
   }
 
-  async aplicar_filtros<C extends string>(filtros: Filtro<C>[]) {
-    console.table(filtros);
+  async aplicar_filtros<C extends string>(
+    filtros: Filtro<C>[],
+    paginacion?: PaginationParams
+  ) {
     this.loading = true;
     try {
       this.estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
           filtros: filtros as Filtro<never>[],
+          paginacion,
         });
 
       // * aqui ocultaremos los filtros estaticos omitiendo añadirlos a filtros activos

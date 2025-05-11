@@ -4,6 +4,7 @@
     [paginator]="true"
     [rowHover]="true"
     [showLoader]="false"
+    [first]="(estudiantes.page - 1 ) * estudiantes.limit"
     [rows]="estudiantes.limit"
     [lazy]="true"
     [value]="estudiantes.data"

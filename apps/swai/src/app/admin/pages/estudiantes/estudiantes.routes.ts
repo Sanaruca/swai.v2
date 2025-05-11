@@ -18,9 +18,7 @@ export const ESTUDIANTES_ROUTES: Route[] = [
     resolve: {
       cantidad_de_estudiantes: resolve_cantidad_de_estudiantes,
       estudiantes: (() =>
-        inject(ApiService).client.estudiantes.obtener_estudiantes.query({
-          paginacion: { limit: 5 },
-        })) as ResolveFn<any>,
+        inject(ApiService).client.estudiantes.obtener_estudiantes.query()) as ResolveFn<any>,
     },
   },
   {
