@@ -18,6 +18,7 @@ import {
   NavigationError,
   NavigationStart,
   Router,
+  RouterLink,
   RouterModule,
 } from '@angular/router';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -31,7 +32,15 @@ import { MenuModule } from 'primeng/menu';
 import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
 import { InputText } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime } from 'rxjs';
+import { ApiService } from '../../services/api.service';
+import { BusquedaRapidaDTO } from '@swai/server';
+import { NombrePipe } from '../../common/pipes/nombre.pipe';
+import {
+  TipoDeEmpleadoTagComponent,
+  TipoDeEstudianteTagComponent,
+} from '../../common/components';
 // For dynamic progressbar demo
 
 @Component({
@@ -50,7 +59,12 @@ import { FormsModule } from '@angular/forms';
     InputIcon,
     IconField,
     InputText,
-    FormsModule
+    ReactiveFormsModule,
+    NombrePipe,
+    RouterLink,
+    TipoDeEmpleadoTagComponent,
+    TipoDeEstudianteTagComponent,
+    Avatar,
   ],
   templateUrl: './admin.layout.component.html',
   styleUrl: './admin.layout.component.scss',
@@ -62,8 +76,11 @@ export class AdminLayoutComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   protected auth = inject(AuthService);
+  protected api = inject(ApiService);
 
   /* ................................. estado ................................. */
+
+  protected busqueda_rapida: BusquedaRapidaDTO | null = null;
 
   protected usuario!: UsuarioPayload;
 
@@ -77,7 +94,10 @@ export class AdminLayoutComponent implements OnInit {
     },
   ];
 
-  loading = false;
+  loadings = {
+    navegacion: false,
+    busqueda_rapida: false,
+  };
 
   protected current_url: string = this.location.path();
 
@@ -105,43 +125,41 @@ export class AdminLayoutComponent implements OnInit {
 
   @ViewChild('main') main!: ElementRef;
 
-  @ViewChild("searchInput") searchInput!: ElementRef
-  isSearchOpen = false
-  searchText = ""
+  @ViewChild('searchInput') searchInput!: ElementRef;
+  isSearchOpen = false;
+  busqueda_rapida_form_control = new FormControl<string>('');
 
-  @HostListener("window:keydown", ["$event"])
+  @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent): void {
     // Check for Command+K (Mac) or Ctrl+K (Windows/Linux)
-    if ((event.metaKey || event.ctrlKey) && event.key === "k") {
-      event.preventDefault()
-      this.focusSearch()
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+      event.preventDefault();
+      this.focusSearch();
     }
 
     // Close search on escape
-    if (event.key === "Escape") {
-      this.isSearchOpen = false
+    if (event.key === 'Escape') {
+      this.isSearchOpen = false;
       setTimeout(() => {
-        this.searchInput.nativeElement.blur()
-      }, 0)
+        this.searchInput.nativeElement.blur();
+      }, 0);
     }
   }
 
   focusSearch(): void {
-    this.isSearchOpen = true
+    this.isSearchOpen = true;
     setTimeout(() => {
-      this.searchInput.nativeElement.focus()
-    }, 0)
+      this.searchInput.nativeElement.focus();
+    }, 0);
   }
 
   onSearchFocus(): void {
-    this.isSearchOpen = true
+    this.isSearchOpen = true;
   }
 
   onSearchBlur(): void {
-    this.isSearchOpen = false
+    this.isSearchOpen = false;
   }
-
-
 
   /* .............................. ciclo de vida ............................. */
   constructor() {
@@ -153,9 +171,23 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.busqueda_rapida_form_control.valueChanges
+      .pipe(debounceTime(600))
+      .subscribe((busqueda) => {
+        if (!busqueda) return;
+        this.loadings.busqueda_rapida = true;
+        this.api.client.institucion.obtener_busqueda_rapida
+          .query({
+            busqueda,
+            paginacion: { limit: 3 },
+          })
+          .then(({ data: [res] }) => (this.busqueda_rapida = res))
+          .finally(() => (this.loadings.busqueda_rapida = false));
+      });
+
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        this.loading = true; // Inicia la carga
+        this.loadings.navegacion = true; // Inicia la carga
       }
       if (
         event instanceof NavigationEnd ||
@@ -163,7 +195,7 @@ export class AdminLayoutComponent implements OnInit {
         event instanceof NavigationError
       ) {
         setTimeout(() => {
-          this.loading = false; // Finaliza la carga
+          this.loadings.navegacion = false; // Finaliza la carga
         }, 1_000);
       }
 
