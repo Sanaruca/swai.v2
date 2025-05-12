@@ -156,7 +156,7 @@
           [attr.data-active]="current_url.startsWith('/admin/dashboard')"
           class="nav__link | size-11  | font-bold"
           [class]="{
-            'w-56': sidebar_open,
+            'w-full': sidebar_open,
             'p-5': sidebar_open,
             'justify-center': !sidebar_open,
             'justify-start': sidebar_open,
@@ -164,7 +164,7 @@
           pTooltip="Inicio"
         >
           <i class="ti ti-layout-dashboard"></i>
-          <p *ngIf="sidebar_open">Inicio</p>
+          <p *ngIf="sidebar_open" class="font-normal">Inicio</p>
         </a>
       </li>
       <li>
@@ -174,14 +174,14 @@
           class="nav__link | size-11  | font-bold"
           pTooltip="Estudiantes"
           [class]="{
-            'w-56': sidebar_open,
+            'w-full': sidebar_open,
             'p-5': sidebar_open,
             'justify-center': !sidebar_open,
             'justify-start': sidebar_open,
           }"
         >
           <i class="pi pi-users"></i>
-          <p *ngIf="sidebar_open">Estudiantes</p>
+          <p *ngIf="sidebar_open" class="font-normal">Estudiantes</p>
         </a>
       </li>
       <li>
@@ -191,14 +191,14 @@
           class="nav__link | size-11  | font-bold"
           pTooltip="Empleados"
           [class]="{
-            'w-56': sidebar_open,
+            'w-full': sidebar_open,
             'p-5': sidebar_open,
             'justify-center': !sidebar_open,
             'justify-start': sidebar_open,
           }"
         >
           <i class="pi pi-id-card"></i>
-          <p *ngIf="sidebar_open">Empleados</p>
+          <p *ngIf="sidebar_open" class="font-normal">Empleados</p>
         </a>
       </li>
       <li>
@@ -210,14 +210,14 @@
           class="nav__link | size-11  | font-bold"
           pTooltip="Espacios académicos"
           [class]="{
-            'w-56': sidebar_open,
+            'w-full': sidebar_open,
             'p-5': sidebar_open,
             'justify-center': !sidebar_open,
             'justify-start': sidebar_open,
           }"
         >
           <i class="pi pi-box"></i>
-          <p *ngIf="sidebar_open">Espacios académicos</p>
+          <p *ngIf="sidebar_open" class="font-normal">Espacios académicos</p>
         </a>
       </li>
       <li>
@@ -229,14 +229,14 @@
           class="nav__link | size-11  | font-bold"
           pTooltip="Niveles académicos"
           [class]="{
-            'w-56': sidebar_open,
+            'w-full': sidebar_open,
             'p-5': sidebar_open,
             'justify-center': !sidebar_open,
             'justify-start': sidebar_open,
           }"
         >
           <i class="pi pi-check-circle"></i>
-          <p *ngIf="sidebar_open">Niveles académicos</p>
+          <p *ngIf="sidebar_open" class="font-normal">Niveles académicos</p>
         </a>
       </li>
 <!-- 
