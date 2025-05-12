@@ -142,31 +142,63 @@
   }
 </section>
 <section class="flex flex-1 overflow-hidden">
-  <nav class="nav bar">
+  <nav 
+    class="nav bar min-w-0 justify-center"
+    [class]="{
+    'min-w-80': sidebar_open,
+    'justify-start': sidebar_open,
+    }"
+  >
     <ul class="gap-2 grid">
       <li>
-        <a routerLink="/admin/dashboard" class="nav__link | font-bold" pTooltip="Inicio" [attr.data-active]="current_url.startsWith('/admin/dashboard')">
+        <a 
+          routerLink="/admin/dashboard"
+          [attr.data-active]="current_url.startsWith('/admin/dashboard')"
+          class="nav__link | size-11  | font-bold"
+          [class]="{
+            'w-56': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
+          pTooltip="Inicio"
+        >
           <i class="ti ti-layout-dashboard"></i>
+          <p *ngIf="sidebar_open">Inicio</p>
         </a>
       </li>
       <li>
         <a
           routerLink="/admin/estudiantes"
           [attr.data-active]="current_url.startsWith('/admin/estudiantes')"
-          class="nav__link | font-bold"
+          class="nav__link | size-11  | font-bold"
           pTooltip="Estudiantes"
+          [class]="{
+            'w-56': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
         >
           <i class="pi pi-users"></i>
+          <p *ngIf="sidebar_open">Estudiantes</p>
         </a>
       </li>
       <li>
         <a
           routerLink="/admin/empleados"
           [attr.data-active]="current_url.startsWith('/admin/empleados')"
-          class="nav__link | font-bold"
+          class="nav__link | size-11  | font-bold"
           pTooltip="Empleados"
+          [class]="{
+            'w-56': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
         >
           <i class="pi pi-id-card"></i>
+          <p *ngIf="sidebar_open">Empleados</p>
         </a>
       </li>
       <li>
@@ -175,11 +207,18 @@
           [attr.data-active]="
             current_url.startsWith('/admin/espacios_academicos')
           "
-          class="nav__link | font-bold"
+          class="nav__link | size-11  | font-bold"
           pTooltip="Espacios académicos"
+          [class]="{
+            'w-56': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
         >
-          <i class="pi pi-box"></i
-        ></a>
+          <i class="pi pi-box"></i>
+          <p *ngIf="sidebar_open">Espacios académicos</p>
+        </a>
       </li>
       <li>
         <a
@@ -187,18 +226,25 @@
           [attr.data-active]="
             current_url.startsWith('/admin/niveles_academicos')
           "
-          class="nav__link | font-bold"
+          class="nav__link | size-11  | font-bold"
           pTooltip="Niveles académicos"
+          [class]="{
+            'w-56': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
         >
-          <i class="pi pi-check-circle"></i
-        ></a>
+          <i class="pi pi-check-circle"></i>
+          <p *ngIf="sidebar_open">Niveles académicos</p>
+        </a>
       </li>
 <!-- 
       <li>
         <a
           routerLink="/admin/recursos"
           [attr.data-active]="current_url.startsWith('/admin/recursos')"
-          class="nav__link | font-bold"
+          class="nav__link | size-11  | font-bold"
           pTooltip="Recursos"
         >
           <i class="pi pi-database"></i>
@@ -206,7 +252,7 @@
       </li> -->
     </ul>
 
-      <p-button class="mt-auto" icon="ti ti-layout-sidebar-left-expand" [rounded]="true" [text]="true" severity="secondary" />
+      <p-button class="mt-auto" [icon]="'ti ti-layout-sidebar-'+(sidebar_open? 'right':'left')+'-expand'" [rounded]="true" [text]="true" severity="secondary" (click)="sidebar_open = !sidebar_open" />
 
 
   </nav>

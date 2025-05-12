@@ -81,6 +81,7 @@ export class AdminLayoutComponent implements OnInit {
   /* ................................. estado ................................. */
 
   protected busqueda_rapida: BusquedaRapidaDTO | null = null;
+  protected sidebar_open = false
 
   protected usuario!: UsuarioPayload;
 
@@ -98,6 +99,8 @@ export class AdminLayoutComponent implements OnInit {
     navegacion: false,
     busqueda_rapida: false,
   };
+
+
 
   protected current_url: string = this.location.path();
 

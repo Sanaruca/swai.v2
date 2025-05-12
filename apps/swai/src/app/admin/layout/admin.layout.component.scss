@@ -3,13 +3,14 @@
 }
 
 .bar {
-  @apply bg-surface-50 dark:bg-surface-800;
+  @apply bg-surface-50 dark:bg-surface-800 border-b;
 }
 .nav {
-  @apply flex flex-col p-3 content-start  items-center w-max border;
+  @apply flex flex-col p-3 border-r;
+  transition: cubic-bezier(0, 1, 0, 1) 500ms;
 }
 .nav__link {
-  @apply size-11 flex justify-center items-center rounded-lg;
+  @apply flex gap-2 items-center rounded-lg;
   @apply hover:bg-primary/20;
 
   &[data-active='true'] {
