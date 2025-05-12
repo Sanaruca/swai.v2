@@ -10,7 +10,7 @@
   transition: cubic-bezier(0, 1, 0, 1) 500ms;
 }
 .nav__link {
-  @apply flex gap-2 items-center rounded-lg;
+  @apply flex gap-3 items-center rounded-lg;
   @apply hover:bg-primary/20;
 
   &[data-active='true'] {
