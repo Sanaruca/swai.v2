@@ -4,11 +4,7 @@ import {
   FastLinkComponent,
   InfoCardComponent,
 } from '../../../../admin/components';
-import {
-  SexoTagComponent,
-  EstadoAcademicoTagComponent,
-  SeccionTagComponent,
-} from '../../../../common/components';
+import { SeccionTagComponent } from '../../../../common/components';
 import { MomentModule } from 'ngx-moment';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -22,8 +18,9 @@ import { EstudianteDTO, PensumDTO, SeccionDTO, StringCondicion } from '@swai/cor
 import { CantidadDeEstudiantesDTO } from '@swai/server';
 import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
 import { TablaDeEstudiantesComponent } from '../../estudiantes/components/tabla_de_estudiantes/tabla_de_estudiantes.component';
-import { TablaDeEmpleadosComponent } from '../../empleados/components/tabla_de_empleados/tabla_de_empleados.component';
 import { Avatar } from 'primeng/avatar';
+import { AsignarEstudiantesModalComponent } from './components/asignar_estudiantes/asignar_estudiantes.modal.component';
+import { AñadirRecursoModalComponent } from "../../espacios_academicos/espacio_academico/components/a\u00F1adir_recurso/a\u00F1adir_recurso.modal.component";
 
 @Component({
   selector: 'aw-seccion-academica.page',
@@ -31,8 +28,6 @@ import { Avatar } from 'primeng/avatar';
     CommonModule,
     IconFieldModule,
     InfoCardComponent,
-    SexoTagComponent,
-    EstadoAcademicoTagComponent,
     MomentModule,
     SeccionTagComponent,
     SkeletonModule,
@@ -44,8 +39,9 @@ import { Avatar } from 'primeng/avatar';
     NombrePipe,
     FastLinkComponent,
     TablaDeEstudiantesComponent,
-    TablaDeEmpleadosComponent,
-  ],
+    AsignarEstudiantesModalComponent,
+    AñadirRecursoModalComponent
+],
   templateUrl: './seccion_academica.page.component.html',
   styleUrl: './seccion_academica.page.component.scss',
 })

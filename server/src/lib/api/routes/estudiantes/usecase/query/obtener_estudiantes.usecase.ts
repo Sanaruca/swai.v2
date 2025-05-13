@@ -49,6 +49,7 @@ export const ObtenerEstudiantesSchemaDTO = object({
           'tipo_de_sangre',
           'nivel_academico',
           'tipo',
+          'seccion',
           'estatura',
           'peso',
           'chemise',
@@ -80,6 +81,7 @@ export const obtener_estudiantes = admin_procedure
       PaginationParamsSchema,
       input?.paginacion ?? {}
     ) as Required<PaginationParams>;
+    
 
     const filtros: Prisma.estudiantesWhereInput = {
       estado_academico: { in: input?.por_estado_academico },
@@ -109,7 +111,6 @@ export const obtener_estudiantes = admin_procedure
           )
           ?.map((filtro) => CoreFiltroToPrismaFilterMapper.map(filtro)),
       },
-
       AND: input?.filtros
         ?.filter((it) =>
           Object.keys(EstudianteSchema.entries).includes(it.campo)

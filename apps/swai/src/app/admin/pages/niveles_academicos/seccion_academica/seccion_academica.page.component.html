@@ -1,13 +1,22 @@
-<header>
-  <div class="flex gap-2">
-    <h3>{{ cantidad_de_estudiantes.numero }} Año</h3>
-    <aw-tag-seccion [seccion]="seccion_academica.seccion" />
+<header class="flex justify-between items-center">
+  <div>
+    <div class="flex gap-2">
+      <h3>{{ cantidad_de_estudiantes.numero }} Año</h3>
+      <aw-tag-seccion [seccion]="seccion_academica.seccion" />
+    </div>
+    <p class="text-sm">
+      {{ cantidad_de_estudiantes.nombre }} Seccion "{{
+        seccion_academica.seccion
+      }}"
+    </p>
   </div>
-  <p class="text-sm">
-    {{ cantidad_de_estudiantes.nombre }} Seccion "{{
-      seccion_academica.seccion
-    }}"
-  </p>
+  <div class="flex gap-3">
+    <button pButton routerLink="registrar" pButton (click)="asm.toggle()">
+      <i class="pi pi-user-plus"></i>
+      <span>Asignar estudiantes</span>
+    </button>
+    <aw-modal-asignar-estudiantes [seccion]="{id: seccion_academica.id, seccion: seccion_academica.seccion, nivel_academico: seccion_academica.nivel_academico, profesor_guia: seccion_academica.profesor_guia?.cedula}" #asm/>
+  </div>
 </header>
 
 <nav class="flex mt-5 gap-4">
@@ -78,5 +87,5 @@
 
 <section class="card | mt-5">
   <h6>Estudiantes</h6>
-  <aw-tabla-de-estudiantes [omitir_campos_filtros]="['nivel_academico', 'seccion']" [filtros_estaticos]="[{campo: 'seccion_academica', condicion: StringCondicion.IGUAL, valor: seccion_academica.id}]" />
+  <aw-tabla-de-estudiantes [omitir_campos_filtros]="['nivel_academico', 'seccion']" [filtros_estaticos]="[{campo: 'seccion', condicion: StringCondicion.IGUAL, valor: seccion_academica.id}]" />
 </section>

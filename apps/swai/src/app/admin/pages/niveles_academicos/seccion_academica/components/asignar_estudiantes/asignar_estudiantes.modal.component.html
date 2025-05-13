@@ -1,0 +1,62 @@
+<p-dialog header="Asignar Estudiantes" [modal]="true" [(visible)]="visible" [draggable]="false" [style]="{ width: '45rem' }">
+    <form [formGroup]="estudiantes_form">
+        <p-iconfield>
+            <p-inputicon styleClass="pi pi-search" />
+            <input type="text" pInputText placeholder="Search" formControlName="nombre" class="w-full" />
+        </p-iconfield>
+    </form>
+    <h6 class="mt-5">Sugerencias</h6>
+    <ul class="space-y-5 mt-5">
+        @for (estudiante of estudiantes_sugeridos.slice(0,4); track $index) {
+            <li class="flex gap-2 items-center">
+                <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+                <div class="min-w-48">
+                    <p>
+                        {{ estudiante | nombre}}
+                    </p>
+                    <span>V-{{estudiante.cedula | number }}</span>
+                </div>
+                <aw-tag-seccion [seccion]="estudiante.seccion?.seccion ?? null" />
+
+                <p-button label="Agregar" variant="text" icon="pi pi-user-plus" iconPos="right" class="ml-auto" (click)="agregar(estudiante)" />
+            </li>
+        }
+    </ul>
+    <h6 class="mt-5">Seleccionados ({{estudiantes.length}})</h6>
+    <ul class="space-y-5 mt-5">
+        @for (estudiante of estudiantes; track $index) {
+            <li class="flex gap-2 items-center">
+                <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+                <div class="min-w-48">
+                    <p>
+                        {{ estudiante | nombre}}
+                    </p>
+                    <span>V-{{estudiante.cedula | number }}</span>
+                </div>
+                <aw-tag-seccion [seccion]="estudiante.seccion?.seccion ?? null" />
+                <i class="pi pi-arrow-right text-muted-color text-sm"></i>
+                <aw-tag-seccion [seccion]="seccion.seccion" />
+
+
+
+                <p-button label="Remover" variant="text" icon="pi pi-user-minus" iconPos="right" class="ml-auto" (click)="remover($index)" />
+            </li>
+        }
+    </ul>
+    <ul class="space-y-5 mt-5">
+        @for (estudiante of busqueda_estudiantes; track $index) {
+            <li class="flex gap-2 items-center">
+                <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+                <div class="min-w-48">
+                    <p>
+                        {{ estudiante | nombre}}
+                    </p>
+                    <span>V-{{estudiante.cedula | number }}</span>
+                </div>
+                <aw-tag-seccion [seccion]="estudiante.seccion?.seccion ?? null" />
+
+                <p-button label="Agregar" variant="text" icon="pi pi-user-plus" iconPos="right" class="ml-auto" (click)="agregar(estudiante)" />
+            </li>
+        }
+    </ul>
+</p-dialog>

@@ -16,6 +16,12 @@ import {
   string,
 } from 'valibot';
 
+export enum NullableCondicion {
+  IGUAL = 'IGUAL',
+  DISTINTO = 'DISTINTO',
+  DISTINTA = 'DISTINTA',
+}
+
 export enum SelectableCondicion {
   IGUAL = 'IGUAL',
   DISTINTO = 'DISTINTO',
@@ -53,6 +59,7 @@ export type Condicion =
   | NumberCondicion
   | BooleanCondicion
   | DateCondicion
+  | NullableCondicion
   | SelectableCondicion;
 
 export const CONDICION_MAP: Record<Condicion, string> = {
@@ -74,6 +81,7 @@ export enum TIPO_DE_CONDICION {
   BOOLEAN = 'boolean',
   DATE = 'date',
   SELECTABLE = 'selectable',
+  NULLABLE = 'nullable',
 }
 
 export type TipoDeCampo<T = unknown> =
@@ -81,7 +89,8 @@ export type TipoDeCampo<T = unknown> =
   | number
   | boolean
   | Date
-  | Selectable<T>;
+  | Selectable<T>
+  | null;
 
 export interface Filtro<C extends string = string, T extends TipoDeCampo = TipoDeCampo> {
   campo: C;
@@ -93,8 +102,10 @@ export interface Filtro<C extends string = string, T extends TipoDeCampo = TipoD
     ? BooleanCondicion
     : T extends Date
     ? DateCondicion
-    : T extends Date
+    : T extends Selectable
     ? SelectableCondicion
+    : T extends null
+    ? NullableCondicion
     : Condicion;
   valor: T;
 }
@@ -113,6 +124,8 @@ const generateBaseFiltroSchema = <S extends BaseSchema<unknown, unknown, BaseIss
     ? enum_(DateCondicion)
     : tipo === TIPO_DE_CONDICION.SELECTABLE
     ? enum_(SelectableCondicion)
+    : tipo === TIPO_DE_CONDICION.NULLABLE
+    ? enum_(NullableCondicion)
     : never(),
 
   valor:
@@ -126,6 +139,8 @@ const generateBaseFiltroSchema = <S extends BaseSchema<unknown, unknown, BaseIss
       ? date()
       : tipo === TIPO_DE_CONDICION.SELECTABLE
       ? array(selectable ?? any())
+      :  tipo === TIPO_DE_CONDICION.NULLABLE
+      ? any()
       : never(),
 })
 
@@ -147,9 +162,11 @@ export const FiltroSchema = custom<Filtro>(
             ? TIPO_DE_CONDICION.DATE
             : Array.isArray(value.valor)
             ? TIPO_DE_CONDICION.SELECTABLE
+            : value.valor === null
+            ? TIPO_DE_CONDICION.NULLABLE
             : undefined;
 
-        if (!tipo) return false;
+        if (tipo === undefined) return false;
 
         const schema = generateBaseFiltroSchema(tipo);
         const result = safeParse(schema,value);

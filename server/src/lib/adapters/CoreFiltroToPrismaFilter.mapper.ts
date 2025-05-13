@@ -1,8 +1,10 @@
 import type { Prisma } from '@prisma/client';
 import {
   BooleanCondicion,
+  Condicion,
   DateCondicion,
   Filtro,
+  NullableCondicion,
   NumberCondicion,
   SelectableCondicion,
   StringCondicion,
@@ -12,7 +14,10 @@ type PrismaFilterType =
   | Prisma.IntFilter
   | Prisma.StringFilter
   | Prisma.BoolFilter
-  | Prisma.DateTimeFilter;
+  | Prisma.DateTimeFilter
+  | Prisma.IntNullableFilter
+  | Prisma.StringNullableFilter
+  | Prisma.DateTimeNullableFilter;
 export type PrismaFilter = {
   [key: string]: PrismaFilterType;
 };
@@ -20,6 +25,25 @@ export type PrismaFilter = {
 export class CoreFiltroToPrismaFilterMapper {
   static map(filtro: Filtro): PrismaFilter {
     let condicion: PrismaFilterType | undefined;
+
+    if (filtro.valor === null) {
+      switch (filtro.condicion as Condicion) {
+        case NullableCondicion.DISTINTA:
+        case NullableCondicion.DISTINTO:
+          condicion = {
+            not: filtro.valor,
+          } as PrismaFilterType;
+          break;
+        case NullableCondicion.IGUAL:
+          condicion = {
+            equals: filtro.valor,
+          } as PrismaFilterType;
+          break;
+
+        default:
+          break;
+      }
+    }
 
     if (typeof filtro.valor === 'string') {
       switch (filtro.condicion) {
@@ -135,6 +159,10 @@ export class CoreFiltroToPrismaFilterMapper {
 
     if (!condicion)
       throw new Error('Error al mapear Filtros del Core a filtros de Prisma');
+
+      console.log({
+      [filtro.campo]: condicion,
+    })
 
     return {
       [filtro.campo]: condicion,
