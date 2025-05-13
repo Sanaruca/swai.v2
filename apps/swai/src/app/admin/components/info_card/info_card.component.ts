@@ -9,10 +9,10 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./info_card.component.scss'],
 })
 export class InfoCardComponent {
-  @Input() className: string = ''; // Clases adicionales proporcionadas por el usuario
-  @Input() iconContentClassName: string = '';
-  @Input() icon: string = '';
-  @Input() label: string = 'No label';
+  @Input() className = ''; // Clases adicionales proporcionadas por el usuario
+  @Input() iconContentClassName = '';
+  @Input() icon = '';
+  @Input() label = 'No label';
   @Input() value: any = 'No value';
   @Input() variant: 'default' | 'vertical' = 'default';
   @Input() routerLink: RouterLink['routerLink'];

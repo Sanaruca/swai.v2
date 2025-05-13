@@ -44,13 +44,20 @@
 <section class="grid gap-5 mt-5">
   @for (pensum of pensum; track $index) {
 
-  <a
-    [routerLink]="[pensum.nivel_academico.numero]"
+  <section
     class="card"
     data-hover="true"
   >
-    <h5>{{ pensum.nivel_academico.numero }} Año</h5>
-    <p class="text-sm">{{ pensum.nivel_academico.nombre }}</p>
+    <header class="flex justify-between items-start">
+      <div>
+        <h5>{{ pensum.nivel_academico.numero }} Año</h5>
+        <p class="text-sm">{{ pensum.nivel_academico.nombre }}</p>
+      </div>
+      <a class="rounded-full py-1 bg-slate-100 dark:bg-surface-800 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" [routerLink]="['/admin/niveles_academicos',pensum.nivel_academico.numero]">
+        Ir a {{pensum.nivel_academico.nombre.toLowerCase()}}
+        <i class="pi pi-arrow-right text-muted-color text-sm"></i>
+      </a>
+    </header>
     <div class="flex mt-3 gap-3">
       <nav class="flex gap-4 flex-wrap">
         <aw-info-card
@@ -74,6 +81,7 @@
           [label]="'Seccion ' + seccion.seccion"
           icon="pi pi-book"
           [value]="seccion.total"
+          [routerLink]="['/admin/niveles_academicos', seccion.nivel_academico, seccion.seccion]"
         />
 
         }
@@ -94,6 +102,6 @@
         }
       </ul>
     </section>
-  </a>
+  </section>
   }
 </section>
