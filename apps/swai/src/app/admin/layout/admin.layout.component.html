@@ -54,6 +54,8 @@
       type="text"
       class="w-full pr-32"
       placeholder="Búsqueda rápida"
+      (focus)="puede_mostrar_busqueda_rapida = true"
+
       />
       <p-inputicon styleClass="min-w-max flex items-center">
         <div class="shortcut-keys">
@@ -64,59 +66,58 @@
       </p-inputicon>
     </p-iconfield>
     <!-- Desplegable de resultados -->
-    <nav
-      *ngIf="busqueda_rapida && busqueda_rapida_form_control.value"
-      class="absolute top-full left-0 w-full mt-1 rounded-lg shadow-lg border z-50 max-h-80vh overflow-auto bg-surface-50 dark:bg-surface-800"
-    >
-      <!-- Sección de empleados -->
-      <section *ngIf="busqueda_rapida.empleados.length > 0" class="p-2 border-b">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="pi pi-id-card text-muted-color"></i>
-          <h6>Empleados</h6>
-        </div>
-        <ul class="space-y-2">
-          @for (empleado of busqueda_rapida.empleados; track $index) {
-            <li>
-              <a [routerLink]="['/admin/empleados', empleado.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
-                <p-avatar [label]="empleado | nombre:'iniciales'" shape="circle" />
-                <div class="flex-1 min-w-0">
-                  <p class="font-medium truncate">{{ empleado | nombre }}</p>
-                  <p class="text-xs text-gray-500 truncate">
-                    V-{{empleado.cedula | number}} - {{ empleado.tipo_de_empleado.nombre }}
-                  </p>
-                </div>
-                <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
-              </a>
-            </li>
-          }
-        </ul>
-      </section>
-          <section *ngIf="busqueda_rapida.estudiantes.length > 0" class="p-2 border-b">
-            <div class="flex items-center gap-2 mb-2">
-              <i class="pi pi-users text-muted-color"></i>
-              <h6>Estudiantes</h6>
-            </div>
-            <ul class="space-y-2">
-              @for (estudiante of busqueda_rapida.estudiantes; track $index) {
-                <li>
-                  <a [routerLink]="['/admin/estudiantes', estudiante.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
-                  <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+    <p-overlay [(visible)]="puede_mostrar_busqueda_rapida">
+      <nav
+        class="rounded-lg shadow-lg border bg-surface-50 dark:bg-surface-800"
+      >
+        <!-- Sección de empleados -->
+        <section *ngIf="busqueda_rapida && busqueda_rapida.empleados.length > 0" class="p-2 border-b">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="pi pi-id-card text-muted-color"></i>
+            <h6>Empleados</h6>
+          </div>
+          <ul class="space-y-2">
+            @for (empleado of busqueda_rapida.empleados; track $index) {
+              <li>
+                <a [routerLink]="['/admin/empleados', empleado.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
+                  <p-avatar [label]="empleado | nombre:'iniciales'" shape="circle" />
                   <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate">{{ estudiante | nombre }}</p>
+                    <p class="font-medium truncate">{{ empleado | nombre }}</p>
                     <p class="text-xs text-gray-500 truncate">
-                      V-{{estudiante.cedula | number}} - {{ estudiante.nivel_academico.nombre }}
+                      V-{{empleado.cedula | number}} - {{ empleado.tipo_de_empleado.nombre }}
                     </p>
                   </div>
-                  <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id"/>
+                  <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
                 </a>
               </li>
             }
-            </ul>
-          </section>
-
-
-          
-      </nav>
+          </ul>
+        </section>
+            <section *ngIf="busqueda_rapida &&  busqueda_rapida.estudiantes.length > 0" class="p-2 border-b">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="pi pi-users text-muted-color"></i>
+                <h6>Estudiantes</h6>
+              </div>
+              <ul class="space-y-2">
+                @for (estudiante of busqueda_rapida.estudiantes; track $index) {
+                  <li>
+                    <a [routerLink]="['/admin/estudiantes', estudiante.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
+                    <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+                    <div class="flex-1 min-w-0">
+                      <p class="font-medium truncate">{{ estudiante | nombre }}</p>
+                      <p class="text-xs text-gray-500 truncate">
+                        V-{{estudiante.cedula | number}} - {{ estudiante.nivel_academico.nombre }}
+                      </p>
+                    </div>
+                    <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id"/>
+                  </a>
+                </li>
+              }
+              </ul>
+            </section>
+      
+        </nav>
+    </p-overlay>
   </section>
   <div class="flex gap-1 items-center ml-auto">
     <p-avatar [label]="usuario.nombre_de_usuario.at(0)" />

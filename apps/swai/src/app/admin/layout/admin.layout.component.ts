@@ -42,6 +42,7 @@ import {
   TipoDeEstudianteTagComponent,
 } from '../../common/components';
 // For dynamic progressbar demo
+import { OverlayModule } from 'primeng/overlay';
 
 @Component({
   selector: 'aw-admin.layout',
@@ -65,6 +66,7 @@ import {
     TipoDeEmpleadoTagComponent,
     TipoDeEstudianteTagComponent,
     Avatar,
+    OverlayModule
   ],
   templateUrl: './admin.layout.component.html',
   styleUrl: './admin.layout.component.scss',
@@ -94,6 +96,8 @@ export class AdminLayoutComponent implements OnInit {
       },
     },
   ];
+
+  protected puede_mostrar_busqueda_rapida = false
 
   loadings = {
     navegacion: false,
