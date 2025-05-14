@@ -23,6 +23,16 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
   },
   {
     path: ':nivel_academico',
+    resolve: {
+      breadcrumb: ((r, state) => {
+        return {
+          label:
+            NIVELES_ACADEMICOS.at(+r.paramMap.get('nivel_academico')! - 1)
+              ?.nombre ?? 'error',
+          routerLink: ['/admin/niveles_academicos', r.paramMap.get('nivel_academico')],
+        };
+      }) as ResolveFn<MenuItem>,
+    },
     children: [
       {
         path: '',
@@ -73,15 +83,6 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
         },
       },
     ],
-    resolve: {
-      breadcrumb: ((r, state) => {
-        return {
-          label:
-            NIVELES_ACADEMICOS.at(+r.paramMap.get('nivel_academico')! - 1)
-              ?.nombre ?? 'error',
-          routerLink: [state.url],
-        };
-      }) as ResolveFn<MenuItem>,
-    },
+
   },
 ];

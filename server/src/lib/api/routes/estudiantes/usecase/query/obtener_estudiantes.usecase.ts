@@ -42,6 +42,7 @@ export const ObtenerEstudiantesSchemaDTO = object({
     array(
       generateFiltroSchema<keyof Persona | keyof Estudiante>({
         campos_validos: [
+          'cedula',
           'nombres',
           'apellidos',
           'sexo',

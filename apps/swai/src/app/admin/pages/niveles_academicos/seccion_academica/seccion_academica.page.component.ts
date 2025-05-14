@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FastLinkComponent,
@@ -12,7 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Paginated } from '@swai/server';
 import { EstudianteDTO, PensumDTO, SeccionDTO, StringCondicion } from '@swai/core';
 import { CantidadDeEstudiantesDTO } from '@swai/server';
@@ -45,9 +45,10 @@ import { AñadirRecursoModalComponent } from "../../espacios_academicos/espacio_
   templateUrl: './seccion_academica.page.component.html',
   styleUrl: './seccion_academica.page.component.scss',
 })
-export class SeccionAcademicaPageComponent {
+export class SeccionAcademicaPageComponent implements OnInit {
   /* ............................... injectables .............................. */
   private route = inject(ActivatedRoute);
+  private router = inject(Router)
 
   /* .............................. data inicial .............................. */
 
@@ -67,4 +68,24 @@ export class SeccionAcademicaPageComponent {
   /* ............................... constantes ............................... */
 
   protected StringCondicion = StringCondicion
+
+  /* .............................. ciclo de vida ............................. */
+
+  ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      this.seccion_academica = data['seccion_academica'] as SeccionDTO;
+      this.estudiantes = data['estudiantes'] as Paginated<EstudianteDTO>;
+      this.pensum = data['pensum'] as PensumDTO;
+      this.cantidad_de_estudiantes = (
+        data['cantidad_de_estudiantes'] as CantidadDeEstudiantesDTO
+      ).niveles_academicos[this.seccion_academica.nivel_academico - 1];
+    })
+  }
+
+
+  /* ................................. metodos ................................ */
+
+  recargar() {
+    this.router.navigate([this.router.url], {onSameUrlNavigation: 'reload'})
+  }
 }
