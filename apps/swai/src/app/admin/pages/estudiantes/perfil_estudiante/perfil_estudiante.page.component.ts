@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerfilLayoutComponent } from '../../../../common/layouts/perfil/perfil.layout.component';
 import {
@@ -39,7 +39,7 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './perfil_estudiante.page.component.html',
   styleUrl: './perfil_estudiante.page.component.scss',
 })
-export class PerfilEstudiantePageComponent {
+export class PerfilEstudiantePageComponent implements OnInit {
   /* ............................... constantes ............................... */
   TIPO_DE_ESTUDIANTE = TIPO_DE_ESTUDIANTE;
   NIVEL_ACADEMICO = NIVEL_ACADEMICO;
@@ -75,6 +75,14 @@ export class PerfilEstudiantePageComponent {
       }
     }
   ]
+
+  /* .............................. ciclo de vida ............................. */
+
+  ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      this.estudiante = data['estudiante'];
+    })
+  }
 
   /* ................................. metodos ................................ */
 

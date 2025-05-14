@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerfilLayoutComponent } from '../../../../common/layouts/perfil/perfil.layout.component';
 import { SeccionCampoValorComponent, CampoValorComponent } from '../../../../common/layouts/perfil/components';
@@ -15,7 +15,7 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './perfil_empleado.page.component.html',
   styleUrl: './perfil_empleado.page.component.sass',
 })
-export class PerfilEmpleadoPageComponent {
+export class PerfilEmpleadoPageComponent implements OnInit {
 
   /* ............................... injectables .............................. */
   private route = inject(ActivatedRoute);
@@ -46,5 +46,13 @@ export class PerfilEmpleadoPageComponent {
         },
       }
     ]
+
+    /* .............................. ciclo de vida ............................. */
+
+  ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      this.empleado = data['empleado'];
+    })
+  }
 
 }
