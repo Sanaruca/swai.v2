@@ -53,8 +53,8 @@ export async function obtener_estudiante_fn({
   if (!estudiante_db) throw EstudianteNoExisteError;
 
   const estudiante = parse(EstudianteSchemaDTO, {
-    ...estudiante_db,
     ...estudiante_db.personas,
+    ...estudiante_db,
     estado_civil: estudiante_db.personas.estados_civiles,
     tipo_de_sangre: estudiante_db.personas.tipos_de_sangre,
     discapacidad: estudiante_db.personas.discapacitados && {

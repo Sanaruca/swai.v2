@@ -1,4 +1,4 @@
- generator client {
+generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
@@ -49,17 +49,18 @@ model discapacitados {
 }
 
 model empleados {
-  cedula               Int                 @id
-  rif                  String              @db.VarChar(255)
+  cedula               Int      @id
+  rif                  String   @db.VarChar(255)
   tipo_de_empleado     Int
-  codigo_carnet_patria String              @db.VarChar(255)
-  centro_de_votacion   String              @db.VarChar(11)
-  fecha_de_ingreso     DateTime            @default(now()) @db.Timestamp(6)
-  administrativos      administrativos?
-  personas             personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: " persona_fk")
-  centros_de_votacion  centros_de_votacion @relation(fields: [centro_de_votacion], references: [codigo], map: "centro_de_votacion_fk")
-  tipos_de_empleado    tipos_de_empleado   @relation(fields: [tipo_de_empleado], references: [id], map: "tipo_de_empleado_fk")
-  profesores           profesores?
+  codigo_carnet_patria String   @db.VarChar(255)
+  centro_de_votacion   String   @db.VarChar(11)
+  fecha_de_ingreso     DateTime @default(now()) @db.Timestamp(6)
+  ultima_actualizacion DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  administrativos     administrativos?
+  personas            personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: " persona_fk")
+  centros_de_votacion centros_de_votacion @relation(fields: [centro_de_votacion], references: [codigo], map: "centro_de_votacion_fk")
+  tipos_de_empleado   tipos_de_empleado   @relation(fields: [tipo_de_empleado], references: [id], map: "tipo_de_empleado_fk")
+  profesores          profesores?
 
   @@schema("public")
 }
@@ -114,7 +115,7 @@ model estudiantes {
   calzado                 Int?
   chemise                 Int?
   pantalon                Int?
-  ultima_actualizacion    DateTime            @default(now()) @db.Timestamp(0)
+  ultima_actualizacion    DateTime            @default(now()) @updatedAt @db.Timestamp(0)
   municipio_de_nacimiento String              @db.VarChar(4)
   tipo                    Int
   fecha_de_egreso         DateTime?           @db.Date
@@ -150,24 +151,25 @@ model pensum {
 }
 
 model personas {
-  cedula              Int              @id(map: "persona_pkey")
-  nombres             String           @db.VarChar(255)
-  apellidos           String           @db.VarChar(255)
-  direccion           String?
-  fecha_de_nacimiento DateTime         @db.Date
-  estado_civil        Int
-  telefono            String           @db.VarChar(11)
-  sexo                String           @db.Char(1)
-  tipo_de_sangre      Int
-  correo              String           @default("none") @db.VarChar(255)
-  administrativos     administrativos?
-  discapacitados      discapacitados?
-  empleados           empleados?
-  estudiantes         estudiantes?
-  estados_civiles     estados_civiles  @relation(fields: [estado_civil], references: [id])
-  sexos               sexos            @relation(fields: [sexo], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tipos_de_sangre     tipos_de_sangre  @relation(fields: [tipo_de_sangre], references: [id])
-  profesores          profesores?
+  cedula               Int              @id(map: "persona_pkey")
+  nombres              String           @db.VarChar(255)
+  apellidos            String           @db.VarChar(255)
+  direccion            String?
+  fecha_de_nacimiento  DateTime         @db.Date
+  estado_civil         Int
+  telefono             String           @db.VarChar(11)
+  sexo                 String           @db.Char(1)
+  tipo_de_sangre       Int
+  correo               String           @default("none") @db.VarChar(255)
+  ultima_actualizacion DateTime         @default(now()) @updatedAt @db.Timestamp(0)
+  administrativos      administrativos?
+  discapacitados       discapacitados?
+  empleados            empleados?
+  estudiantes          estudiantes?
+  estados_civiles      estados_civiles  @relation(fields: [estado_civil], references: [id])
+  sexos                sexos            @relation(fields: [sexo], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tipos_de_sangre      tipos_de_sangre  @relation(fields: [tipo_de_sangre], references: [id])
+  profesores           profesores?
 
   @@schema("public")
 }

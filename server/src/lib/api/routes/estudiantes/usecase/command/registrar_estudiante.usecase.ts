@@ -14,7 +14,7 @@ import { admin_procedure } from '../../../../procedures';
 import { omit, object, nullish, parser, parse, InferOutput } from 'valibot';
 
 export const RegistrarEstudianteSchemaDTO = object({
-  ...omit(PersonaSchema, ['estado_civil']).entries,
+  ...omit(PersonaSchema, ['estado_civil', 'ultima_actualizacion']).entries,
   ...omit(EstudianteSchema, ['ultima_actualizacion']).entries,
   estado_academico: nullish(EstudianteSchema.entries.estado_academico),
   discapacidad: nullish(omit(DiscapacitadoSchema, ['cedula'])),

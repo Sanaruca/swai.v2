@@ -5,6 +5,7 @@ import { CampoValorComponent } from './components/campo_valor.component';
 import { SeccionCampoValorComponent } from './components/seccion_campo_valor.component';
 import { AvatarModule } from 'primeng/avatar';
 import { SexoTagComponent } from '../../components';
+import { MomentModule } from 'ngx-moment';
 
 @Component({
   selector: 'aw-perfil',
@@ -14,6 +15,7 @@ import { SexoTagComponent } from '../../components';
     SeccionCampoValorComponent,
     AvatarModule,
     SexoTagComponent,
+    MomentModule 
   ],
   templateUrl: './perfil.layout.component.html',
   styleUrl: './perfil.layout.component.scss',

@@ -23,7 +23,7 @@
       </ul>
     </div>
     <p class="text-sm">{{ persona.nombres }} {{ persona.apellidos }}</p>
-    <p class="text-sm">Lorem ipsum dolor sit.</p>
+    <p class="text-sm text-muted-color">Ultima actualizacion: {{ persona.ultima_actualizacion | amLocale : 'es' | amTimeAgo }}</p>
   </div>
   <div class="ml-auto my-auto">
     <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>

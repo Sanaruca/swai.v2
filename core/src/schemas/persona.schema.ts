@@ -25,6 +25,7 @@ export const PersonaSchema = object({
   correo: string(),
   sexo: enum_(SEXO),
   tipo_de_sangre: enum_(TIPO_DE_SANGRE),
+  ultima_actualizacion: date(),
 });
 
 export type Persona = InferOutput<typeof PersonaSchema>;

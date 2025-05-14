@@ -1,5 +1,5 @@
 import { date, enum_, InferOutput, object, pipe, regex, string } from 'valibot';
-import { PersonaSchema, PersonaSchemaDTO } from './persona.schema';
+import { PersonaSchemaDTO } from './persona.schema';
 import { CentroDeVotacionSchema } from './centro_de_votacion.schema';
 import {
   TIPO_DE_EMPLEADO,
@@ -17,6 +17,7 @@ export const EmpleadoSchema = object({
   ),
   centro_de_votacion: CentroDeVotacionSchema.entries.codigo,
   fecha_de_ingreso: date(),
+  ultima_actualizacion: date(),
 });
 
 export type Empleado = InferOutput<typeof EmpleadoSchema>;

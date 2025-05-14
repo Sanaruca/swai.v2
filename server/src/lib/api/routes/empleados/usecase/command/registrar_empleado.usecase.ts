@@ -24,8 +24,8 @@ export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
   object({
     tipo: literal(TIPO_DE_EMPLEADO.DOCENTE),
     datos: object({
-      ...PersonaSchema.entries,
-      ...omit(EmpleadoSchema, ['tipo_de_empleado']).entries,
+      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
       ...ProfesorSchema.entries,
     }),
   }),
