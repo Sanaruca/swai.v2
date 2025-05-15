@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerfilLayoutComponent } from '../../../../common/layouts/perfil/perfil.layout.component';
 import {
   CampoValorComponent,
   SeccionCampoValorComponent,
 } from '../../../../common/layouts/perfil/components';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EstudianteDTO, generar_constancia_de_estudios, NIVEL_ACADEMICO, TIPO_DE_ESTUDIANTE } from '@swai/core';
 import {
   EstadoAcademicoTagComponent,
@@ -17,7 +17,8 @@ import { FastLinkComponent } from '../../../components';
 import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
 import { Avatar } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
+import { EliminarEstudianteModalComponent } from "../components/eliminar_estudiante/eliminar_estudiante.modal.component";
 
 @Component({
   selector: 'aw-perfil-estudiante',
@@ -34,12 +35,16 @@ import { MenuItem } from 'primeng/api';
     FastLinkComponent,
     NombrePipe,
     Avatar,
-    MenuModule
-  ],
+    MenuModule,
+    EliminarEstudianteModalComponent
+],
   templateUrl: './perfil_estudiante.page.component.html',
   styleUrl: './perfil_estudiante.page.component.scss',
 })
 export class PerfilEstudiantePageComponent implements OnInit {
+
+  @ViewChild(EliminarEstudianteModalComponent) eliminar_estudiante_modal!: EliminarEstudianteModalComponent
+
   /* ............................... constantes ............................... */
   TIPO_DE_ESTUDIANTE = TIPO_DE_ESTUDIANTE;
   NIVEL_ACADEMICO = NIVEL_ACADEMICO;
@@ -47,6 +52,8 @@ export class PerfilEstudiantePageComponent implements OnInit {
 
   /* ............................... injectables .............................. */
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private toast = inject(MessageService);
 
   /* .............................. data inicial .............................. */
 
@@ -76,6 +83,16 @@ export class PerfilEstudiantePageComponent implements OnInit {
     }
   ]
 
+  protected adicional_menu: MenuItem[] = [
+    {
+      label: 'Eliminar',
+      icon: 'pi pi-trash',
+      command: () => {
+        this.eliminar_estudiante_modal.open()
+      }
+    },
+  ]
+
   /* .............................. ciclo de vida ............................. */
 
   ngOnInit(): void {
@@ -96,5 +113,15 @@ export class PerfilEstudiantePageComponent implements OnInit {
       [NIVEL_ACADEMICO.Cuarto, 'bg-pink-100 text-pink-600'],
       [NIVEL_ACADEMICO.Quinto, 'bg-indigo-100 text-indigo-600'],
     ]).get(nivel)!;
+  }
+
+  protected on_eliminar_estudiante_success() {
+
+    this.toast.add({
+      summary: 'Estudiante eliminado con exito',
+      severity: 'success',
+    })
+
+    this.router.navigate(['/admin/estudiantes'])
   }
 }
