@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { CantidadDeEstudiantesPorNivelAcademicoDTO } from '@swai/server';
 import { InfoCardComponent } from '../../../../admin/components';
-import { EstudianteDTO, NumberCondicion, PensumDTO } from '@swai/core';
+import { EstudianteDTO, NIVEL_ACADEMICO_CARDINAL_MAP, NumberCondicion, PensumDTO } from '@swai/core';
 import { TableModule } from 'primeng/table';
 import { Paginated } from '@swai/server';
 import { MomentModule } from 'ngx-moment';
@@ -41,6 +41,7 @@ export class NivelAcademicoPageComponent {
   NIVEL_ACADEMICO = +this.route.snapshot.paramMap.get('nivel_academico')!
 
   protected NumberCondicion = NumberCondicion
+  protected NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP
 
   protected cantidad_de_estudiantes: CantidadDeEstudiantesPorNivelAcademicoDTO =
     this.route.snapshot.data['cantidad_de_estudiantes'];

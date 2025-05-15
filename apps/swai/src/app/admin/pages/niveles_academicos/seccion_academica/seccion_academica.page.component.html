@@ -1,11 +1,11 @@
 <header class="flex justify-between items-center">
   <div>
     <div class="flex gap-2">
-      <h3>{{ cantidad_de_estudiantes.numero }} Año</h3>
+      <h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[seccion_academica.nivel_academico] }} Año</h3>
       <aw-tag-seccion [seccion]="seccion_academica.seccion" />
     </div>
     <p class="text-sm">
-      {{ cantidad_de_estudiantes.nombre }} Seccion "{{
+      {{ NIVEL_ACADEMICO_MAP[seccion_academica.nivel_academico].nombre }} Seccion "{{
         seccion_academica.seccion
       }}"
     </p>

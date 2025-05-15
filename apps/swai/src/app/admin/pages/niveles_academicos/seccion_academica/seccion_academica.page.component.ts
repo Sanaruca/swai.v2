@@ -18,6 +18,7 @@ import {
   EstudianteDTO,
   generar_listado_de_estudiantes,
   NIVEL_ACADEMICO_CARDINAL_MAP,
+  NIVELES_ACADEMICOS_MAP,
   PensumDTO,
   SeccionDTO,
   StringCondicion,
@@ -73,9 +74,12 @@ export class SeccionAcademicaPageComponent implements OnInit {
     this.route.snapshot.data[
       'cantidad_de_estudiantes'
     ] as CantidadDeEstudiantesDTO
-  ).niveles_academicos[this.seccion_academica.nivel_academico - 1];
+  ).niveles_academicos[this.seccion_academica.nivel_academico - 1].secciones.find(seccion => seccion.id === this.seccion_academica.id)!;
 
   /* ............................... constantes ............................... */
+
+  protected NIVEL_ACADEMICO_MAP = NIVELES_ACADEMICOS_MAP
+  protected NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP
 
   protected StringCondicion = StringCondicion;
 
@@ -119,7 +123,7 @@ export class SeccionAcademicaPageComponent implements OnInit {
       this.pensum = data['pensum'] as PensumDTO;
       this.cantidad_de_estudiantes = (
         data['cantidad_de_estudiantes'] as CantidadDeEstudiantesDTO
-      ).niveles_academicos[this.seccion_academica.nivel_academico - 1];
+      ).niveles_academicos[this.seccion_academica.nivel_academico - 1].secciones.find(seccion => seccion.id === this.seccion_academica.id)!;
     });
   }
 

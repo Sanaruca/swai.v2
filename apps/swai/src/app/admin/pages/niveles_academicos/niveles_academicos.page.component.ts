@@ -4,7 +4,7 @@ import {
   FastLinkComponent,
   InfoCardComponent,
 } from '../../../admin/components';
-import { PensumDTO } from '@swai/core';
+import { NIVEL_ACADEMICO_CARDINAL_MAP, PensumDTO } from '@swai/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CantidadDeEstudiantesDTO } from '@swai/server';
 import { TagModule } from 'primeng/tag';
@@ -27,6 +27,8 @@ export class NivelesAcademicosPageComponent {
   protected pensum: PensumDTO[] = this.route.snapshot.data['pensum'];
   protected cantidad_de_estudiantes: CantidadDeEstudiantesDTO =
     this.route.snapshot.data['cantidad_de_estudiantes'];
+
+  protected  NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP
 
   protected obtener_cantidad_de_estudiantes_por_nivel_academico(
     nivel_academico: number

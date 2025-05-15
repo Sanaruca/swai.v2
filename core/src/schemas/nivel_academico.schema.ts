@@ -43,7 +43,7 @@ export const NIVELES_ACADEMICOS = [
   },
 ] as const;
 
-export const NIVEL_ACADEMICO_CARDINAL_MAP = {
+export const NIVEL_ACADEMICO_CARDINAL_MAP: Record<number, `${number}${string}`> = {
   [NIVEL_ACADEMICO.Primero]: '1er',
   [NIVEL_ACADEMICO.Segundo]: '2do',
   [NIVEL_ACADEMICO.Tercero]: '3er',
