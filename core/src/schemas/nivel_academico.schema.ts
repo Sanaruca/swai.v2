@@ -43,6 +43,14 @@ export const NIVELES_ACADEMICOS = [
   },
 ] as const;
 
+export const NIVEL_ACADEMICO_CARDINAL_MAP = {
+  [NIVEL_ACADEMICO.Primero]: '1er',
+  [NIVEL_ACADEMICO.Segundo]: '2do',
+  [NIVEL_ACADEMICO.Tercero]: '3er',
+  [NIVEL_ACADEMICO.Cuarto]: '4to',
+  [NIVEL_ACADEMICO.Quinto]: '5to',
+}
+
 export const NIVELES_ACADEMICOS_MAP = NIVELES_ACADEMICOS.reduce<
   Record<NivelAcademico['numero'], NivelAcademico>
 >((map, it) => {

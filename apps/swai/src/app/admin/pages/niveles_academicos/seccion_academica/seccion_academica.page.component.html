@@ -11,10 +11,12 @@
     </p>
   </div>
   <div class="flex gap-3">
+    <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
     <button pButton routerLink="registrar" pButton (click)="asm.toggle()">
       <i class="pi pi-user-plus"></i>
       <span>Asignar estudiantes</span>
     </button>
+    <p-menu #menu [model]="imprimir_menu" popup></p-menu>
     <aw-modal-asignar-estudiantes (success)="recargar()" [seccion]="{id: seccion_academica.id, seccion: seccion_academica.seccion, nivel_academico: seccion_academica.nivel_academico, profesor_guia: seccion_academica.profesor_guia?.cedula}" #asm/>
   </div>
 </header>

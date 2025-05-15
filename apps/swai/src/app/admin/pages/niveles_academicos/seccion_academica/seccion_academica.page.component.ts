@@ -14,13 +14,22 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Paginated } from '@swai/server';
-import { EstudianteDTO, PensumDTO, SeccionDTO, StringCondicion } from '@swai/core';
+import {
+  EstudianteDTO,
+  generar_listado_de_estudiantes,
+  NIVEL_ACADEMICO_CARDINAL_MAP,
+  PensumDTO,
+  SeccionDTO,
+  StringCondicion,
+} from '@swai/core';
 import { CantidadDeEstudiantesDTO } from '@swai/server';
 import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
 import { TablaDeEstudiantesComponent } from '../../estudiantes/components/tabla_de_estudiantes/tabla_de_estudiantes.component';
 import { Avatar } from 'primeng/avatar';
 import { AsignarEstudiantesModalComponent } from './components/asignar_estudiantes/asignar_estudiantes.modal.component';
-import { AñadirRecursoModalComponent } from "../../espacios_academicos/espacio_academico/components/a\u00F1adir_recurso/a\u00F1adir_recurso.modal.component";
+import { AñadirRecursoModalComponent } from '../../espacios_academicos/espacio_academico/components/a\u00F1adir_recurso/a\u00F1adir_recurso.modal.component';
+import { MenuItem } from 'primeng/api';
+import { ApiService } from '../../../../services/api.service';
 
 @Component({
   selector: 'aw-seccion-academica.page',
@@ -40,15 +49,16 @@ import { AñadirRecursoModalComponent } from "../../espacios_academicos/espacio_
     FastLinkComponent,
     TablaDeEstudiantesComponent,
     AsignarEstudiantesModalComponent,
-    AñadirRecursoModalComponent
-],
+    AñadirRecursoModalComponent,
+  ],
   templateUrl: './seccion_academica.page.component.html',
   styleUrl: './seccion_academica.page.component.scss',
 })
 export class SeccionAcademicaPageComponent implements OnInit {
   /* ............................... injectables .............................. */
   private route = inject(ActivatedRoute);
-  private router = inject(Router)
+  private router = inject(Router);
+  private api = inject(ApiService);
 
   /* .............................. data inicial .............................. */
 
@@ -67,7 +77,38 @@ export class SeccionAcademicaPageComponent implements OnInit {
 
   /* ............................... constantes ............................... */
 
-  protected StringCondicion = StringCondicion
+  protected StringCondicion = StringCondicion;
+
+  protected imprimir_menu: MenuItem[] = [
+    {
+      label: 'Listado',
+      icon: 'pi pi-list',
+      command: () => {
+        this.api.client.estudiantes.obtener_estudiantes
+          .query({
+            filtros: [
+              {
+                campo: 'seccion',
+                condicion: StringCondicion.IGUAL,
+                valor: this.seccion_academica.id,
+              },
+            ],
+            paginacion: {
+              page: 1,
+              limit: 100,
+            },
+          })
+          .then((r) =>
+            generar_listado_de_estudiantes(
+              r.data,
+              `Lista de estudiantes de ${
+                NIVEL_ACADEMICO_CARDINAL_MAP[this.seccion_academica.nivel_academico as 1 | 2 | 3 | 4 | 5 ]
+              } Año seccion "${this.seccion_academica.seccion}"`
+            )
+          );
+      },
+    },
+  ];
 
   /* .............................. ciclo de vida ............................. */
 
@@ -79,13 +120,12 @@ export class SeccionAcademicaPageComponent implements OnInit {
       this.cantidad_de_estudiantes = (
         data['cantidad_de_estudiantes'] as CantidadDeEstudiantesDTO
       ).niveles_academicos[this.seccion_academica.nivel_academico - 1];
-    })
+    });
   }
-
 
   /* ................................. metodos ................................ */
 
   recargar() {
-    this.router.navigate([this.router.url], {onSameUrlNavigation: 'reload'})
+    this.router.navigate([this.router.url], { onSameUrlNavigation: 'reload' });
   }
 }
