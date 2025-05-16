@@ -22,11 +22,13 @@ import {
   nullable,
 } from 'valibot';
 
+const PersonaSinUltimaActualizacionSchema = omit(PersonaSchema, ['ultima_actualizacion'])
+
 export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
   object({
     tipo: literal(TIPO_DE_EMPLEADO.DOCENTE),
     datos: object({
-      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...PersonaSinUltimaActualizacionSchema.entries,
       ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
       ...ProfesorSchema.entries,
       seccion_guia: nullable(SeccionSchema.entries.id),
@@ -35,7 +37,7 @@ export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
   object({
     tipo: literal(TIPO_DE_EMPLEADO.ADMINISTRATIVO),
     datos: object({
-      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...PersonaSinUltimaActualizacionSchema.entries,
       ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
       ...AdministrativoSchema.entries,
     }),
@@ -43,7 +45,7 @@ export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
   object({
     tipo: literal(TIPO_DE_EMPLEADO.OBRERO),
     datos: object({
-      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...PersonaSinUltimaActualizacionSchema.entries,
       ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
     }),
   }),
@@ -62,8 +64,8 @@ export const registrar_empleado = admin_procedure
 
     if (cantidad_de_personas) throw new EntidadExisteError('Persona');
 
-    const persona = parse(PersonaSchema, input.datos);
-    const empleado = parse(omit(EmpleadoSchema, ['cedula']), {
+    const persona = parse(PersonaSinUltimaActualizacionSchema, input.datos);
+    const empleado = parse(omit(EmpleadoSchema, ['cedula', 'ultima_actualizacion']), {
       ...input.datos,
       tipo_de_empleado: input.tipo,
     });
