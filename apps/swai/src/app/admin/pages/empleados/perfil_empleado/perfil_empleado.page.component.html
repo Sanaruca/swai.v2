@@ -6,20 +6,29 @@
 
         @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.DOCENTE && $docente(empleado).seccion_guia) {
           <li>
-            <p-tag
-          [value]="
-            'Guia de ' +
-            NIVEL_ACADEMICO_CARDINAL_MAP[$docente(empleado).seccion_guia!.nivel_academico] +
-            ' Año ' +
-            $docente(empleado).seccion_guia!.seccion
-          "
-          [rounded]="true"
-          styleClass="border bg-transparent text-color"
-        >
-          <div class="flex items-center gap-1">
-            <i class="pi pi-external-link"></i>
-          </div>
-        </p-tag>
+            <a 
+             [routerLink]="[
+          '/admin',
+          'niveles_academicos',
+          $docente(empleado).seccion_guia!.nivel_academico,
+          $docente(empleado).seccion_guia!.seccion
+        ]"
+            >
+              <p-tag
+                        [value]="
+              'Guia de ' +
+              NIVEL_ACADEMICO_CARDINAL_MAP[$docente(empleado).seccion_guia!.nivel_academico] +
+              ' Año ' +
+              $docente(empleado).seccion_guia!.seccion
+                        "
+                        [rounded]="true"
+                        styleClass="border bg-transparent text-color"
+                      >
+                        <div class="flex items-center gap-1">
+              <i class="pi pi-external-link"></i>
+                        </div>
+                      </p-tag>
+            </a>
       </li>
       
     }
