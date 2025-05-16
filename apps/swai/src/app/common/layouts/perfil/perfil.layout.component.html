@@ -51,6 +51,7 @@
       [valor]="persona.estado_civil.nombre"
     />
     <aw-campo-valor campo="Teléfono" [valor]="persona.telefono || '-'" />
+    <aw-campo-valor campo="Correo electronico" [valor]="persona.correo || '-'" />
     <aw-campo-valor campo="Sexo" [valor]="persona.sexo || '-'">
       <ng-template #valor let-valor>
         <aw-tag-sexo [sexo]="valor" />

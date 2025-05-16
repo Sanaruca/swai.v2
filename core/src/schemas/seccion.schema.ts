@@ -11,8 +11,6 @@ import {
   trim,
 } from 'valibot';
 import { NIVEL_ACADEMICO } from './nivel_academico.schema';
-import { ProfesorSchema } from './profesor.schema';
-import { PersonaSchema } from './persona.schema';
 
 export const SeccionSchema = object({
   id: pipe(
@@ -26,11 +24,3 @@ export const SeccionSchema = object({
 
 export type Seccion = InferOutput<typeof SeccionSchema>;
 
-/* ................................... dto .................................. */
-
-export const SeccionSchemaDTO = object({
-  ...SeccionSchema.entries,
-  profesor_guia: nullish(object({...PersonaSchema.entries, ...ProfesorSchema.entries})),
-});
-
-export type SeccionDTO = InferOutput<typeof SeccionSchemaDTO>;

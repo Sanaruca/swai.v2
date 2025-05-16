@@ -6,6 +6,7 @@ import { RegistrarEmpleadoPageComponent } from './registrar_empleado/registrar_e
 import { MenuItem } from 'primeng/api';
 import { EstadosDeVenezuelaISO } from '@swai/core';
 import { PerfilEmpleadoPageComponent } from './perfil_empleado/perfil_empleado.page.component';
+import { resolve_niveles_academicos } from '../../../resolvers';
 
 export const EMPLEADOS_ROUTES: Route[] = [
   {
@@ -39,6 +40,7 @@ export const EMPLEADOS_ROUTES: Route[] = [
         inject(
           ApiService
         ).client.venezuela.obtener_titulos_de_pregrado.query()) as ResolveFn<any>,
+      niveles_academicos: resolve_niveles_academicos,
       breadcrumb: ((_, state) => ({
         label: 'Registrar',
         routerLink: state.url,
@@ -76,6 +78,7 @@ export const EMPLEADOS_ROUTES: Route[] = [
         component: RegistrarEmpleadoPageComponent,
         resolve: {
           inputs: () => ({ modo: 'editar' }),
+          niveles_academicos: resolve_niveles_academicos,
           municipios: (() =>
             inject(ApiService).client.venezuela.obtener_municipios.query({
               por_estado: EstadosDeVenezuelaISO.MONAGAS,

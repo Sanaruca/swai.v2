@@ -3,7 +3,6 @@ import { TituloPregradoSchema } from './titulo_de_pregrado.schema';
 import { EspecialidadSchema } from './especialidad.schema';
 import { PlantelEducativoSchema } from './plantel_educativo.schema';
 import { PersonaSchema } from './persona.schema';
-import { EmpleadoSchemaDTO } from './empleado.schema';
 
 export const ProfesorSchema = object({
   cedula: PersonaSchema.entries.cedula,
@@ -14,14 +13,3 @@ export const ProfesorSchema = object({
 
 export type Profesor = InferOutput<typeof ProfesorSchema>;
 
-/* ................................... dto .................................. */
-
-export const ProfesorSchemaDTO = object({
-  ...EmpleadoSchemaDTO.entries,
-  ...ProfesorSchema.entries,
-  titulo_de_pregrado: TituloPregradoSchema,
-  especialidad: EspecialidadSchema,
-  plantel_de_dependencia: PlantelEducativoSchema,
-});
-
-export type ProfesorDTO = InferOutput<typeof ProfesorSchemaDTO>;

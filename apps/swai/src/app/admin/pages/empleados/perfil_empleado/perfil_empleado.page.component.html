@@ -4,6 +4,25 @@
             <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
         </li>
 
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.DOCENTE && $docente(empleado).seccion_guia) {
+          <li>
+            <p-tag
+          [value]="
+            'Guia de ' +
+            NIVEL_ACADEMICO_CARDINAL_MAP[$docente(empleado).seccion_guia!.nivel_academico] +
+            ' Año ' +
+            $docente(empleado).seccion_guia!.seccion
+          "
+          [rounded]="true"
+          styleClass="border bg-transparent text-color"
+        >
+          <div class="flex items-center gap-1">
+            <i class="pi pi-external-link"></i>
+          </div>
+        </p-tag>
+      </li>
+      
+    }
     </ng-template>
     <ng-template #headerRight>
         <div class="flex gap-3">
@@ -26,5 +45,40 @@
           campo="RIF"
           [valor]="empleado.rif"
         />
+        <aw-campo-valor
+          campo="Carnet de la patria"
+          [valor]="empleado.codigo_carnet_patria"
+        />
+        <aw-campo-valor
+          campo="Centro de votacion"
+          [valor]="empleado.centro_de_votacion.nombre"
+        />
+        <aw-campo-valor
+          campo="Fecha de ingreso"
+          [valor]="empleado.fecha_de_ingreso | date : 'dd/MM/YYYY'"
+        />
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.DOCENTE) {
+          <ng-container ngProjectAs="aw-campo-valor">
+            <aw-campo-valor
+            campo="Titulo de pregrado"
+            [valor]="$docente(empleado).titulo_de_pregrado.nombre"
+            />
+            <aw-campo-valor
+            campo="Plantel de dependencia"
+            [valor]="$docente(empleado).plantel_de_dependencia.dea"
+            />
+            <aw-campo-valor
+            campo="Especialidad"
+            [valor]="$docente(empleado).especialidad.nombre"
+            />
+          </ng-container>
+        }
+
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.ADMINISTRATIVO) {
+          <aw-campo-valor
+          campo="Titulo de pregrado"
+          [valor]="$administrativo(empleado).titulo_de_pregrado.nombre"
+          />
+        }
       </aw-seccion-campo-valor>
 </aw-perfil>

@@ -1,19 +1,28 @@
 import {
-    AdministrativoDTO,
-    AdministrativoSchema,
-    CedulaSchema,
-    DiscapacitadoSchema,
-    EmpleadoDTO,
-    EmpleadoSchema,
-    PersonaSchema,
-    ProfesorDTO,
-    ProfesorSchema,
-    SwaiError,
-    SwaiErrorCode,
-    TIPO_DE_EMPLEADO,
+  AdministrativoDTO,
+  AdministrativoSchema,
+  CedulaSchema,
+  DiscapacitadoSchema,
+  EmpleadoDTO,
+  EmpleadoSchema,
+  PersonaSchema,
+  ProfesorDTO,
+  ProfesorSchema,
+  SeccionSchema,
+  SwaiError,
+  SwaiErrorCode,
+  TIPO_DE_EMPLEADO,
 } from '@swai/core';
 import { admin_procedure } from '../../../../../api/procedures';
-import { InferOutput, nullable, object, omit, parser, partial, pick } from 'valibot';
+import {
+  InferOutput,
+  nullable,
+  object,
+  omit,
+  parser,
+  partial,
+  pick,
+} from 'valibot';
 import { obtener_empleado_fn } from '../query/obtener_empleado.usecase';
 
 export const ActualizarEmpleadoSchemaDTO = object({
@@ -27,12 +36,13 @@ export const ActualizarEmpleadoSchemaDTO = object({
         'telefono',
         'correo',
         'tipo_de_sangre',
-        'direccion'
+        'direccion',
       ]).entries,
       ...omit(EmpleadoSchema, ['cedula']).entries,
       ...omit(ProfesorSchema, ['cedula']).entries,
       ...omit(AdministrativoSchema, ['cedula']).entries,
       discapacidad: nullable(partial(omit(DiscapacitadoSchema, ['cedula']))),
+      seccion_guia: nullable(SeccionSchema.entries.id),
     })
   ),
 });
@@ -111,7 +121,7 @@ export const actualizar_empelado = admin_procedure
           telefono: input.datos.telefono,
           correo: input.datos.correo,
           tipo_de_sangre: input.datos.tipo_de_sangre,
-            direccion: input.datos.direccion,
+          direccion: input.datos.direccion,
         },
       });
 
@@ -138,6 +148,41 @@ export const actualizar_empelado = admin_procedure
             plantel_de_dependencia: input.datos.plantel_de_dependencia,
           },
         });
+
+        if (input.datos.seccion_guia) {
+          const seccion_academica = await ctx.prisma.secciones.findUnique({
+            where: { id: input.datos.seccion_guia },
+          });
+
+          if (!seccion_academica) {
+            throw new SwaiError({
+              codigo: SwaiErrorCode.RECURSO_NO_ENCONTRADO,
+              mensaje: `Sección académica no existe`,
+            });
+          }
+
+          await ctx.prisma.secciones.update({
+            where: { id: seccion_academica.id },
+            data: {
+              profesor_guia: empleado.cedula,
+            },
+          });
+        }
+
+        if (input.datos.seccion_guia === null) {
+          const seccion_academica = await ctx.prisma.secciones.findFirst({
+            where: { profesor_guia: input.cedula },
+          });
+
+          if (seccion_academica) {
+            await ctx.prisma.secciones.update({
+              where: { id: seccion_academica.id },
+              data: {
+                profesor_guia: null,
+              },
+            });
+          }
+        }
 
         await ctx.prisma.$transaction([
           actualizacion_de_empleado,

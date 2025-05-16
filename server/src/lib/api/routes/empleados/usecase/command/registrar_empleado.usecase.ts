@@ -8,6 +8,7 @@ import {
   PersonaSchema,
   Administratativo,
   Profesor,
+  SeccionSchema,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
 import {
@@ -18,6 +19,7 @@ import {
   InferOutput,
   parser,
   parse,
+  nullable,
 } from 'valibot';
 
 export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
@@ -27,19 +29,22 @@ export const RegistrarEmpleadoSchemaDTO = variant('tipo', [
       ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
       ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
       ...ProfesorSchema.entries,
+      seccion_guia: nullable(SeccionSchema.entries.id),
     }),
   }),
   object({
     tipo: literal(TIPO_DE_EMPLEADO.ADMINISTRATIVO),
     datos: object({
-      ...omit(EmpleadoSchema, ['tipo_de_empleado']).entries,
+      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
       ...AdministrativoSchema.entries,
     }),
   }),
   object({
     tipo: literal(TIPO_DE_EMPLEADO.OBRERO),
     datos: object({
-      ...omit(EmpleadoSchema, ['tipo_de_empleado']).entries,
+      ...omit(PersonaSchema, ['ultima_actualizacion']).entries,
+      ...omit(EmpleadoSchema, ['tipo_de_empleado', 'ultima_actualizacion']).entries,
     }),
   }),
 ]);
@@ -112,6 +117,22 @@ export const registrar_empleado = admin_procedure
         empleados: true,
       },
     });
+
+
+    if (input.tipo === TIPO_DE_EMPLEADO.DOCENTE && input.datos.seccion_guia) {
+
+      await ctx.prisma.secciones.update({
+        where: {
+          id: input.datos.seccion_guia,
+        },
+        data: {
+          profesor_guia: persona_db.cedula
+        },
+      });
+      
+    }
+
+
 
     return parse(EmpleadoSchema, { ...persona_db, ...persona_db.empleados });
   });

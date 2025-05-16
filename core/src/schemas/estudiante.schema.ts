@@ -21,9 +21,10 @@ import {
   TIPO_DE_ESTUDIANTE,
   TipoDeEstudianteSchema,
 } from './tipo_de_estudiante.schema';
-import { SeccionSchema, SeccionSchemaDTO } from './seccion.schema';
+import { SeccionSchema } from './seccion.schema';
 import { PersonaSchemaDTO } from './persona.schema';
 import { MunicipioSchemaDTO } from './municipio.schema';
+import { SeccionSchemaDTO } from './seccion.schema.dto';
 
 export const EstudianteSchema = object({
   cedula: number(),

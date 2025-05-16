@@ -16,6 +16,7 @@ import {
   EstadosDeVenezuelaISO,
   ISwaiError,
   Municipio,
+  NIVELES_ACADEMICOS,
   Parroquia,
   PlantelEducativo,
   ProfesorDTO,
@@ -35,7 +36,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
-import { TipoDeEmpleadoTagComponent } from '../../../../common/components';
+import { NivelAcademicoTagComponent, SeccionTagComponent, TipoDeEmpleadoTagComponent } from '../../../../common/components';
 import { validateIf } from '../../../../common/utils/angular/forms/validateif';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PasswordModule } from 'primeng/password';
@@ -47,6 +48,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { debounceTime } from 'rxjs';
 import { TRPCClientError } from '@trpc/client';
 import { environment } from '../../../../../environments/environment';
+import { NivelAcademicoConSeccionesDTO } from '@swai/server';
+import { Tag } from 'primeng/tag';
 
 // TODO: Renombrar componente
 @Component({
@@ -66,6 +69,9 @@ import { environment } from '../../../../../environments/environment';
     PasswordModule,
     IconFieldModule,
     InputIconModule,
+    NivelAcademicoTagComponent,
+    SeccionTagComponent,
+    Tag
   ],
   templateUrl: './registrar_empleado.page.component.html',
   styleUrl: './registrar_empleado.page.component.scss',
@@ -83,6 +89,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
 
   protected ESPECIALIDADES = ESPECIALIDADES;
   protected TIPO_DE_EMPLEADO = TIPO_DE_EMPLEADO;
+  protected NIVELES_ACADEMICOS = NIVELES_ACADEMICOS.slice(0,5);
   protected TIPOS_DE_EMPLEADO = TIPOS_DE_EMPLEADO;
   protected ESTADOS_FEDERALES = ESTADOS_FEDERALES;
   protected TIPOS_DE_DISCAPACIDAD = TIPOS_DE_DISCAPACIDAD;
@@ -105,6 +112,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   protected municipios = this.route.snapshot.data['municipios'] as Municipio[];
 
   protected parroquias = this.route.snapshot.data['parroquias'] as Parroquia[];
+  protected niveles_academicos = this.route.snapshot.data['niveles_academicos'] as NivelAcademicoConSeccionesDTO[];
 
   protected centros_de_votacion = [] as CentroDeVotacion[];
 
@@ -147,6 +155,20 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
       this.datos_de_contacto.valid &&
       this.datos_de_salud.valid
     );
+  }
+
+
+  get SECCIONES() {
+    const nivel_academico  = this.datos_de_empleo.controls.docente_guia_nivel_academico.value
+
+    if (nivel_academico) {
+      return (
+        this.niveles_academicos.find((it) => it.numero === nivel_academico)
+          ?.secciones ?? []
+      );
+    }
+
+    return []
   }
 
   /* ............................ Datos personales ............................ */
@@ -198,6 +220,10 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
     /* ................................. docente ................................ */
     especialidad: new FormControl<number | null>(null),
     plantel_de_dependencia: new FormControl<string | null>(null),
+    docente_guia: new FormControl<boolean>(false),
+    docente_guia_nivel_academico: new FormControl<number | null>(null),
+    docente_guia_seccion: new FormControl<string | null>(null),
+
   });
 
   /* ............................ Datos de contacto ........................... */
@@ -220,6 +246,34 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   /* ................................. on init ................................ */
 
   ngOnInit(): void {
+
+    this.datos_de_empleo.controls.docente_guia.valueChanges.subscribe((es_docente_guia) => {
+      
+        this.datos_de_empleo.controls.docente_guia_nivel_academico.setValidators([
+          validateIf(!!es_docente_guia, Validators.required),
+        ]);
+        this.datos_de_empleo.controls.docente_guia_seccion.setValidators([
+          validateIf(!!es_docente_guia, Validators.required),
+        ]);
+
+        this.datos_de_empleo.controls.docente_guia_nivel_academico.updateValueAndValidity();
+        this.datos_de_empleo.controls.docente_guia_seccion.updateValueAndValidity();
+
+    })
+
+    this.datos_de_empleo.controls.docente_guia_nivel_academico.valueChanges.subscribe((nivel_academico) => {
+
+      if (!nivel_academico) return;
+
+      const seccion = this.datos_de_empleo.controls.docente_guia_seccion.value
+      if (!seccion) return
+      if (!this.SECCIONES.some(it => it.nivel_academico === nivel_academico && it.seccion === seccion)) {
+        this.datos_de_empleo.controls.docente_guia_seccion.setValue(null);
+      }
+      
+    })
+
+
     this.datos_de_empleo.controls.plantel_de_dependencia.valueChanges
       .pipe(debounceTime(200))
       .subscribe(async (v) => {
@@ -268,6 +322,10 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
         const es_docente = +tipo === TIPO_DE_EMPLEADO.DOCENTE;
 
         console.log('cambio', tipo, es_obrero);
+
+        if (!es_docente) {
+          this.datos_de_empleo.controls.docente_guia.setValue(false);
+        }
 
         this.datos_de_empleo.controls.titulo_de_pregrado.setValidators([
           validateIf(!es_obrero, Validators.required),
@@ -350,6 +408,9 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
         especialidad: (empleado as ProfesorDTO).especialidad?.id ?? null,
         plantel_de_dependencia:
           (empleado as ProfesorDTO).plantel_de_dependencia?.dea ?? null,
+        docente_guia: !!(empleado as ProfesorDTO).seccion_guia,
+        docente_guia_nivel_academico: (empleado as ProfesorDTO).seccion_guia?.nivel_academico || null,
+        docente_guia_seccion: (empleado as ProfesorDTO).seccion_guia?.seccion || null
       });
 
       this.datos_de_contacto.setValue({
@@ -379,6 +440,14 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
   /* ................................ registrar ............................... */
   private async registrar() {
     this.loadings.enviando = true;
+
+        const nivel_academico = this.datos_de_empleo.controls.docente_guia_nivel_academico.value;
+    const seccion = this.datos_de_empleo.controls.docente_guia_seccion.value;
+    const es_docente_guia = this.datos_de_empleo.controls.docente_guia.value;
+
+    const seccion_guia = (es_docente_guia ? `${nivel_academico}${seccion}` : null ) as `${number}${string}` | null
+
+
     try {
       const empleado =
         await this.api.client.empleados.registrar_empleado.mutate({
@@ -409,6 +478,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
               date(),
               this.datos_de_empleo.controls.fecha_de_ingreso.value
             ),
+            seccion_guia,
           },
         });
 
@@ -426,6 +496,12 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
     // TODO: Implementar editar empleado
 
     this.loadings.enviando = true;
+
+    const nivel_academico = this.datos_de_empleo.controls.docente_guia_nivel_academico.value;
+    const seccion = this.datos_de_empleo.controls.docente_guia_seccion.value;
+    const es_docente_guia = this.datos_de_empleo.controls.docente_guia.value;
+
+    const seccion_guia = (es_docente_guia ? `${nivel_academico}${seccion}` : null ) as `${number}${string}` | null
 
     try {
       this.api.client.empleados.actualizar_empelado.mutate({
@@ -468,6 +544,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
                   this.datos_de_salud.controls.descripcion_discapacidad.value,
               }
             : null,
+          seccion_guia,
         },
       });
       

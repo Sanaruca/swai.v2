@@ -57,6 +57,7 @@ export const obtener_empleados = admin_procedure
                 titulos_de_pregrado: true,
                 especialidades: true,
                 planteles_educativos: true,
+                secciones: true,
               },
             },
           },
@@ -90,6 +91,7 @@ export const obtener_empleados = admin_procedure
             titulo_de_pregrado: empleado.profesores?.titulos_de_pregrado,
             especialidad: empleado.profesores?.especialidades,
             plantel_de_dependencia: empleado.profesores?.planteles_educativos,
+            seccion_guia: empleado.profesores?.secciones[0],
           });
         }
 

@@ -426,6 +426,62 @@
           } }
         </section>
       </ng-template>
+      @if(datos_de_empleo.controls.tipo_de_empleado.value === TIPO_DE_EMPLEADO.DOCENTE){
+        <section class="form_group">
+          <div class="form_input" data-required>
+          <label for="docente_guia">Docente Guía</label>
+          <p-selectbutton
+          id="docente_guia"
+            formControlName="docente_guia"
+            [options]="[
+              { valor: false, nombre: 'No' },
+              { valor: true, nombre: 'Si' }
+            ]"
+            optionLabel="nombre"
+            optionValue="valor"
+          >
+          </p-selectbutton>
+          <small class="text-red-500">
+            {{ datos_de_salud.get('discapacidad')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      <section class="form_group" *ngIf="datos_de_empleo.controls.docente_guia.value">
+        <div class="form_input" data-required>
+          <label for="docente_guia_nivel_academico">Nivel académico</label>
+          <p-select
+            [options]="$any(NIVELES_ACADEMICOS)"
+            optionValue="numero"
+            optionLabel="nombre"
+            formControlName="docente_guia_nivel_academico"
+            placeholder="Selecione"
+          >
+            <ng-template let-nivel #item #selectedItem>
+              <aw-tag-nivel-academico [nivel]="nivel.numero" />
+            </ng-template>
+          </p-select>
+        </div>
+        <div class="form_input" data-required>
+          <label for="docente_guia_seccion">Seccion académica</label>
+          <p-select
+            [options]="$any(SECCIONES)"
+            optionValue="seccion"
+            optionLabel="nombre"
+            formControlName="docente_guia_seccion"
+            placeholder="Selecione"
+          >
+            <ng-template let-seccion #item #selectedItem>
+              <div class="flex gap-2 items-center">
+                <aw-tag-seccion [seccion]="seccion.seccion" />
+                @if(seccion.profesor_guia && seccion.profesor_guia !== this.datos_personales.controls.cedula.value){
+                  <p-tag icon="pi pi-exclamation-triangle" styleClass="bg-yellow-100 text-yellow-600" value="Ocupada" />
+                }
+              </div>
+            </ng-template>
+          </p-select>
+        </div>
+      </section>
+    }
     </section>
     } @else if (paso_actual === 4) {
     <h5>Datos de contacto</h5>
@@ -507,7 +563,6 @@
             ]"
             optionLabel="nombre"
             optionValue="valor"
-            formControlName="discapacidad"
           >
           </p-selectbutton>
           <small class="text-red-500">
