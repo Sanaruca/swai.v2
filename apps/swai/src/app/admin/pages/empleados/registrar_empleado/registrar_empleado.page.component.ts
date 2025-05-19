@@ -219,7 +219,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
     titulo_de_pregrado: new FormControl<number | null>(null),
     /* ................................. docente ................................ */
     especialidad: new FormControl<number | null>(null),
-    plantel_de_dependencia: new FormControl<string | null>(null),
+    plantel_de_dependencia: new FormControl<string | null>('S0347D1608'),
     docente_guia: new FormControl<boolean>(false),
     docente_guia_nivel_academico: new FormControl<number | null>(null),
     docente_guia_seccion: new FormControl<string | null>(null),
