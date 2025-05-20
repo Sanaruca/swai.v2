@@ -17,8 +17,27 @@
           navigateOnDoubleClick(['admin', 'empleados', empleado.cedula])
         "
       >
-        <td>{{ empleado | nombre }}</td>
-        <td>V-{{ empleado.cedula | number }}</td>
+        <td>
+            <a
+            [routerLink]="['/admin/empleados', empleado.cedula]"
+            class="flex gap-3 hover:underline"
+            [pTooltip]="empleado | nombre: 'completo'"
+            tooltipPosition="top"
+          >
+            <p-avatar
+              [label]="empleado | nombre: 'iniciales'"
+              styleClass="flex-none"
+              size="large"
+              shape="circle"
+            />
+            <p class="font-medium">
+              {{ empleado | nombre }}
+            </p>
+          </a>
+        </td>
+        <td>
+          <a [routerLink]="['/admin/empleados', empleado.cedula]" class="hover:underline">V-{{ empleado.cedula | number }}</a>
+        </td>
         <td>
           <aw-tag-tipo-de-empleado
             [tipo]="empleado.tipo_de_empleado.id"

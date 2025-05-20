@@ -6,7 +6,7 @@ import {
   SeccionCampoValorComponent,
 } from '../../../../common/layouts/perfil/components';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { EstudianteDTO, generar_constancia_de_estudios, NIVEL_ACADEMICO, TIPO_DE_ESTUDIANTE } from '@swai/core';
+import { EstudianteDTO, generar_carnet_estudiantil, generar_constancia_de_estudios, NIVEL_ACADEMICO, TIPO_DE_ESTUDIANTE } from '@swai/core';
 import {
   EstadoAcademicoTagComponent,
   TipoDeEstudianteTagComponent,
@@ -72,6 +72,7 @@ export class PerfilEstudiantePageComponent implements OnInit {
       icon: 'pi pi-id-card',
       command: () => {
         console.log('Imprimir Carnet');
+        generar_carnet_estudiantil(this.estudiante)
       }
     },
     {

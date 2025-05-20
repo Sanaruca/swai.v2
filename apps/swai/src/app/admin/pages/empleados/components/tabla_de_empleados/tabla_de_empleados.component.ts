@@ -10,7 +10,9 @@ import {
 } from '../../../../../common/components';
 import { Inplace } from 'primeng/inplace';
 import { Button } from 'primeng/button';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Avatar } from 'primeng/avatar';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'aw-tabla-de-empleados',
@@ -22,6 +24,9 @@ import { Router } from '@angular/router';
     Inplace,
     Button,
     IllustrationComponent,
+    Avatar,
+    RouterLink,
+    TooltipModule
   ],
   templateUrl: './tabla_de_empleados.component.html',
   styleUrl: './tabla_de_empleados.component.scss',
