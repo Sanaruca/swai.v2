@@ -123,7 +123,7 @@
           <td colspan="5">
             <div class="p-4">
               <h5>{{recurso.nombre}}</h5>
-              <p-table [value]="recurso.detalles" dataKey="id" editMode="row">
+              <p-table [value]="recurso.detalles.data" dataKey="id" editMode="row">
                 <ng-template #header>
                   <tr>
                     <th>Estado</th>
@@ -195,7 +195,7 @@
                     <td rowspan="5" *ngIf="!i" class="w-64">
                       <p-chart
                         type="doughnut"
-                        [data]="init_recursos_chart(recurso.id)"
+                        [data]="{datasets: [recurso.detalles.chart]}"
                         [options]="options"
                       />
                     </td>
@@ -238,7 +238,7 @@
       <div class="w-56 m-auto">
         <p-chart
           type="doughnut"
-          [data]="init_resumen_chart()"
+          [data]="resumen_cantidad_de_recursos.chart"
           [options]="options"
           class="w-full"
         />

@@ -1,5 +1,5 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { RecursosDeUnEspacioAcademicoDTO } from '@swai/server';
@@ -18,6 +18,7 @@ import {
   RecursoDeUnEspacioAcademico,
   RECURSOS,
   EspacioAcademicoDTO,
+  Recurso,
 } from '@swai/core';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
@@ -29,10 +30,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../services/api.service';
 
- function clone_object<T extends object>(obj: T): T {
+function clone_object<T extends object>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
-
 
 interface RecursoDetalle {
   id: string;
@@ -40,6 +40,20 @@ interface RecursoDetalle {
   estado: EstadoDeUnRecurso;
   cantidad: number;
 }
+
+interface IRecurso extends Recurso {
+  estados: number[];
+  cantidad: number;
+  detalles: {
+    data: RecursoDetalle[];
+    chart?: {
+      data: number[];
+      backgroundColor?: string[];
+      hoverBackgroundColor?: string[];
+    };
+  };
+}
+
 @Component({
   selector: 'aw-espacio-academico.page',
   imports: [
@@ -110,8 +124,9 @@ export class EspacioAcademicoPageComponent {
     'cantidad_de_recursos'
   ] as RecursosDeUnEspacioAcademicoDTO;
 
-  protected resumen_cantidad_de_recursos = ((component) => ({
-    estados: ESTADOS_DE_UN_RECURSO.map((estado) => ({
+  protected resumen_cantidad_de_recursos = ((component) => {
+    
+    const estados = ESTADOS_DE_UN_RECURSO.map((estado) => ({
       ...estado,
       recursos: this.cantidad_de_recursos.recursos.reduce<
         typeof this.cantidad_de_recursos.recursos
@@ -138,13 +153,37 @@ export class EspacioAcademicoPageComponent {
           ) || 0
         );
       },
-    })),
-  }))(this);
+    }))
+    
+    return ({
+    estados,
+    chart: {
+      datasets: [{
+        data: estados.map((estado) => estado.total),
+        backgroundColor: [
+            '#22c55e',
+            '#14b8a6',
+            '#eab308',
+            '#ef4444',
+            '#6b7280',
+          ],
+          hoverBackgroundColor: [
+            '#4ade80',
+            '#2dd4bf',
+            '#facc15',
+            '#f87171',
+            '#9ca3af',
+          ],
+      }]
+    },
+    
+  })})(this);
 
   protected recursos = Array.from(
     this.espacio_academico.recursos
       .reduce((acc, it) => {
         const recurso = acc.get(it.recurso.id);
+
         if (!recurso) {
           const detalles = ESTADOS_DE_UN_RECURSO.map<RecursoDetalle>(
             (estado) => {
@@ -177,105 +216,35 @@ export class EspacioAcademicoPageComponent {
         return acc;
       }, new Map<RECURSO, { id: number; nombre: string; estados: Set<number>; cantidad: number; detalles: RecursoDetalle[] }>())
       .values()
-  ).map((it) => ({
-    ...it,
-    estados: Array.from(it.estados.values()).sort((a, b) => a - b),
-  }));
+  ).map<IRecurso>((recurso) => {
+    return {
+      ...recurso,
+      estados: Array.from(recurso.estados.values()).sort((a, b) => a - b),
+      detalles: {
+        data: recurso.detalles,
+        chart: {
+          data: recurso.detalles.map((it) => it.cantidad),
+          backgroundColor: [
+            '#22c55e',
+            '#14b8a6',
+            '#eab308',
+            '#ef4444',
+            '#6b7280',
+          ],
+          hoverBackgroundColor: [
+            '#4ade80',
+            '#2dd4bf',
+            '#facc15',
+            '#f87171',
+            '#9ca3af',
+          ],
+        },
+      },
+    };
+  });
 
   protected recurso_primeicon_map = recurso_primeicon_map;
 
-  /* .................................. inits ................................. */
-
-  init_resumen_chart() {
-    const valores = this.resumen_cantidad_de_recursos.estados.map(
-      (it) => it.total
-    );
-
-    if (isPlatformBrowser(this.platformId)) {
-      const documentStyle = getComputedStyle(document.documentElement);
-
-      return {
-        datasets: [
-          {
-            data: valores,
-            backgroundColor: [
-              documentStyle.getPropertyValue('--p-green-500'),
-              documentStyle.getPropertyValue('--p-teal-500'),
-              documentStyle.getPropertyValue('--p-yellow-500'),
-              documentStyle.getPropertyValue('--p-red-500'),
-              documentStyle.getPropertyValue('--p-gray-500'),
-            ],
-            hoverBackgroundColor: [
-              documentStyle.getPropertyValue('--p-green-400'),
-              documentStyle.getPropertyValue('--p-teal-400'),
-              documentStyle.getPropertyValue('--p-yellow-400'),
-              documentStyle.getPropertyValue('--p-red-400'),
-              documentStyle.getPropertyValue('--p-gray-400'),
-            ],
-          },
-        ],
-      };
-    }
-
-    return {
-      data: valores,
-    };
-  }
-
-  init_recursos_chart(recursoID: number) {
-    const recurso = this.recursos.find((it) => it.id === recursoID);
-
-    if (!recurso) return {};
-
-    const valores = ESTADOS_DE_UN_RECURSO.map((estado) => {
-      const detalle = recurso.detalles.find((it) => it.estado.id === estado.id);
-
-      if (!detalle) return 0;
-
-      return detalle.cantidad;
-    });
-
-    if (isPlatformBrowser(this.platformId)) {
-      const documentStyle = getComputedStyle(document.documentElement);
-      // const textColor = documentStyle.getPropertyValue('--p-text-color');
-
-      return {
-        datasets: [
-          {
-            data: valores,
-            backgroundColor: [
-              documentStyle.getPropertyValue('--p-green-500'),
-              documentStyle.getPropertyValue('--p-teal-500'),
-              documentStyle.getPropertyValue('--p-yellow-500'),
-              documentStyle.getPropertyValue('--p-red-500'),
-              documentStyle.getPropertyValue('--p-gray-500'),
-            ],
-            hoverBackgroundColor: [
-              documentStyle.getPropertyValue('--p-green-400'),
-              documentStyle.getPropertyValue('--p-teal-400'),
-              documentStyle.getPropertyValue('--p-yellow-400'),
-              documentStyle.getPropertyValue('--p-red-400'),
-              documentStyle.getPropertyValue('--p-gray-400'),
-            ],
-          },
-        ],
-      };
-    }
-
-    return {
-      data: valores,
-      // backgroundColor: [
-      //   documentStyle.getPropertyValue('--p-cyan-500'),
-      //   documentStyle.getPropertyValue('--p-orange-500'),
-      //   documentStyle.getPropertyValue('--p-gray-500'),
-      // ],
-      // hoverBackgroundColor: [
-      //   documentStyle.getPropertyValue('--p-cyan-400'),
-      //   documentStyle.getPropertyValue('--p-orange-400'),
-      //   documentStyle.getPropertyValue('--p-gray-400'),
-      // ],
-    };
-  }
 
   /* ................................. events ................................. */
 
@@ -304,7 +273,7 @@ export class EspacioAcademicoPageComponent {
 
     const index = this.recursos.findIndex((r) => r.id === detalle.recurso_id);
 
-    this.recursos[index].detalles[detalle.estado.id - 1] = prev;
+    this.recursos[index].detalles.data[detalle.estado.id - 1] = prev;
 
     this.detalles_clonados.delete(detalle.id);
   }
