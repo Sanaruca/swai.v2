@@ -246,8 +246,46 @@
               icon="pi pi-ellipsis-h"
               severity="secondary"
               variant="text"
+              (click)="estudiante.aux.show_acctions = !estudiante.aux.show_acctions"
             />
-            <p-menu #menu [popup]="true" />
+            <p-overlay [(visible)]="estudiante.aux.show_acctions" contentStyleClass="absolute right-0" >
+              <div class="p-menu">
+                <ul class="p-menu-list">
+                  <li class="p-menu-item">
+                    <div class="p-menu-item-content">
+                      <a
+                      [routerLink]="[
+                        '/admin',
+                        'estudiantes',
+                        estudiante.cedula,
+                      ]"
+                      class="p-menu-item-link"
+                      >
+                      <i class="pi pi-eye"></i>
+                      <span>Ver</span>
+                    </a>
+                  </div>
+                  </li>
+                  <li class="p-menu-item">
+                    <div class="p-menu-item-content">
+                      <a
+                      [routerLink]="[
+                        '/admin',
+                        'estudiantes',
+                        estudiante.cedula,
+                        'editar'
+                      ]"
+                      class="p-menu-item-link"
+                      >
+                      <i class="pi pi-pencil"></i>
+                      <span>Editar</span>
+                    </a>
+                  </div>
+                  </li>
+                </ul>
+              </div>
+              <!-- <p-menu [model]="get_acciones(estudiante)" styleClass="absolute right-0" /> -->
+            </p-overlay>
           </div>
         </td>
       </tr>

@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -50,6 +50,7 @@ import { PopoverModule } from 'primeng/popover';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { NombrePipe } from '../../../../../common/pipes/nombre.pipe';
+import { OverlayModule } from 'primeng/overlay';
 
 interface Wrapper<T> {
   name: string;
@@ -84,11 +85,12 @@ interface Wrapper<T> {
     DatePickerModule,
     InputNumberModule,
     NombrePipe,
+    OverlayModule
   ],
   templateUrl: './tabla_de_estudiantes.component.html',
   styleUrl: './tabla_de_estudiantes.component.sass',
 })
-export class TablaDeEstudiantesComponent {
+export class TablaDeEstudiantesComponent implements OnInit {
   @Input() filtros_estaticos: Filtro[] = [];
   @Input() omitir_campos_filtros: string[] = [];
 
@@ -280,7 +282,7 @@ export class TablaDeEstudiantesComponent {
 
   estudiantes = this.route.snapshot.data[
     'estudiantes'
-  ] as Paginated<EstudianteDTO>;
+  ] as Paginated<EstudianteDTO & {aux: {show_acctions: boolean}}>;
 
   loading = false;
 
@@ -295,7 +297,12 @@ export class TablaDeEstudiantesComponent {
   protected filtros_activos = [] as Filtro[];
 
   /* .............................. ciclo de vida ............................. */
-
+  ngOnInit(): void {
+    this.estudiantes = {
+      ...this.estudiantes,
+      data: this.estudiantes.data.map((it) => ({ ...it, aux: {show_acctions: false}}))
+    }
+  }
   /* ................................. metodos ................................ */
 
   // TODO: esta funcion no deberia ejecutarce la primera vez
@@ -364,11 +371,16 @@ export class TablaDeEstudiantesComponent {
   ) {
     this.loading = true;
     try {
-      this.estudiantes =
+      const estudiantes =
         await this.api.client.estudiantes.obtener_estudiantes.query({
           filtros: filtros as Filtro<never>[],
           paginacion,
         });
+
+      this.estudiantes = {
+        ...estudiantes,
+        data: estudiantes.data.map((it) => ({ ...it, aux: {show_acctions: false}}))
+      }
 
       // * aqui ocultaremos los filtros estaticos omitiendo añadirlos a filtros activos
 
@@ -411,6 +423,27 @@ export class TablaDeEstudiantesComponent {
   // TODO: esta funcion esta ejecutandoce veces inesesarias
   protected comparar_objetos(a: object, b: object) {
     return JSON.stringify(a) === JSON.stringify(b);
+  }
+
+  get_acciones(estudiante: EstudianteDTO) {
+    return [
+      {
+        label: 'Ver',
+        icon: 'pi pi-eye',
+        command: () =>
+          this.router.navigate(['/admin/estudiantes', estudiante.cedula]),
+      },
+      {
+        label: 'Editar',
+        icon: 'pi pi-pencil',
+        command: () =>
+          this.router.navigate(['/admin/estudiantes', estudiante.cedula, '/editar']),
+      },
+      {
+        label: 'Eliminar',
+        icon: 'pi pi-trash',
+      },
+    ];
   }
 
   async navigateOnDoubleClick(comands: any[]) {
