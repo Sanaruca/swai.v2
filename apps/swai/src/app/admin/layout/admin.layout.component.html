@@ -1,14 +1,14 @@
 <p-toast />
 <aw-navbar/>
-<section class="flex flex-1 overflow-hidden">
+<section class="layout">
   <nav 
-    class="nav bar min-w-0 justify-center"
+    class="nav | bar min-w-0 justify-center"
     [class]="{
     'min-w-80': sidebar_open,
     'justify-start': sidebar_open,
     }"
   >
-    <ul class="gap-2 grid">
+    <ul class="nav__links">
       <li>
         <a 
           routerLink="/admin/dashboard"
@@ -111,12 +111,15 @@
       </li> -->
     </ul>
 
-      <p-button class="mt-auto" [icon]="'ti ti-layout-sidebar-'+(sidebar_open? 'right':'left')+'-expand'" [rounded]="true" [text]="true" severity="secondary" (click)="sidebar_open = !sidebar_open" />
+    <div class="nav__acctions">
+      <p-button [icon]="'ti ti-layout-sidebar-'+(sidebar_open? 'right':'left')+'-expand'" [rounded]="true" [text]="true" severity="secondary" (click)="sidebar_open = !sidebar_open" />
+    </div>
+
 
 
   </nav>
 
-  <main class="flex-1 pr-3 pt-10 pl-6 overflow-y-auto overflow-x-hidden" #main>
+  <main class="main" #main>
     <!-- <p-scrollpanel styleClass="w-full h-full pr-4"> -->
     <router-outlet></router-outlet>
     <!-- </p-scrollpanel> -->

@@ -1,7 +1,7 @@
 <h3>{{INSTITUTION_NAME}}</h3>
 <p class="text-sm">Vista Rápida</p>
 
-<nav class="flex gap-3 mt-5">
+<nav class="flex gap-3 mt-5 overflow-x-auto">
     <aw-fast-link
       title="1er Año"
       subtitle="Nivel académico"
@@ -91,7 +91,7 @@
 
   </nav>
 
-  <section class="flex gap-3 mt-5 items-start">
+  <section class="flex gap-3 mt-5 items-start flex-wrap">
 
     
     <div class="card flex-[2]">
@@ -100,7 +100,7 @@
       
       <h5 class="my-5">{{graficas[grafica_actual].titulo}}</h5>
 
-      <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem" ></p-chart>
+      <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem" [responsive]="true"></p-chart>
 
       <ol class="flex gap-4 mt-5 flex-wrap">
         <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #1e293b;"></i> Total ({{cantidad_de_estudiantes.total}})</li>
@@ -123,7 +123,7 @@
             <li>
               <a class="flex items-center gap-3 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors px-3 py-4 rounded-xl" [routerLink]="['/admin', persona.tipo === 'estudiante' ? 'estudiantes' : 'empleados', persona.cedula]">
 
-                <p-avatar [label]="persona | nombre:'iniciales'" size="large" shape="circle" />
+                <p-avatar [label]="persona | nombre:'iniciales'" size="large" shape="circle" class="flex-none" />
                 <div>
                   <p class="font-medium">
                     {{persona | nombre}}

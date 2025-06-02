@@ -3,8 +3,26 @@
 }
 
 .nav {
-  @apply flex flex-col p-3 border-r;
+  @apply flex p-3 border-r;
   transition: cubic-bezier(0, 1, 0, 1) 500ms;
+
+  /* ................................... xl ................................... */
+  @apply xl:flex-col;
+  
+  &__links{
+    @apply flex gap-2;
+    /* ................................... xl ................................... */
+    @apply xl:grid;
+  }
+
+  &__acctions{
+    @apply hidden mt-auto;
+
+    /* ................................... xl ................................... */
+    @apply xl:block;
+  }
+
+
 }
 .nav__link {
   @apply flex gap-3 items-center rounded-lg;
@@ -13,6 +31,20 @@
   &[data-active='true'] {
     @apply bg-primary text-white dark:bg-primary-600;
   }
+}
+
+.layout{
+ @apply flex-col-reverse;
+ @apply flex flex-1 overflow-hidden;
+
+ /* ................................... xl ................................... */
+ @apply xl:flex-row;
+}
+
+.main{
+  @apply flex-1 px-3 pt-10 overflow-y-auto overflow-x-hidden;
+  /* ................................... sm ................................... */
+  @apply sm:flex-row sm:pl-6;
 }
 
 

@@ -18,3 +18,11 @@
     color: var(--text-color-secondary);
   }
 }
+
+
+.breadcrumb {
+  @apply hidden;
+  @apply gap-[var(--p-breadcrumb-gap)] items-center;
+  /* ................................... sm ................................... */
+  @apply xl:flex;
+}
