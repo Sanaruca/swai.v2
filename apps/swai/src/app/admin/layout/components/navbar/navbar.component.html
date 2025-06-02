@@ -1,0 +1,143 @@
+<section class="bar h-16 flex items-center px-4 pt-5 pb-3 gap-4 relative">
+  <svg 
+  class="w-11 h-full fill-primary dark:fill-primary-600"
+  width="36" height="40" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M0 15V31H5C5.52527 31 6.04541 31.1035 6.53076 31.3045C7.01599 31.5055 7.45703 31.8001 7.82837 32.1716C8.19983 32.543 8.49451 32.984 8.69556 33.4693C8.89648 33.9546 9 34.4747 9 35V40H21L36 25V9H31C30.4747 9 29.9546 8.89655 29.4692 8.69553C28.984 8.49451 28.543 8.19986 28.1716 7.82843C27.8002 7.457 27.5055 7.01602 27.3044 6.53073C27.1035 6.04544 27 5.5253 27 5V0H15L0 15ZM17 30H10V19L19 10H26V21L17 30Z" fill="#0004E8-"></path>
+    </svg>
+  <div class="flex gap-[var(--p-breadcrumb-gap)] items-center">
+    <span class="text-surface-300 dark:text-surface-600 text-xl select-none px-2">/</span>
+    <p-breadcrumb
+      class="max-w-max"
+      styleClass="bg-transparent p-0"
+      [model]="breadcrumb_items"
+    >
+      <ng-template #separator
+        ><span class="text-surface-300 dark:text-surface-600 text-xl select-none px-2">/</span></ng-template
+      >
+      <ng-template #item let-item>
+        @if (item.routerLink) {
+        <a
+        [routerLink]="item.routerLink"
+        class="p-breadcrumb-item-link | hover:text-primary-500 hover:underline"
+        [class]="{
+          'font-bold': item.active,
+          'text-muted-color': !item.active,
+          'text-primary-500': item.active,
+          'dark:text-primary-600': item.active,
+        }"
+        >
+        <span class="text-current">{{ item.label }}</span>
+        </a>
+        } @else {
+        <a [href]="item.url">
+        <span class="text-color">{{ item.label }}</span>
+        </a>
+        }
+      </ng-template>
+    </p-breadcrumb>
+  </div>
+  <section class="m-auto w-[40rem] relative">
+    <p-iconfield iconPosition="left" class="ml-auto">
+      <p-inputicon>
+        @if (loadings.busqueda_rapida) {
+          <i class="pi pi-spinner pi-spin"></i>
+        } @else {
+          <i class="pi pi-search"></i>
+        }
+      </p-inputicon>
+      <input
+      #searchInput
+      pInputText
+      [formControl]="busqueda_rapida_form_control"
+      pSize="small"
+      type="text"
+      class="w-full pr-32"
+      placeholder="Búsqueda rápida"
+      (focus)="puede_mostrar_busqueda_rapida = true"
+
+      />
+      <p-inputicon styleClass="min-w-max flex items-center">
+        <div class="shortcut-keys">
+          <span class="key-button">⌘</span>
+          <span class="key-plus">+</span>
+          <span class="key-button">K</span>
+        </div>
+      </p-inputicon>
+    </p-iconfield>
+    <!-- Desplegable de resultados -->
+    <p-overlay [(visible)]="puede_mostrar_busqueda_rapida">
+      <nav
+        class="rounded-lg shadow-lg border bg-surface-50 dark:bg-surface-800"
+      >
+        <!-- Sección de empleados -->
+        <section *ngIf="busqueda_rapida && busqueda_rapida.empleados.length > 0" class="p-2 border-b">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="pi pi-id-card text-muted-color"></i>
+            <h6>Empleados</h6>
+          </div>
+          <ul class="space-y-2">
+            @for (empleado of busqueda_rapida.empleados; track $index) {
+              <li>
+                <a [routerLink]="['/admin/empleados', empleado.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
+                  <p-avatar [label]="empleado | nombre:'iniciales'" shape="circle" />
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">{{ empleado | nombre }}</p>
+                    <p class="text-xs text-gray-500 truncate">
+                      V-{{empleado.cedula | number}} - {{ empleado.tipo_de_empleado.nombre }}
+                    </p>
+                  </div>
+                  <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+            <section *ngIf="busqueda_rapida &&  busqueda_rapida.estudiantes.length > 0" class="p-2 border-b">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="pi pi-users text-muted-color"></i>
+                <h6>Estudiantes</h6>
+              </div>
+              <ul class="space-y-2">
+                @for (estudiante of busqueda_rapida.estudiantes; track $index) {
+                  <li>
+                    <a [routerLink]="['/admin/estudiantes', estudiante.cedula]" class="gap-2 transition-colors flex items-center p-2 rounded-md hover:bg-slate-500/10 cursor-pointer" pRipple>
+                    <p-avatar [label]="estudiante | nombre:'iniciales'" shape="circle" />
+                    <div class="flex-1 min-w-0">
+                      <p class="font-medium truncate">{{ estudiante | nombre }}</p>
+                      <p class="text-xs text-gray-500 truncate">
+                        V-{{estudiante.cedula | number}} - {{ estudiante.nivel_academico.nombre }}
+                      </p>
+                    </div>
+                    <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id"/>
+                  </a>
+                </li>
+              }
+              </ul>
+            </section>
+      
+        </nav>
+    </p-overlay>
+  </section>
+  <div class="flex gap-1 items-center ml-auto">
+    <p-avatar [label]="usuario.nombre_de_usuario.at(0)" />
+    <div class="text-sm">
+      <p>{{ usuario.nombre_de_usuario }}</p>
+      <p class="text-xs capitalize">{{ usuario.rol.toLocaleLowerCase() }}</p>
+    </div>
+    <p-menu
+      #menu
+      [model]="profile_menu"
+      [popup]="true"
+    />
+    <button (click)="menu.toggle($event)">
+      <i class="pi pi-angle-down p-2"></i>
+    </button>
+  </div>
+  @if (loadings.navegacion) {
+
+  <p-progressbar
+    mode="indeterminate"
+    styleClass="h-1 absolute top-full w-full left-0"
+  />
+  }
+</section>
