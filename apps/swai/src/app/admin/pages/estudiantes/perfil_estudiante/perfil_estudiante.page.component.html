@@ -14,20 +14,26 @@
   </ng-template>
   <ng-template #tags>
     <li>
-      <p-tag
-        value="Estudiante"
-        [rounded]="true"
-        styleClass="bg-teal-500 text-white"
-      >
-        <div class="flex items-center gap-1">
-          <i class="pi pi-book rig"></i>
-        </div>
-      </p-tag>
-    </li>
-    <li>
-      <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id" />
-    </li>
-    @if (estudiante.nivel_academico.numero !== NIVEL_ACADEMICO.Egresado &&
+      <ul class="flex items-center gap-2 flex-wrap">
+        <li>
+          <ul class="flex items-center gap-2">
+            <li>
+              <p-tag
+                value="Estudiante"
+                [rounded]="true"
+                styleClass="bg-teal-500 text-white"
+              >
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-book rig"></i>
+                </div>
+              </p-tag>
+            </li>
+            <li>
+              <aw-tag-tipo-de-estudiante [tipo]="estudiante.tipo.id" />
+            </li>
+          </ul>
+        </li>
+        @if (estudiante.nivel_academico.numero !== NIVEL_ACADEMICO.Egresado &&
     estudiante.seccion) {
     <li>
       <a
@@ -46,14 +52,16 @@
           "
           [rounded]="true"
           styleClass="border bg-transparent text-color"
-        >
+          >
           <div class="flex items-center gap-1">
             <i class="pi pi-external-link"></i>
           </div>
         </p-tag>
       </a>
     </li>
-    }
+  }
+</ul>
+</li>
   </ng-template>
 
   <aw-fast-link
