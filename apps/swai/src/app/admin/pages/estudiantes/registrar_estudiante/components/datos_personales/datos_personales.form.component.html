@@ -1,0 +1,125 @@
+<form [formGroup]="datos_personales">
+    <h5>Datos Personales</h5>
+        <p class="text-sm">Información del estudiante</p>
+        <div class="grid mt-8 gap-4">
+          <section class="form_group">
+            <div class="form_input" data-required>
+              <label for="nombres">Nombres</label>
+              <input
+                pInputText
+                id="nombres"
+                placeholder="Juan José"
+                formControlName="nombres"
+                [class]="{
+                    'ng-invalid ng-dirty':
+                      datos_personales.controls.nombres.invalid,
+                  }"
+              />
+              <small class="text-red-500">
+                {{ datos_personales.get('nombres')?.errors | json }}
+              </small>
+            </div>
+            <div class="form_input" data-required>
+              <label for="apellidos">Apellidos</label>
+              <input
+                pInputText
+                id="apellidos"
+                placeholder="Pérez Rodrigues"
+                formControlName="apellidos"
+                [class]="{
+                    'ng-invalid ng-dirty':
+                      datos_personales.controls.apellidos.invalid,
+                  }"
+              />
+              <small class="text-red-500">
+                {{ datos_personales.get('apellidos')?.errors | json }}
+              </small>
+            </div>
+            <div class="form_input" data-required>
+              <label for="cedula">Cedula de identidad</label>
+    
+              <p-inputnumber
+                locale="es-VE"
+                prefix="V-"
+                inputId="cedula"
+                placeholder="V-12.345.678"
+                formControlName="cedula"
+                [max]="99999999"
+              />
+    
+              <small class="text-red-500">
+                {{ datos_personales.get('cedula')?.errors | json }}
+              </small>
+            </div>
+          </section>
+          <section class="form_group">
+            <div class="form_input" data-required>
+              <label for="fecha_de_nacimiento">Fecha de nacimiento</label>
+              <!-- TODO: el input no ocupa el mismo espacio que los demas -->
+              <p-datepicker
+                [iconDisplay]="'input'"
+                [showIcon]="true"
+                inputId="fecha_de_nacimiento"
+                formControlName="fecha_de_nacimiento"
+              />
+              <small class="text-red-500">
+                {{ datos_personales.get('fecha_de_nacimiento')?.errors | json }}
+              </small>
+            </div>
+            <div class="form_input" data-required>
+              <label for="estado_federal">Estado en que nació</label>
+              <p-select
+                emptyMessage="Sin resultados"
+                [options]="$any(ESTADOS_FEDERALES)"
+                optionLabel="nombre"
+                optionValue="codigo"
+                placeholder="Selecione"
+                formControlName="estado_federal"
+                inputId="estado_federal"
+              />
+              <small class="text-red-500">
+                {{ datos_personales.get('estado_federal')?.errors | json }}
+              </small>
+            </div>
+            <div class="form_input" data-required>
+              <label for="municipio_federal">Municipio en que nació</label>
+              <p-select
+                formControlName="municipio_federal"
+                emptyMessage="Sin resultados"
+                [options]="municipios"
+                optionValue="codigo"
+                optionLabel="nombre"
+                placeholder="Selecione"
+                [loading]="loadings.municipios"
+                inputId="municipio_federal"
+              />
+              <small class="text-red-500">
+                {{ datos_personales.get('municipio_federal')?.errors | json }}
+              </small>
+            </div>
+          </section>
+    
+          <div class="form_input" data-required>
+            <label for="sexo">Sexo</label>
+            <p-selectbutton
+              emptyMessage="Sin resultados"
+              [options]="[
+                { id: 'M', nombre: 'Masculino' },
+                { id: 'F', nombre: 'Femenino' }
+              ]"
+              optionLabel="nombre"
+              optionValue="id"
+              formControlName="sexo"
+              id="sexo"
+            >
+              <ng-template #item let-it>
+                <i [class]="'pi ' + (it.id === 'M' ? 'pi-mars' : 'pi-venus')"></i>
+                {{ it.nombre }}
+              </ng-template>
+            </p-selectbutton>
+            <small class="text-red-500">
+              {{ datos_personales.get('sexo')?.errors | json }}
+            </small>
+          </div>
+        </div>
+</form>

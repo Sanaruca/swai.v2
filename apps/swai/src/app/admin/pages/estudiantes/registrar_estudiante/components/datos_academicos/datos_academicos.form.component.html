@@ -1,0 +1,159 @@
+<form [formGroup]="datos_academicos">
+      <h5>Datos Académicos</h5>
+    <p class="text-sm">Información académica del estudiante</p>
+    <div class="grid mt-8 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="">Tipo de estudiante</label>
+          <p-select
+            emptyMessage="Sin resultados"
+            [options]="TIPOS_DE_ESTUDIANTE"
+            optionValue="id"
+            optionLabel="nombre"
+            formControlName="tipo_de_estudiante"
+            placeholder="Selecione"
+          >
+            <ng-template let-tipo #item #selectedItem>
+              <aw-tag-tipo-de-estudiante [tipo]="tipo.id" />
+            </ng-template>
+          </p-select>
+        </div>
+      </section>
+      <section
+        class="form_group"
+        *ngIf="
+          +datos_academicos.controls.tipo_de_estudiante.value! !==
+          TIPO_DE_ESTUDIANTE.EGRESADO
+        "
+      >
+        <div class="form_input" data-required>
+          <label for="estado_academico">Estado académico</label>
+          <p-select
+            emptyMessage="Sin resultados"
+            [options]="ESTADOS_ACADEMICOS"
+            optionValue="id"
+            optionLabel="nombre"
+            formControlName="estado_academico"
+            placeholder="Selecione"
+          >
+            <ng-template let-estado #selectedItem>
+              <aw-tag-estado-academico [estado]="estado.id" />
+            </ng-template>
+            <ng-template let-estado #item>
+              <aw-tag-estado-academico [estado]="estado.id" />
+            </ng-template>
+          </p-select>
+        </div>
+        <div
+          class="form_input"
+          data-required
+          *ngIf="
+            +datos_academicos.get('estado_academico')!.value! !==
+            ESTADO_ACADEMICO.EGRESADO
+          "
+        >
+          <label for="estado_academico">Nivel académico</label>
+          <p-select
+            emptyMessage="Sin resultados"
+            formControlName="nivel_academico"
+            [options]="NIVELES_ACADEMICOS.slice(0, 5)"
+            optionValue="numero"
+            optionLabel="nombre"
+            placeholder="Selecione"
+          >
+          </p-select>
+        </div>
+        <div
+          class="form_input"
+          data-required
+          *ngIf="
+            datos_academicos.get('nivel_academico')!.value !== null &&
+            +datos_academicos.get('estado_academico')!.value! !==
+              ESTADO_ACADEMICO.EGRESADO
+          "
+        >
+          <label for="estado_academico">Seccion</label>
+          <p-select
+            emptyMessage="Sin resultados"
+            formControlName="seccion"
+            [options]="secciones"
+            optionValue="seccion"
+            optionLabel="seccion"
+            placeholder="Selecione"
+          >
+            <ng-template let-seccion #item #selectedItem>
+              <aw-tag-seccion [seccion]="seccion.seccion"></aw-tag-seccion>
+            </ng-template>
+          </p-select>
+        </div>
+      </section>
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="materias_pendientes">Materias Pendientes</label>
+          <p-selectbutton
+            formControlName="materias_pendientes"
+            [options]="[
+              { valor: false, nombre: 'No' },
+              { valor: true, nombre: 'Si' }
+            ]"
+            optionLabel="nombre"
+            optionValue="valor"
+            formControlName="discapacidad"
+            id="materias_pendientes"
+          >
+          </p-selectbutton>
+          <!-- <small class="text-red-500">
+            {{ datos_de_salud.get('discapacidad')?.errors | json }}
+          </small> -->
+        </div>
+      </section>
+      <section class="form_group">
+        <div
+          class="form_input"
+          data-required
+          *ngIf="
+            +datos_academicos.controls.tipo_de_estudiante.value! !==
+              TIPO_DE_ESTUDIANTE.EGRESADO &&
+            +datos_academicos.controls.estado_academico.value! !==
+              ESTADO_ACADEMICO.EGRESADO
+          "
+        >
+          <label for="fecha_de_inscripcion">Fecha de inscripcion</label>
+          <p-datepicker
+            [showButtonBar]="true"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            inputId="fecha_de_inscripcion"
+            formControlName="fecha_de_inscripcion"
+          />
+          <small class="text-red-500">
+            {{ datos_academicos.get('fecha_de_inscripcion')?.errors | json }}
+          </small>
+        </div>
+        <div
+          class="form_input"
+          data-required
+          *ngIf="
+            +datos_academicos.controls.tipo_de_estudiante.value! ===
+              TIPO_DE_ESTUDIANTE.EGRESADO ||
+            +datos_academicos.controls.estado_academico.value! ===
+              ESTADO_ACADEMICO.EGRESADO
+          "
+        >
+          <label for="fecha_de_egreso">Fecha de egreso</label>
+          <p-datepicker
+            [showButtonBar]="true"
+            view="month"
+            dateFormat="mm/yy"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            inputId="fecha_de_egreso"
+            formControlName="fecha_de_egreso"
+          />
+          <small class="text-red-500">
+            {{ datos_academicos.get('fecha_de_egreso')?.errors | json }}
+          </small>
+        </div>
+      </section>
+    </div>
+</form>

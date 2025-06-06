@@ -1,0 +1,77 @@
+<form [formGroup]="datos_de_salud">
+     <h5>Datos de salud</h5>
+    <p class="text-sm">Información del médica estudiante</p>
+    <div class="grid mt-8 gap-4">
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="tipo_de_sangre">Tipo de sangre</label>
+          <p-select
+            inputId="tipo_de_sangre"
+            [options]="TIPOS_DE_SANGRE"
+            optionLabel="nombre"
+            optionValue="id"
+            formControlName="tipo_de_sangre"
+          ></p-select>
+          <small class="text-red-500">{{
+            datos_de_salud.get('tipo_de_sangre')!.errors | json
+          }}</small>
+        </div>
+      </section>
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="discapacidad">Discapacidad</label>
+          <p-selectbutton
+            formControlName="discapacidad"
+            [options]="[
+              { valor: false, nombre: 'No' },
+              { valor: true, nombre: 'Si' }
+            ]"
+            optionLabel="nombre"
+            optionValue="valor"
+            formControlName="discapacidad"
+            id="discapacidad"
+          >
+          </p-selectbutton>
+          <small class="text-red-500">
+            {{ datos_de_salud.get('discapacidad')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      <section
+        class="form_group"
+        *ngIf="datos_de_salud.controls.discapacidad.value"
+      >
+        <div class="form_input" data-required>
+          <label for="descripcion_discapacidad">Tipo de dispacidad</label>
+          <p-select
+            [options]="TIPOS_DE_DISCAPACIDAD"
+            optionValue="id"
+            optionLabel="nombre"
+            formControlName="tipo_de_discapacidad"
+          ></p-select>
+          <small class="text-red-500">{{
+            datos_de_salud.controls.tipo_de_discapacidad.errors | json
+          }}</small>
+        </div>
+      </section>
+      <div
+        class="form_input"
+        *ngIf="datos_de_salud.controls.discapacidad.value"
+      >
+        <label for="descripcion_discapacidad"
+          >Descripción de la dispacidad (opcional)</label
+        >
+        <textarea
+          placeholder="Descripción"
+          rows="5"
+          cols="30"
+          pTextarea
+          id="descripcion_discapacidad"
+          formControlName="descripcion_discapacidad"
+        ></textarea>
+        <small class="text-red-500">{{
+          datos_de_salud.controls.descripcion_discapacidad.errors | json
+        }}</small>
+      </div>
+    </div>
+</form>

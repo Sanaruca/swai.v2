@@ -1,0 +1,52 @@
+ <form [formGroup]="datos_de_contacto">
+     <h5>Datos de contacto</h5>
+        <p class="text-sm">Información de contacto</p>
+        <div class="grid mt-8 gap-4">
+          <section class="form_group">
+            <div class="form_input" data-required>
+              <label for="telefono">Teléfono</label>
+              <p-inputmask
+                mask="+58 (999) 999-9999"
+                autocomplete="off"
+                inputId="telefono"
+                [autofocus]="true"
+                [unmask]="true"
+                formControlName="telefono"
+                placeholder="+58 (424) 999-9999"
+              />
+              <small class="text-red-500">{{
+                datos_de_contacto.controls.telefono.errors | json
+              }}</small>
+            </div>
+            <div class="form_input" data-required>
+              <label for="email">Correo electrónico</label>
+              <input
+                type="text"
+                placeholder="email@email.com"
+                pInputText
+                formControlName="email"
+                [email]="true"
+                id="email"
+              />
+              <small class="text-red-500">{{
+                datos_de_contacto.controls.email.errors | json
+              }}</small>
+            </div>
+          </section>
+          <section class="form_group">
+            <div class="form_input">
+              <label for="">Dirección</label>
+              <textarea
+                placeholder="Liceo José Miguel Sanz. Avenida Bolívar, Maturín, Venezuela."
+                rows="5"
+                cols="30"
+                pTextarea
+                formControlName="direccion"
+              ></textarea>
+              <small class="text-red-500">{{
+                datos_de_contacto.controls.direccion.errors | json
+              }}</small>
+            </div>
+          </section>
+        </div>
+ </form>

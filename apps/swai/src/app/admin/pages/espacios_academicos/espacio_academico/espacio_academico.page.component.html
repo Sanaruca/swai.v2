@@ -23,11 +23,6 @@
       icon="pi pi-plus"
       (onClick)="amodal.showDialog()"
     />
-    <aw-modal-anadir-recurso
-      #amodal
-      [espacio_academico]="espacio_academico.id"
-      (success)="on_recursos_anadidos($event)"
-    ></aw-modal-anadir-recurso>
     <p-button
       (click)="menu.toggle($event)"
       icon="pi pi-ellipsis-h"
@@ -286,3 +281,8 @@
     </section>
   </section>
 </section>
+<aw-modal-anadir-recurso
+      #amodal
+      [espacio_academico]="espacio_academico.id"
+      (success)="on_recursos_anadidos($event)"
+    ></aw-modal-anadir-recurso>

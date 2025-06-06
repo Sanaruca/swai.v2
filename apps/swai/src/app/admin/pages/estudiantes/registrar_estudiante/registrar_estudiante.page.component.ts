@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StepperModule } from 'primeng/stepper';
 import { ButtonModule } from 'primeng/button';
@@ -8,40 +8,32 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   Discapacitado,
   ESTADO_ACADEMICO,
   ESTADOS_ACADEMICOS,
   ESTADOS_FEDERALES,
-  EstadosDeVenezuelaISO,
   EstudianteDTO,
   EstudianteSchema,
   Municipio,
   NIVELES_ACADEMICOS,
-  PersonaSchema,
-  Seccion,
-  SEXO,
-  TIPO_DE_ESTUDIANTE,
+  PersonaSchema, TIPO_DE_ESTUDIANTE,
   TIPOS_DE_DISCAPACIDAD,
   TIPOS_DE_ESTUDIANTE,
-  TIPOS_DE_SANGRE,
+  TIPOS_DE_SANGRE
 } from '@swai/core';
-import { EstadoAcademicoTagComponent, SeccionTagComponent, TipoDeEstudianteTagComponent } from '../../../../common/components';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NivelAcademicoConSeccionesDTO } from '@swai/server';
 import { ApiService } from '../../../../services/api.service';
-import { validateIf } from '../../../../common/utils/angular/forms/validateif';
-import { merge } from 'rxjs';
 import { TextareaModule } from 'primeng/textarea';
 import { parse, ValiError } from 'valibot';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../../../../environments/environment';
+import { DatosPersonalesFormComponent } from './components/datos_personales/datos_personales.form.component';
+import { DatosDeSaludFormComponent } from './components/datos_de_salud/datos_de_salud.form.component';
+import { DatosDeContactoFormComponent } from './components/datos_de_contacto/datos_de_contacto.form.component';
+import { DatosAcademicosFormComponent } from './components/datos_academicos/datos_academicos.form.component';
+import { DatosAntropometricosFormComponent } from './components/datos_antropometricos/datos_antropometricos.form.component';
 
 // TODO: renombrar componente
 @Component({
@@ -57,10 +49,12 @@ import { environment } from '../../../../../environments/environment';
     ReactiveFormsModule,
     InputMaskModule,
     InputNumberModule,
-    EstadoAcademicoTagComponent,
-    SeccionTagComponent,
-    TipoDeEstudianteTagComponent,
     TextareaModule,
+    DatosPersonalesFormComponent,
+    DatosDeContactoFormComponent,
+    DatosAcademicosFormComponent,
+    DatosDeSaludFormComponent,
+    DatosAntropometricosFormComponent,
   ],
   templateUrl: './registrar_estudiante.page.component.html',
   styleUrl: './registrar_estudiante.page.component.scss',
@@ -82,8 +76,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
   private router = inject(Router);
 
   /* ................................. estado ................................. */
-  protected niveles_academicos: NivelAcademicoConSeccionesDTO[] =
-    this.route.snapshot.data['niveles_academicos'];
+
   protected municipios: Municipio[] = [];
 
   protected loadings = {
@@ -93,46 +86,19 @@ export class RegistrarEstudiantePageComponent implements OnInit {
 
   get puede_enviar_formulario(): boolean {
     return (
-      this.datos_personales.valid &&
-      this.datos_academicos.valid &&
-      this.datos_antropometricos.valid &&
-      this.datos_de_contacto.valid &&
-      this.datos_de_salud.valid
+      this.datos_personales_component().form.valid &&
+      this.datos_academicos_component().form.valid &&
+      this.datos_antropometricos_component().form.valid &&
+      this.datos_de_contacto_component().form.valid &&
+      this.datos_de_salud_component().form.valid
     );
   }
 
   // TODO: Sospecho que el scrollbar de ngprime esta provocando que se ejecute el detector un numero incecesaro de veces
-  get secciones(): Seccion[] {
-    const nivel_academico =
-      this.datos_academicos.controls.nivel_academico.value;
 
-    if (nivel_academico) {
-      return (
-        this.niveles_academicos.find((it) => it.numero === +nivel_academico)
-          ?.secciones ?? []
-      );
-    }
-
-    return [];
-  }
 
   protected paso_actual = 1;
-  get formulario_actual() {
-    switch (this.paso_actual) {
-      case 1:
-        return this.datos_personales;
-      case 2:
-        return this.datos_de_contacto;
-      case 3:
-        return this.datos_academicos;
-      case 4:
-        return this.datos_de_salud;
-      case 5:
-        return this.datos_antropometricos;
-      default:
-        return null;
-    }
-  }
+
 
   /* ............................... constantes ............................... */
   protected TIPOS_DE_DISCAPACIDAD = TIPOS_DE_DISCAPACIDAD;
@@ -147,64 +113,18 @@ export class RegistrarEstudiantePageComponent implements OnInit {
   protected ESTADOS_ACADEMICOS: Record<'id' | 'nombre', string>[] =
     ESTADOS_ACADEMICOS as any;
 
-  /* ............................... formulario ............................... */
+  /* ............................... components ............................... */
 
-  protected datos_personales = new FormGroup({
-    nombres: new FormControl('', { validators: [Validators.required] }),
-    apellidos: new FormControl('', { validators: [Validators.required] }),
-    cedula: new FormControl<string | null>(null, {
-      validators: [Validators.required],
-      asyncValidators: [],
-    }),
-    fecha_de_nacimiento: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    estado_federal: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    municipio_federal: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    sexo: new FormControl<null | SEXO>(null, {
-      validators: [Validators.required],
-    }),
-  });
+  protected datos_personales_component = viewChild.required(DatosPersonalesFormComponent);
 
-  protected datos_de_contacto = new FormGroup({
-    telefono: new FormControl<string | null>(null, {
-      validators: [Validators.required],
-    }),
-    email: new FormControl<string | null>(null, {
-      validators: [Validators.required, Validators.email],
-    }),
-    direccion: new FormControl<string | null>(null, {
-      validators: [Validators.required],
-    }),
-  });
+  protected datos_de_contacto_component = viewChild.required(DatosDeContactoFormComponent);
 
-  protected datos_academicos = new FormGroup({
-    tipo_de_estudiante: new FormControl<number | null>(null, {
-      validators: [Validators.required],
-    }),
-    estado_academico: new FormControl<number | null>(null),
-    nivel_academico: new FormControl<number | null>(null),
-    seccion: new FormControl<string | null>(null),
-    fecha_de_inscripcion: new FormControl<string | null>(null),
-    fecha_de_egreso: new FormControl<string | null>(null),
-  });
+  protected datos_academicos_component = viewChild.required(DatosAcademicosFormComponent);
 
-  protected datos_de_salud = new FormGroup({
-    tipo_de_sangre: new FormControl<number | null>(null, [Validators.required]),
-    discapacidad: new FormControl<boolean>(false),
-    tipo_de_discapacidad: new FormControl<number | null>(null),
-    descripcion_discapacidad: new FormControl<string | null>(null),
-  });
-  protected datos_antropometricos = new FormGroup({
-    peso: new FormControl<string | null>(null),
-    estatura: new FormControl<string | null>(null),
-    chemise: new FormControl<string | null>(null),
-    pantalon: new FormControl<string | null>(null),
-  });
+  protected datos_de_salud_component = viewChild.required(DatosDeSaludFormComponent);
+
+  protected datos_antropometricos_component = viewChild.required(DatosAntropometricosFormComponent);
+  
 
   /* .................................. init .................................. */
   ngOnInit(): void {
@@ -227,96 +147,6 @@ export class RegistrarEstudiantePageComponent implements OnInit {
       this.init_modo(modo!);
     });
 
-    /* ............................ Datos Personales ............................ */
-
-    this.datos_personales.controls.estado_federal.valueChanges.subscribe(
-      (estado_federal) => {
-        if (estado_federal === null) return;
-
-        this.datos_personales.controls.municipio_federal.setValue(null);
-
-        this.loadings.municipios = true;
-        this.api.client.venezuela.obtener_municipios
-          .query({
-            por_estado: estado_federal as EstadosDeVenezuelaISO,
-          })
-          .then((municipios) => {
-            this.municipios = municipios;
-          })
-          .finally(() => (this.loadings.municipios = false));
-      }
-    );
-
-    /* ............................ Datos Academicos ............................ */
-
-    merge(
-      this.datos_academicos.controls.estado_academico.valueChanges,
-      this.datos_academicos.controls.tipo_de_estudiante.valueChanges
-    ).subscribe((tipo_de_estudiante) => {
-      if (tipo_de_estudiante === null) return;
-
-      const es_egresado =
-        +tipo_de_estudiante === TIPO_DE_ESTUDIANTE.EGRESADO ||
-        +tipo_de_estudiante === ESTADO_ACADEMICO.EGRESADO;
-
-      this.datos_academicos.controls.estado_academico.setValidators([
-        validateIf(!es_egresado, Validators.required),
-      ]);
-      this.datos_academicos.controls.fecha_de_inscripcion.setValidators([
-        validateIf(!es_egresado, Validators.required),
-      ]);
-      this.datos_academicos.controls.nivel_academico.setValidators([
-        validateIf(!es_egresado, Validators.required),
-      ]);
-      this.datos_academicos.controls.seccion.setValidators([
-        validateIf(!es_egresado, Validators.required),
-      ]);
-      this.datos_academicos.controls.fecha_de_egreso.setValidators([
-        validateIf(es_egresado, Validators.required),
-      ]);
-
-      // TODO: al no emitir legan ocaciones donde al cambiar de estado el boton se desabilita
-      // TODO: se debe resolver el bucle infinito de cambios
-
-      this.datos_academicos.controls.estado_academico.updateValueAndValidity({
-        emitEvent: false,
-      });
-      this.datos_academicos.controls.fecha_de_inscripcion.updateValueAndValidity(
-        { emitEvent: false }
-      );
-      this.datos_academicos.controls.nivel_academico.updateValueAndValidity({
-        emitEvent: false,
-      });
-      this.datos_academicos.controls.seccion.updateValueAndValidity({
-        emitEvent: false,
-      });
-      this.datos_academicos.controls.fecha_de_egreso.updateValueAndValidity({
-        emitEvent: false,
-      });
-    });
-
-    this.datos_academicos.controls.nivel_academico.valueChanges.subscribe(
-      () => {
-        const seccion_index = this.secciones.findIndex(
-          (it) => it.seccion === this.datos_academicos.controls.seccion.value
-        );
-
-        if (seccion_index === -1) {
-          this.datos_academicos.controls.seccion.setValue(null);
-        }
-      }
-    );
-
-    /* ............................. Datos de salud ............................. */
-
-    this.datos_de_salud.controls.discapacidad.valueChanges.subscribe(
-      (posee_discapacidad) => {
-        this.datos_de_salud.controls.tipo_de_discapacidad.setValidators([
-          validateIf(!!posee_discapacidad, Validators.required),
-        ]);
-        this.datos_de_salud.controls.tipo_de_discapacidad.updateValueAndValidity();
-      }
-    );
   }
 
   /* ................................. metodos ................................ */
@@ -327,7 +157,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
 
       this.municipios = [estudiante.municipio_de_nacimiento as any];
 
-      this.datos_personales.setValue({
+      this.datos_personales_component().form.setValue({
         nombres: estudiante.nombres,
         apellidos: estudiante.apellidos,
         cedula: estudiante.cedula + '',
@@ -338,19 +168,19 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         sexo: estudiante.sexo,
       });
 
-      this.datos_personales.controls.cedula.disable();
-      this.datos_personales.controls.estado_federal.disable();
-      this.datos_personales.controls.municipio_federal.disable();
-      this.datos_personales.controls.fecha_de_nacimiento.disable();
-      this.datos_personales.controls.sexo.disable();
+      this.datos_personales_component().form.controls.cedula.disable();
+      this.datos_personales_component().form.controls.estado_federal.disable();
+      this.datos_personales_component().form.controls.municipio_federal.disable();
+      this.datos_personales_component().form.controls.fecha_de_nacimiento.disable();
+      this.datos_personales_component().form.controls.sexo.disable();
 
-      this.datos_de_contacto.setValue({
+      this.datos_de_contacto_component().form.setValue({
         telefono: estudiante.telefono,
         email: estudiante.correo,
         direccion: estudiante.direccion ?? null,
       });
 
-      this.datos_academicos.setValue({
+      this.datos_academicos_component().form.setValue({
         tipo_de_estudiante: estudiante.tipo.id!,
         estado_academico: estudiante.estado_academico.id,
         nivel_academico: estudiante.nivel_academico.numero,
@@ -359,7 +189,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         fecha_de_egreso: estudiante.fecha_de_egreso as any,
       });
 
-      this.datos_de_salud.setValue({
+      this.datos_de_salud_component().form.setValue({
         tipo_de_sangre: estudiante.tipo_de_sangre.id,
         discapacidad: !!estudiante.discapacidad,
         tipo_de_discapacidad:
@@ -384,12 +214,12 @@ export class RegistrarEstudiantePageComponent implements OnInit {
     this.loadings.enviando_datos = true;
 
     const discapacidad: Omit<Discapacitado, 'cedula'> | null = this
-      .datos_de_salud.controls.discapacidad.value
+      .datos_de_salud_component().form.controls.discapacidad.value
       ? {
           descripcion:
-            this.datos_de_salud.controls.descripcion_discapacidad.value,
+            this.datos_de_salud_component().form.controls.descripcion_discapacidad.value,
           tipo_de_discapacidad:
-            this.datos_de_salud.controls.tipo_de_discapacidad.value!,
+            this.datos_de_salud_component().form.controls.tipo_de_discapacidad.value!,
         }
       : null;
 
@@ -397,28 +227,28 @@ export class RegistrarEstudiantePageComponent implements OnInit {
       await this.api.client.estudiantes.actualizar_estudiante.mutate({
         estudiante: this.estudiante!.cedula,
         actualizacion: {
-          seccion: this.datos_academicos.controls.seccion.value as any,
-          direccion: this.datos_de_contacto.controls.direccion.value!,
+          seccion: this.datos_academicos_component().form.controls.seccion.value as any,
+          direccion: this.datos_de_contacto_component().form.controls.direccion.value!,
           nivel_academico:
-            +this.datos_academicos.controls.nivel_academico.value!,
-          tipo: +this.datos_academicos.controls.tipo_de_estudiante.value!,
-          correo: this.datos_de_contacto.controls.email.value!,
-          tipo_de_sangre: +this.datos_de_salud.controls.tipo_de_sangre.value!,
-          nombres: this.datos_personales.controls.nombres.value!,
-          apellidos: this.datos_personales.controls.apellidos.value!,
+            +this.datos_academicos_component().form.controls.nivel_academico.value!,
+          tipo: +this.datos_academicos_component().form.controls.tipo_de_estudiante.value!,
+          correo: this.datos_de_contacto_component().form.controls.email.value!,
+          tipo_de_sangre: +this.datos_de_salud_component().form.controls.tipo_de_sangre.value!,
+          nombres: this.datos_personales_component().form.controls.nombres.value!,
+          apellidos: this.datos_personales_component().form.controls.apellidos.value!,
           discapacidad,
-          telefono: this.datos_de_contacto.controls.telefono.value!,
+          telefono: this.datos_de_contacto_component().form.controls.telefono.value!,
           fecha_de_egreso:
             parse(
               EstudianteSchema.entries.fecha_de_egreso,
-              this.datos_academicos.controls.fecha_de_egreso.value
+              this.datos_academicos_component().form.controls.fecha_de_egreso.value
             ) ?? null,
           fecha_de_inscripcion: parse(
             EstudianteSchema.entries.fecha_de_inscripcion,
-            this.datos_academicos.controls.fecha_de_inscripcion.value
+            this.datos_academicos_component().form.controls.fecha_de_inscripcion.value
           ),
           estado_academico:
-            +this.datos_academicos.controls.estado_academico.value!,
+            +this.datos_academicos_component().form.controls.estado_academico.value!,
         },
       });
 
@@ -440,47 +270,47 @@ export class RegistrarEstudiantePageComponent implements OnInit {
     this.loadings.enviando_datos = true;
 
     const discapacidad: Omit<Discapacitado, 'cedula'> | null = this
-      .datos_de_salud.controls.discapacidad.value
+      .datos_de_salud_component().form.controls.discapacidad.value
       ? {
           descripcion:
-            this.datos_de_salud.controls.descripcion_discapacidad.value,
+            this.datos_de_salud_component().form.controls.descripcion_discapacidad.value,
           tipo_de_discapacidad:
-            this.datos_de_salud.controls.tipo_de_discapacidad.value!,
+            this.datos_de_salud_component().form.controls.tipo_de_discapacidad.value!,
         }
       : null;
 
     try {
       const estudiante =
         await this.api.client.estudiantes.registrar_estudiante.mutate({
-          direccion: this.datos_de_contacto.controls.direccion.value!,
+          direccion: this.datos_de_contacto_component().form.controls.direccion.value!,
           nivel_academico:
-            +this.datos_academicos.controls.nivel_academico.value!,
-          tipo: +this.datos_academicos.controls.tipo_de_estudiante.value!,
-          sexo: this.datos_personales.controls.sexo.value!,
-          correo: this.datos_de_contacto.controls.email.value!,
-          tipo_de_sangre: +this.datos_de_salud.controls.tipo_de_sangre.value!,
-          cedula: +this.datos_personales.controls.cedula.value!,
-          nombres: this.datos_personales.controls.nombres.value!,
-          apellidos: this.datos_personales.controls.apellidos.value!,
+            +this.datos_academicos_component().form.controls.nivel_academico.value!,
+          tipo: +this.datos_academicos_component().form.controls.tipo_de_estudiante.value!,
+          sexo: this.datos_personales_component().form.controls.sexo.value!,
+          correo: this.datos_de_contacto_component().form.controls.email.value!,
+          tipo_de_sangre: +this.datos_de_salud_component().form.controls.tipo_de_sangre.value!,
+          cedula: +this.datos_personales_component().form.controls.cedula.value!,
+          nombres: this.datos_personales_component().form.controls.nombres.value!,
+          apellidos: this.datos_personales_component().form.controls.apellidos.value!,
           discapacidad,
           fecha_de_nacimiento: parse(
             PersonaSchema.entries.fecha_de_nacimiento,
-            this.datos_personales.controls.fecha_de_nacimiento.value
+            this.datos_personales_component().form.controls.fecha_de_nacimiento.value
           ),
-          telefono: this.datos_de_contacto.controls.telefono.value!,
+          telefono: this.datos_de_contacto_component().form.controls.telefono.value!,
           fecha_de_egreso:
             parse(
               EstudianteSchema.entries.fecha_de_egreso,
-              this.datos_academicos.controls.fecha_de_egreso.value
+              this.datos_academicos_component().form.controls.fecha_de_egreso.value
             ) ?? null,
           fecha_de_inscripcion: parse(
             EstudianteSchema.entries.fecha_de_inscripcion,
-            this.datos_academicos.controls.fecha_de_inscripcion.value
+            this.datos_academicos_component().form.controls.fecha_de_inscripcion.value
           ),
           municipio_de_nacimiento:
-            this.datos_personales.controls.municipio_federal.value!,
+            this.datos_personales_component().form.controls.municipio_federal.value!,
           estado_academico:
-            +this.datos_academicos.controls.estado_academico.value!,
+            +this.datos_academicos_component().form.controls.estado_academico.value!,
         });
 
       this.toast.add({
@@ -501,5 +331,23 @@ export class RegistrarEstudiantePageComponent implements OnInit {
       }
     }
     this.loadings.enviando_datos = false;
+  }
+
+
+  /* ................................. getters ................................ */
+
+  get formulario_actual(): FormGroup | void {
+    switch (this.paso_actual) {
+      case 1:
+        return this.datos_personales_component().form;
+      case 2:
+        return this.datos_academicos_component().form;
+      case 3:
+        return this.datos_de_contacto_component().form;
+      case 4:
+        return this.datos_de_salud_component().form;
+      default:
+        break;
+    }
   }
 }

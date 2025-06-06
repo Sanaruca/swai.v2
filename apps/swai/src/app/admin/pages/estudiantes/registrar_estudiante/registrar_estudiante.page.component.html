@@ -7,12 +7,12 @@
       <li>
         <button
           class="stepper__step"
-          [attr.data-completed]="datos_personales.valid"
+          [attr.data-completed]="datos_personales_component().form.valid"
           (click)="paso_actual = 1"
           [attr.data-active]="paso_actual === 1"
         >
           <div class="stepper__step__number">
-            @if (datos_personales.valid) { <i class="pi pi-check"></i> } @else {
+            @if (datos_personales_component().form.valid) { <i class="pi pi-check"></i> } @else {
             1 }
           </div>
           <div>
@@ -20,11 +20,11 @@
             <p
               class="stepper__step__description"
               [class]="{
-                'text-green-500': datos_personales.valid
+                'text-green-500': datos_personales_component().form.valid
               }"
             >
               {{
-                datos_personales.valid
+                datos_personales_component().form.valid
                   ? 'Compledado'
                   : 'Nombres, Apellidos, CI, etc.'
               }}
@@ -36,22 +36,22 @@
       <li>
         <button
           class="stepper__step"
-          [attr.data-completed]="datos_de_contacto.valid"
+          [attr.data-completed]="datos_de_contacto_component().form.valid"
           (click)="paso_actual = 2"
           [attr.data-active]="paso_actual === 2"
         >
           <div class="stepper__step__number">
-            @if (datos_de_contacto.valid) { <i class="pi pi-check"></i> } @else
+            @if (datos_de_contacto_component().form.valid) { <i class="pi pi-check"></i> } @else
             { 2 }
           </div>
           <div>
             <p class="stepper__step__title">Datos de contacto</p>
             <p
               class="stepper__step__description"
-              [class]="{ 'text-green-500': datos_de_contacto.valid }"
+              [class]="{ 'text-green-500': datos_de_contacto_component().form.valid }"
             >
               {{
-                datos_de_contacto.valid
+                datos_de_contacto_component().form.valid
                   ? 'Compledado'
                   : 'Correo, teléfono, etc.'
               }}
@@ -63,22 +63,22 @@
       <li>
         <button
           class="stepper__step"
-          [attr.data-completed]="datos_academicos.valid"
+          [attr.data-completed]="datos_academicos_component().form.valid"
           (click)="paso_actual = 3"
           [attr.data-active]="paso_actual === 3"
         >
           <div class="stepper__step__number">
-            @if (datos_academicos.valid) { <i class="pi pi-check"></i> } @else {
+            @if (datos_academicos_component().form.valid) { <i class="pi pi-check"></i> } @else {
             3 }
           </div>
           <div>
             <p class="stepper__step__title">Datos académicos</p>
             <p
               class="stepper__step__description"
-              [class]="{ 'text-green-500': datos_academicos.valid }"
+              [class]="{ 'text-green-500': datos_academicos_component().form.valid }"
             >
               {{
-                datos_academicos.valid ? 'Compledado' : 'Estado, nivel, etc.'
+                datos_academicos_component().form.valid ? 'Compledado' : 'Estado, nivel, etc.'
               }}
             </p>
           </div>
@@ -88,22 +88,22 @@
       <li>
         <button
           class="stepper__step"
-          [attr.data-completed]="datos_de_salud.valid"
+          [attr.data-completed]="datos_de_salud_component().form.valid"
           (click)="paso_actual = 4"
           [attr.data-active]="paso_actual === 4"
         >
           <div class="stepper__step__number">
-            @if (datos_de_salud.valid) { <i class="pi pi-check"></i> } @else { 4
+            @if (datos_de_salud_component().form.valid) { <i class="pi pi-check"></i> } @else { 4
             }
           </div>
           <div>
             <p class="stepper__step__title">Datos de salud</p>
             <p
               class="stepper__step__description"
-              [class]="{ 'text-green-500': datos_de_salud.valid }"
+              [class]="{ 'text-green-500': datos_de_salud_component().form.valid }"
             >
               {{
-                datos_de_salud.valid
+                datos_de_salud_component().form.valid
                   ? 'Compledado'
                   : 'Tipo de sangre, discapacidad, etc.'
               }}
@@ -115,22 +115,22 @@
       <li>
         <button
           class="stepper__step"
-          [attr.data-completed]="datos_antropometricos.valid"
+          [attr.data-completed]="datos_antropometricos_component().form.valid"
           (click)="paso_actual = 5"
           [attr.data-active]="paso_actual === 5"
         >
           <div class="stepper__step__number">
-            @if (datos_antropometricos.valid) { <i class="pi pi-check"></i> }
+            @if (datos_antropometricos_component().form.valid) { <i class="pi pi-check"></i> }
             @else { 5 }
           </div>
           <div>
             <p class="stepper__step__title">Datos antropométricos</p>
             <p
               class="stepper__step__description"
-              [class]="{ 'text-green-500': datos_antropometricos.valid }"
+              [class]="{ 'text-green-500': datos_antropometricos_component().form.valid }"
             >
               {{
-                datos_antropometricos.valid
+                datos_antropometricos_component().form.valid
                   ? 'Compledado'
                   : 'Peso, estatura, etc.'
               }}
@@ -141,444 +141,12 @@
     </ul>
   </section>
 
-  <form class="flex-1" [formGroup]="formulario_actual!">
-    @if (paso_actual === 1) {
-    <h5>Datos Personales</h5>
-    <p class="text-sm">Información del estudiante</p>
-    <div class="grid mt-8 gap-4">
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label for="nombres">Nombres</label>
-          <input
-            pInputText
-            id="nombres"
-            placeholder="Juan José"
-            formControlName="nombres"
-            [class]="{
-                'ng-invalid ng-dirty':
-                  datos_personales.controls.nombres.invalid,
-              }"
-          />
-          <small class="text-red-500">
-            {{ datos_personales.get('nombres')?.errors | json }}
-          </small>
-        </div>
-        <div class="form_input" data-required>
-          <label for="apellidos">Apellidos</label>
-          <input
-            pInputText
-            id="apellidos"
-            placeholder="Pérez Rodrigues"
-            formControlName="apellidos"
-            [class]="{
-                'ng-invalid ng-dirty':
-                  datos_personales.controls.apellidos.invalid,
-              }"
-          />
-          <small class="text-red-500">
-            {{ datos_personales.get('apellidos')?.errors | json }}
-          </small>
-        </div>
-        <div class="form_input" data-required>
-          <label for="cedula">Cedula de identidad</label>
-
-          <p-inputnumber
-            locale="es-VE"
-            prefix="V-"
-            inputId="cedula"
-            placeholder="V-12.345.678"
-            formControlName="cedula"
-            [max]="99999999"
-          />
-
-          <small class="text-red-500">
-            {{ datos_personales.get('cedula')?.errors | json }}
-          </small>
-        </div>
-      </section>
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label for="fecha_de_nacimiento">Fecha de nacimiento</label>
-          <!-- TODO: el input no ocupa el mismo espacio que los demas -->
-          <p-datepicker
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            inputId="fecha_de_nacimiento"
-            formControlName="fecha_de_nacimiento"
-          />
-          <small class="text-red-500">
-            {{ datos_personales.get('fecha_de_nacimiento')?.errors | json }}
-          </small>
-        </div>
-        <div class="form_input" data-required>
-          <label>Estado en que nació</label>
-          <p-select
-            emptyMessage="Sin resultados"
-            [options]="ESTADOS_FEDERALES"
-            optionLabel="nombre"
-            optionValue="codigo"
-            placeholder="Selecione"
-            formControlName="estado_federal"
-          />
-          <small class="text-red-500">
-            {{ datos_personales.get('estado_federal')?.errors | json }}
-          </small>
-        </div>
-        <div class="form_input" data-required>
-          <label>Municipio en que nació</label>
-          <p-select
-            formControlName="municipio_federal"
-            emptyMessage="Sin resultados"
-            [options]="municipios"
-            optionValue="codigo"
-            optionLabel="nombre"
-            placeholder="Selecione"
-            [loading]="loadings.municipios"
-          />
-          <small class="text-red-500">
-            {{ datos_personales.get('municipio_federal')?.errors | json }}
-          </small>
-        </div>
-      </section>
-
-      <div class="form_input" data-required>
-        <label>Sexo</label>
-        <p-selectbutton
-          emptyMessage="Sin resultados"
-          [options]="[
-            { id: 'M', nombre: 'Masculino' },
-            { id: 'F', nombre: 'Femenino' }
-          ]"
-          optionLabel="nombre"
-          optionValue="id"
-          formControlName="sexo"
-        >
-          <ng-template #item let-it>
-            <i [class]="'pi ' + (it.id === 'M' ? 'pi-mars' : 'pi-venus')"></i>
-            {{ it.nombre }}
-          </ng-template>
-        </p-selectbutton>
-        <small class="text-red-500">
-          {{ datos_personales.get('sexo')?.errors | json }}
-        </small>
-      </div>
-    </div>
-    } @else if (paso_actual === 2) {
-    <h5>Datos de contacto</h5>
-    <p class="text-sm">Información de contacto</p>
-    <div class="grid mt-8 gap-4">
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label for="telefono">Teléfono</label>
-          <p-inputmask
-            mask="+58 (999) 999-9999"
-            autocomplete="off"
-            inputId="telefono"
-            [autofocus]="true"
-            [unmask]="true"
-            formControlName="telefono"
-            placeholder="+58 (424) 999-9999"
-          />
-          <small class="text-red-500">{{
-            datos_de_contacto.controls.telefono.errors | json
-          }}</small>
-        </div>
-        <div class="form_input" data-required>
-          <label>Correo electrónico</label>
-          <input
-            type="text"
-            placeholder="email@email.com"
-            pInputText
-            formControlName="email"
-            [email]="true"
-          />
-          <small class="text-red-500">{{
-            datos_de_contacto.controls.email.errors | json
-          }}</small>
-        </div>
-      </section>
-      <section class="form_group">
-        <div class="form_input">
-          <label for="">Dirección</label>
-          <textarea
-            placeholder="Liceo José Miguel Sanz. Avenida Bolívar, Maturín, Venezuela."
-            rows="5"
-            cols="30"
-            pTextarea
-            formControlName="direccion"
-          ></textarea>
-          <small class="text-red-500">{{
-            datos_de_contacto.controls.direccion.errors | json
-          }}</small>
-        </div>
-      </section>
-    </div>
-
-    } @else if (paso_actual === 3) {
-    <h5>Datos Académicos</h5>
-    <p class="text-sm">Información académica del estudiante</p>
-    <div class="grid mt-8 gap-4">
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label for="">Tipo de estudiante</label>
-          <p-select
-            emptyMessage="Sin resultados"
-            [options]="TIPOS_DE_ESTUDIANTE"
-            optionValue="id"
-            optionLabel="nombre"
-            formControlName="tipo_de_estudiante"
-            placeholder="Selecione"
-          >
-            <ng-template let-tipo #item #selectedItem>
-              <aw-tag-tipo-de-estudiante [tipo]="tipo.id" />
-            </ng-template>
-          </p-select>
-        </div>
-      </section>
-      <section
-        class="form_group"
-        *ngIf="
-          +datos_academicos.controls.tipo_de_estudiante.value! !==
-          TIPO_DE_ESTUDIANTE.EGRESADO
-        "
-      >
-        <div class="form_input" data-required>
-          <label for="estado_academico">Estado académico</label>
-          <p-select
-            emptyMessage="Sin resultados"
-            [options]="ESTADOS_ACADEMICOS"
-            optionValue="id"
-            optionLabel="nombre"
-            formControlName="estado_academico"
-            placeholder="Selecione"
-          >
-            <ng-template let-estado #selectedItem>
-              <aw-tag-estado-academico [estado]="estado.id" />
-            </ng-template>
-            <ng-template let-estado #item>
-              <aw-tag-estado-academico [estado]="estado.id" />
-            </ng-template>
-          </p-select>
-        </div>
-        <div
-          class="form_input"
-          data-required
-          *ngIf="
-            +datos_academicos.get('estado_academico')!.value! !==
-            ESTADO_ACADEMICO.EGRESADO
-          "
-        >
-          <label for="estado_academico">Nivel académico</label>
-          <p-select
-            emptyMessage="Sin resultados"
-            formControlName="nivel_academico"
-            [options]="NIVELES_ACADEMICOS.slice(0, 5)"
-            optionValue="numero"
-            optionLabel="nombre"
-            placeholder="Selecione"
-          >
-          </p-select>
-        </div>
-        <div
-          class="form_input"
-          data-required
-          *ngIf="
-            datos_academicos.get('nivel_academico')!.value !== null &&
-            +datos_academicos.get('estado_academico')!.value! !==
-              ESTADO_ACADEMICO.EGRESADO
-          "
-        >
-          <label for="estado_academico">Seccion</label>
-          <p-select
-            emptyMessage="Sin resultados"
-            formControlName="seccion"
-            [options]="secciones"
-            optionValue="seccion"
-            optionLabel="seccion"
-            placeholder="Selecione"
-          >
-            <ng-template let-seccion #item #selectedItem>
-              <aw-tag-seccion [seccion]="seccion.seccion"></aw-tag-seccion>
-            </ng-template>
-          </p-select>
-        </div>
-      </section>
-      <section class="form_group">
-        <div
-          class="form_input"
-          data-required
-          *ngIf="
-            +datos_academicos.controls.tipo_de_estudiante.value! !==
-              TIPO_DE_ESTUDIANTE.EGRESADO &&
-            +datos_academicos.controls.estado_academico.value! !==
-              ESTADO_ACADEMICO.EGRESADO
-          "
-        >
-          <label for="fecha_de_inscripcion">Fecha de inscripcion</label>
-          <p-datepicker
-            [showButtonBar]="true"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            inputId="fecha_de_inscripcion"
-            formControlName="fecha_de_inscripcion"
-          />
-          <small class="text-red-500">
-            {{ datos_academicos.get('fecha_de_inscripcion')?.errors | json }}
-          </small>
-        </div>
-        <div
-          class="form_input"
-          data-required
-          *ngIf="
-            +datos_academicos.controls.tipo_de_estudiante.value! ===
-              TIPO_DE_ESTUDIANTE.EGRESADO ||
-            +datos_academicos.controls.estado_academico.value! ===
-              ESTADO_ACADEMICO.EGRESADO
-          "
-        >
-          <label for="fecha_de_egreso">Fecha de egreso</label>
-          <p-datepicker
-            [showButtonBar]="true"
-            view="month"
-            dateFormat="mm/yy"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            inputId="fecha_de_egreso"
-            formControlName="fecha_de_egreso"
-          />
-          <small class="text-red-500">
-            {{ datos_academicos.get('fecha_de_egreso')?.errors | json }}
-          </small>
-        </div>
-      </section>
-    </div>
-    } @else if (paso_actual === 4) {
-    <h5>Datos de salud</h5>
-    <p class="text-sm">Información del médica estudiante</p>
-    <div class="grid mt-8 gap-4">
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label for="tipo_de_sangre">Tipo de sangre</label>
-          <p-select
-            inputId="tipo_de_sangre"
-            [options]="TIPOS_DE_SANGRE"
-            optionLabel="nombre"
-            optionValue="id"
-            formControlName="tipo_de_sangre"
-          ></p-select>
-          <small class="text-red-500">{{
-            datos_de_salud.get('tipo_de_sangre')!.errors | json
-          }}</small>
-        </div>
-      </section>
-      <section class="form_group">
-        <div class="form_input" data-required>
-          <label>Discapacidad</label>
-          <p-selectbutton
-            formControlName="discapacidad"
-            [options]="[
-              { valor: false, nombre: 'No' },
-              { valor: true, nombre: 'Si' }
-            ]"
-            optionLabel="nombre"
-            optionValue="valor"
-            formControlName="discapacidad"
-          >
-          </p-selectbutton>
-          <small class="text-red-500">
-            {{ datos_de_salud.get('discapacidad')?.errors | json }}
-          </small>
-        </div>
-      </section>
-      <section
-        class="form_group"
-        *ngIf="datos_de_salud.controls.discapacidad.value"
-      >
-        <div class="form_input" data-required>
-          <label for="descripcion_discapacidad">Tipo de dispacidad</label>
-          <p-select
-            [options]="TIPOS_DE_DISCAPACIDAD"
-            optionValue="id"
-            optionLabel="nombre"
-            formControlName="tipo_de_discapacidad"
-          ></p-select>
-          <small class="text-red-500">{{
-            datos_de_salud.controls.tipo_de_discapacidad.errors | json
-          }}</small>
-        </div>
-      </section>
-      <div
-        class="form_input"
-        *ngIf="datos_de_salud.controls.discapacidad.value"
-      >
-        <label for="descripcion_discapacidad"
-          >Descripción de la dispacidad (opcional)</label
-        >
-        <textarea
-          placeholder="Descripción"
-          rows="5"
-          cols="30"
-          pTextarea
-          id="descripcion_discapacidad"
-          formControlName="descripcion_discapacidad"
-        ></textarea>
-        <small class="text-red-500">{{
-          datos_de_salud.controls.descripcion_discapacidad.errors | json
-        }}</small>
-      </div>
-    </div>
-    } @else if (paso_actual === 5) {
-    <h5>Datos antropométricos</h5>
-    <p class="text-sm">Información antropométrica del estudiante</p>
-    <div class="grid mt-8 gap-4">
-      <section class="form_group">
-        <div class="form_input">
-          <label for="peso">Peso</label>
-          <p-inputnumber
-            [max]="999"
-            locale="es-VE"
-            suffix=" kg"
-            inputId="peso"
-            formControlName="peso"
-            placeholder="75 kg"
-          />
-        </div>
-        <div class="form_input">
-          <label for="estatura">Estatura</label>
-          <p-inputnumber
-            [max]="999"
-            locale="es-VE"
-            suffix=" cm"
-            inputId="estatura"
-            formControlName="estatura"
-            placeholder="175 cm"
-          />
-        </div>
-      </section>
-      <section class="form_group">
-        <div class="form_input">
-          <label for="chemise">Chemise</label>
-          <p-inputnumber
-            [max]="999"
-            locale="es-VE"
-            inputId="chemise"
-            formControlName="chemise"
-            placeholder="12"
-          />
-        </div>
-        <div class="form_input">
-          <label for="pantalon">Pantalón</label>
-          <p-inputnumber
-            [max]="999"
-            locale="es-VE"
-            inputId="pantalon"
-            formControlName="pantalon"
-            placeholder="30"
-          />
-        </div>
-      </section>
-    </div>
-    }
+  <section class="flex-1">
+    <aw-form-datos-personales [class]="{hidden: paso_actual !== 1}"/>
+    <aw-form-datos-de-contacto [class]="{hidden: paso_actual !== 2}"/>
+    <aw-form-datos-academicos [class]="{hidden: paso_actual !== 3}"/>
+    <aw-form-datos-de-salud [class]="{hidden: paso_actual !== 4}"/>
+    <aw-form-datos-antropometricos [class]="{hidden: paso_actual !== 5}"/>
     <div class="flex gap-4 mt-8 justify-end">
       <p-button
         *ngIf="paso_actual > 1"
@@ -607,5 +175,5 @@
 
       }
     </div>
-  </form>
+  </section>
 </section>
