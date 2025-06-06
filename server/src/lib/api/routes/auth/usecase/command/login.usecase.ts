@@ -1,8 +1,10 @@
 import { SwaiError, SwaiErrorCode, UsuarioPayload } from '@swai/core';
 import { InferOutput, object, parser, pipe, string, trim } from 'valibot';
 import { public_procedure } from '../../../../procedures';
-import {V3} from 'paseto';
+import * as bcrypt from "bcryptjs";
+import { V3 } from 'paseto';
 const {encrypt} = V3;
+
 
 export const LoginSchemaDTO = object({
   usuario: pipe(string(), trim()),
@@ -16,16 +18,26 @@ export const login = public_procedure
   .mutation<UsuarioPayload>(async ({ ctx, input }) => {
 
     const usuario = await ctx.prisma.usuarios.findUnique({
-      where: { nombre_de_usuario: input.usuario, clave: input.clave },
+      where: { nombre_de_usuario: input.usuario },
       select: {
         id: true,
         nombre_de_usuario: true,
         cedula: true,
         rol: true,
+        clave: true
       },
     })
 
     if (!usuario) {
+      throw new SwaiError({
+        codigo: SwaiErrorCode.AUTENTICACION_CREDENCIALES_INVALIDAS,
+        mensaje: 'Usuario o clave incorrectos',
+      });
+    }
+
+
+
+    if (!(await bcrypt.compare(input.clave, usuario.clave))) {
       throw new SwaiError({
         codigo: SwaiErrorCode.AUTENTICACION_CREDENCIALES_INVALIDAS,
         mensaje: 'Usuario o clave incorrectos',
