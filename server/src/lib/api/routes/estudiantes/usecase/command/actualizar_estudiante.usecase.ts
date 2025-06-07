@@ -1,4 +1,5 @@
 import {
+  AreaDeFromacionSchema,
   CedulaSchema,
   DiscapacitadoSchema,
   ESTADO_ACADEMICO,
@@ -14,7 +15,15 @@ import {
   TIPO_DE_ESTUDIANTE,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
-import { nullable, nullish, object, omit, parser, partial } from 'valibot';
+import {
+  array,
+  nullable,
+  nullish,
+  object,
+  omit,
+  parser,
+  partial,
+} from 'valibot';
 import { obtener_estudiante_fn } from '../query/obtener_estudiante.usecase';
 
 // Definición del esquema para la actualización del estudiante
@@ -37,6 +46,7 @@ export const ActualizarEstudianteSchemaDTO = object({
       seccion: nullable(SeccionSchema.entries.seccion),
       estado_academico: nullish(EstudianteSchema.entries.estado_academico),
       discapacidad: nullable(omit(DiscapacitadoSchema, ['cedula'])),
+      materias_pendientes: nullish(array(AreaDeFromacionSchema.entries.codigo)),
     })
   ),
 });
@@ -54,6 +64,7 @@ export const actualizar_estudiante = admin_procedure
       seccion = null;
       actualizacion.estado_academico = ESTADO_ACADEMICO.EGRESADO;
       actualizacion.nivel_academico = NIVEL_ACADEMICO.Egresado;
+      actualizacion.materias_pendientes = null;
     } else if (actualizacion.nivel_academico) {
       const es_egresado =
         actualizacion.nivel_academico === NIVEL_ACADEMICO.Egresado;
@@ -64,6 +75,7 @@ export const actualizar_estudiante = admin_procedure
         actualizacion.tipo = TIPO_DE_ESTUDIANTE.EGRESADO;
         actualizacion.estado_academico = ESTADO_ACADEMICO.EGRESADO;
         seccion = null;
+        actualizacion.materias_pendientes = null;
       } else {
         const seccion_db = await ctx.prisma.secciones.findFirst({
           where: {
@@ -85,10 +97,6 @@ export const actualizar_estudiante = admin_procedure
         seccion = seccion_db.id;
       }
     }
-
-    console.log({
-      seccion,
-    });
 
     // Obtener estudiante y discapacidad en una transacción
     const [estudiante, discapacitado] = await ctx.prisma.$transaction([
@@ -155,6 +163,28 @@ export const actualizar_estudiante = admin_procedure
         },
       }),
     ]);
+
+    // actulizar materias pendientes
+
+    if (
+      actualizacion.materias_pendientes ||
+      actualizacion.materias_pendientes === null
+    ) {
+      await ctx.prisma.materias_pendientes.deleteMany({
+        where: {
+          estudiante: estudiante.cedula,
+        },
+      });
+
+      if (actualizacion.materias_pendientes !== null) {
+        await ctx.prisma.materias_pendientes.createMany({
+          data: actualizacion.materias_pendientes.map((area_de_formacion) => ({
+            estudiante: estudiante.cedula,
+            area_de_formacion,
+          })),
+        });
+      }
+    }
 
     // Retornar el estudiante actualizado
     return await obtener_estudiante_fn({

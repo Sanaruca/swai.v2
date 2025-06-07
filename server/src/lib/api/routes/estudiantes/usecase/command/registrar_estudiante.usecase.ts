@@ -9,15 +9,25 @@ import {
   ESTADO_CIVIL,
   PersonaSchema,
   DiscapacitadoSchema,
+  AreaDeFromacionSchema,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
-import { omit, object, nullish, parser, parse, InferOutput } from 'valibot';
+import {
+  omit,
+  object,
+  nullish,
+  parser,
+  parse,
+  InferOutput,
+  array,
+} from 'valibot';
 
 export const RegistrarEstudianteSchemaDTO = object({
   ...omit(PersonaSchema, ['estado_civil', 'ultima_actualizacion']).entries,
   ...omit(EstudianteSchema, ['ultima_actualizacion']).entries,
   estado_academico: nullish(EstudianteSchema.entries.estado_academico),
   discapacidad: nullish(omit(DiscapacitadoSchema, ['cedula'])),
+  materias_pendientes: nullish(array(AreaDeFromacionSchema.entries.codigo)),
 });
 
 export type RegistrarEstudianteDTO = InferOutput<
@@ -58,6 +68,7 @@ export const registrar_estudiante = admin_procedure
       input.seccion = null;
       input.tipo = TIPO_DE_ESTUDIANTE.EGRESADO;
       input.estado_academico = ESTADO_ACADEMICO.EGRESADO;
+      input.materias_pendientes = null;
     } else {
       console.log('validando');
       parse(EstudianteSchema.entries.estado_academico, input.estado_academico);
@@ -91,6 +102,15 @@ export const registrar_estudiante = admin_procedure
             ultima_actualizacion: new Date(),
             municipio_de_nacimiento: input.municipio_de_nacimiento,
             fecha_de_egreso: input.fecha_de_egreso,
+
+            materias_pendientes: {
+              createMany: {
+                data:
+                  input.materias_pendientes?.map((it) => ({
+                    area_de_formacion: it,
+                  })) || [],
+              },
+            },
           },
         },
       },

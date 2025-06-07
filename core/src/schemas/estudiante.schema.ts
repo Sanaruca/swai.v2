@@ -1,4 +1,5 @@
 import {
+  array,
   date,
   enum_,
   InferOutput,
@@ -25,6 +26,7 @@ import { SeccionSchema } from './seccion.schema';
 import { PersonaSchemaDTO } from './persona.schema';
 import { MunicipioSchemaDTO } from './municipio.schema';
 import { SeccionSchemaDTO } from './seccion.schema.dto';
+import { AreaDeFromacionSchema } from './area_de_formacion.schema';
 
 export const EstudianteSchema = object({
   cedula: number(),
@@ -55,6 +57,7 @@ export const EstudianteSchemaDTO = object({
   tipo: TipoDeEstudianteSchema,
   municipio_de_nacimiento: MunicipioSchemaDTO,
   seccion: nullish(SeccionSchemaDTO),
+  materias_pendientes: nullish(array(AreaDeFromacionSchema)),
 });
 
 export type EstudianteDTO = InferOutput<typeof EstudianteSchemaDTO>;

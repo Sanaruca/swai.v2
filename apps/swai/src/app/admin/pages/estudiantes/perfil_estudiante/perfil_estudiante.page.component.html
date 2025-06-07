@@ -129,6 +129,26 @@
       [valor]="estudiante.tipo.nombre"
     />
     <!-- TODO: materias pendientes -->
+     @if (estudiante.materias_pendientes?.length) {
+       <aw-campo-valor campo="Materias Pendientes">
+         <ng-template #valor>
+           <div class="flex gap-1">
+           @for (af of estudiante.materias_pendientes; track $index) {
+
+              <p-tag
+              [value]="af.nombre"
+              [rounded]="true"
+              styleClass="bg-gray-100 text-current dark:bg-surface-800"
+              >
+              <div class="flex items-center gap-1">
+                <i class="pi pi-book"></i>
+              </div>
+            </p-tag>
+          }
+        </div>
+          </ng-template>
+        </aw-campo-valor>
+      }
     <aw-campo-valor campo="Estado" [valor]="estudiante.estado_academico">
       <ng-template #valor let-it>
         <aw-tag-estado-academico [estado]="it.id" />

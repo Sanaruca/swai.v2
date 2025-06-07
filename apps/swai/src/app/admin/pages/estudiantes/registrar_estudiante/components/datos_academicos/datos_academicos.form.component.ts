@@ -1,11 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import {
   EstadoAcademicoTagComponent,
@@ -13,6 +8,7 @@ import {
   TipoDeEstudianteTagComponent,
 } from '../../../../../../common/components';
 import {
+  AreaDeFromacion,
   ESTADO_ACADEMICO,
   ESTADOS_ACADEMICOS,
   NIVELES_ACADEMICOS,
@@ -26,6 +22,7 @@ import { NivelAcademicoConSeccionesDTO } from '@swai/server';
 import { ActivatedRoute } from '@angular/router';
 import { merge } from 'rxjs';
 import { validateIf } from '../../../../../../common/utils/angular/forms/validateif';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 @Component({
@@ -39,6 +36,7 @@ import { validateIf } from '../../../../../../common/utils/angular/forms/validat
     SeccionTagComponent,
     SelectButtonModule,
     DatePickerModule,
+    MultiSelectModule
   ],
   templateUrl: './datos_academicos.form.component.html',
   styleUrl: './datos_academicos.form.component.sass',
@@ -67,12 +65,16 @@ export class DatosAcademicosFormComponent implements OnInit {
     seccion: new FormControl<string | null>(null),
     fecha_de_inscripcion: new FormControl<string | null>(null),
     fecha_de_egreso: new FormControl<string | null>(null),
+    posee_materias_pendientes: new FormControl<boolean>(false),
+    materias_pendientes:new FormControl<string[]>([])
   });
 
   /* .................................. data .................................. */
 
   protected niveles_academicos: NivelAcademicoConSeccionesDTO[] =
     this.route.snapshot.data['niveles_academicos'];
+  protected areas_de_formacion: AreaDeFromacion[] =
+    this.route.snapshot.data['areas_de_formacion'];
 
   /* ................................. getters ................................ */
 
@@ -157,6 +159,16 @@ export class DatosAcademicosFormComponent implements OnInit {
             }
           }
         );
+
+
+        this.datos_academicos.controls.posee_materias_pendientes.valueChanges.subscribe((posee_materias_pendientes) => {
+          if (posee_materias_pendientes) {
+            this.datos_academicos.controls.materias_pendientes.setValidators([Validators.required]);
+          } else {
+            this.datos_academicos.controls.materias_pendientes.clearValidators();
+          }
+          this.datos_academicos.controls.materias_pendientes.updateValueAndValidity();
+        })
     
   }
 

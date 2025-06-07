@@ -1,3 +1,4 @@
+export * from './obtener_areas_de_formacion.usecase';
 export * from './obtener_busqueda_rapida.usecase';
 export * from './obtener_cantidad_de_estudiantes.usecase';
 export * from './obtener_cantidad_de_estudiantes_por_nivel_academico.usecase';

@@ -18,10 +18,11 @@ import {
   EstudianteSchema,
   Municipio,
   NIVELES_ACADEMICOS,
-  PersonaSchema, TIPO_DE_ESTUDIANTE,
+  PersonaSchema,
+  TIPO_DE_ESTUDIANTE,
   TIPOS_DE_DISCAPACIDAD,
   TIPOS_DE_ESTUDIANTE,
-  TIPOS_DE_SANGRE
+  TIPOS_DE_SANGRE,
 } from '@swai/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../services/api.service';
@@ -60,9 +61,8 @@ import { DatosAntropometricosFormComponent } from './components/datos_antropomet
   styleUrl: './registrar_estudiante.page.component.scss',
 })
 export class RegistrarEstudiantePageComponent implements OnInit {
-
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
   /* ................................. inputs ................................. */
   @Input() modo!: 'registrar' | 'editar';
@@ -96,9 +96,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
 
   // TODO: Sospecho que el scrollbar de ngprime esta provocando que se ejecute el detector un numero incecesaro de veces
 
-
   protected paso_actual = 1;
-
 
   /* ............................... constantes ............................... */
   protected TIPOS_DE_DISCAPACIDAD = TIPOS_DE_DISCAPACIDAD;
@@ -115,16 +113,25 @@ export class RegistrarEstudiantePageComponent implements OnInit {
 
   /* ............................... components ............................... */
 
-  protected datos_personales_component = viewChild.required(DatosPersonalesFormComponent);
+  protected datos_personales_component = viewChild.required(
+    DatosPersonalesFormComponent
+  );
 
-  protected datos_de_contacto_component = viewChild.required(DatosDeContactoFormComponent);
+  protected datos_de_contacto_component = viewChild.required(
+    DatosDeContactoFormComponent
+  );
 
-  protected datos_academicos_component = viewChild.required(DatosAcademicosFormComponent);
+  protected datos_academicos_component = viewChild.required(
+    DatosAcademicosFormComponent
+  );
 
-  protected datos_de_salud_component = viewChild.required(DatosDeSaludFormComponent);
+  protected datos_de_salud_component = viewChild.required(
+    DatosDeSaludFormComponent
+  );
 
-  protected datos_antropometricos_component = viewChild.required(DatosAntropometricosFormComponent);
-  
+  protected datos_antropometricos_component = viewChild.required(
+    DatosAntropometricosFormComponent
+  );
 
   /* .................................. init .................................. */
   ngOnInit(): void {
@@ -146,7 +153,6 @@ export class RegistrarEstudiantePageComponent implements OnInit {
 
       this.init_modo(modo!);
     });
-
   }
 
   /* ................................. metodos ................................ */
@@ -180,6 +186,9 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         direccion: estudiante.direccion ?? null,
       });
 
+      const posee_materias_pendientes =
+        !!estudiante.materias_pendientes?.length;
+
       this.datos_academicos_component().form.setValue({
         tipo_de_estudiante: estudiante.tipo.id!,
         estado_academico: estudiante.estado_academico.id,
@@ -187,6 +196,10 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         seccion: estudiante.seccion?.seccion ?? null,
         fecha_de_inscripcion: estudiante.fecha_de_inscripcion as any,
         fecha_de_egreso: estudiante.fecha_de_egreso as any,
+        posee_materias_pendientes,
+        materias_pendientes: posee_materias_pendientes
+          ? estudiante.materias_pendientes?.map((mp) => mp.codigo) ?? []
+          : null,
       });
 
       this.datos_de_salud_component().form.setValue({
@@ -213,42 +226,59 @@ export class RegistrarEstudiantePageComponent implements OnInit {
   private async actualizar() {
     this.loadings.enviando_datos = true;
 
-    const discapacidad: Omit<Discapacitado, 'cedula'> | null = this
-      .datos_de_salud_component().form.controls.discapacidad.value
-      ? {
-          descripcion:
-            this.datos_de_salud_component().form.controls.descripcion_discapacidad.value,
-          tipo_de_discapacidad:
-            this.datos_de_salud_component().form.controls.tipo_de_discapacidad.value!,
-        }
-      : null;
+    const discapacidad: Omit<Discapacitado, 'cedula'> | null =
+      this.datos_de_salud_component().form.controls.discapacidad.value
+        ? {
+            descripcion:
+              this.datos_de_salud_component().form.controls
+                .descripcion_discapacidad.value,
+            tipo_de_discapacidad:
+              this.datos_de_salud_component().form.controls.tipo_de_discapacidad
+                .value!,
+          }
+        : null;
 
     try {
       await this.api.client.estudiantes.actualizar_estudiante.mutate({
         estudiante: this.estudiante!.cedula,
         actualizacion: {
-          seccion: this.datos_academicos_component().form.controls.seccion.value as any,
-          direccion: this.datos_de_contacto_component().form.controls.direccion.value!,
+          seccion: this.datos_academicos_component().form.controls.seccion
+            .value as any,
+          direccion:
+            this.datos_de_contacto_component().form.controls.direccion.value!,
           nivel_academico:
-            +this.datos_academicos_component().form.controls.nivel_academico.value!,
-          tipo: +this.datos_academicos_component().form.controls.tipo_de_estudiante.value!,
+            +this.datos_academicos_component().form.controls.nivel_academico
+              .value!,
+          tipo: +this.datos_academicos_component().form.controls
+            .tipo_de_estudiante.value!,
           correo: this.datos_de_contacto_component().form.controls.email.value!,
-          tipo_de_sangre: +this.datos_de_salud_component().form.controls.tipo_de_sangre.value!,
-          nombres: this.datos_personales_component().form.controls.nombres.value!,
-          apellidos: this.datos_personales_component().form.controls.apellidos.value!,
+          tipo_de_sangre:
+            +this.datos_de_salud_component().form.controls.tipo_de_sangre
+              .value!,
+          nombres:
+            this.datos_personales_component().form.controls.nombres.value!,
+          apellidos:
+            this.datos_personales_component().form.controls.apellidos.value!,
           discapacidad,
-          telefono: this.datos_de_contacto_component().form.controls.telefono.value!,
+          telefono:
+            this.datos_de_contacto_component().form.controls.telefono.value!,
           fecha_de_egreso:
             parse(
               EstudianteSchema.entries.fecha_de_egreso,
-              this.datos_academicos_component().form.controls.fecha_de_egreso.value
+              this.datos_academicos_component().form.controls.fecha_de_egreso
+                .value
             ) ?? null,
           fecha_de_inscripcion: parse(
             EstudianteSchema.entries.fecha_de_inscripcion,
-            this.datos_academicos_component().form.controls.fecha_de_inscripcion.value
+            this.datos_academicos_component().form.controls.fecha_de_inscripcion
+              .value
           ),
           estado_academico:
-            +this.datos_academicos_component().form.controls.estado_academico.value!,
+            +this.datos_academicos_component().form.controls.estado_academico
+              .value!,
+          materias_pendientes:
+            this.datos_academicos_component().form.controls.materias_pendientes
+              .value,
         },
       });
 
@@ -269,48 +299,67 @@ export class RegistrarEstudiantePageComponent implements OnInit {
   private async registrar() {
     this.loadings.enviando_datos = true;
 
-    const discapacidad: Omit<Discapacitado, 'cedula'> | null = this
-      .datos_de_salud_component().form.controls.discapacidad.value
-      ? {
-          descripcion:
-            this.datos_de_salud_component().form.controls.descripcion_discapacidad.value,
-          tipo_de_discapacidad:
-            this.datos_de_salud_component().form.controls.tipo_de_discapacidad.value!,
-        }
-      : null;
+    const discapacidad: Omit<Discapacitado, 'cedula'> | null =
+      this.datos_de_salud_component().form.controls.discapacidad.value
+        ? {
+            descripcion:
+              this.datos_de_salud_component().form.controls
+                .descripcion_discapacidad.value,
+            tipo_de_discapacidad:
+              this.datos_de_salud_component().form.controls.tipo_de_discapacidad
+                .value!,
+          }
+        : null;
 
     try {
       const estudiante =
         await this.api.client.estudiantes.registrar_estudiante.mutate({
-          direccion: this.datos_de_contacto_component().form.controls.direccion.value!,
+          direccion:
+            this.datos_de_contacto_component().form.controls.direccion.value!,
           nivel_academico:
-            +this.datos_academicos_component().form.controls.nivel_academico.value!,
-          tipo: +this.datos_academicos_component().form.controls.tipo_de_estudiante.value!,
+            +this.datos_academicos_component().form.controls.nivel_academico
+              .value!,
+          tipo: +this.datos_academicos_component().form.controls
+            .tipo_de_estudiante.value!,
           sexo: this.datos_personales_component().form.controls.sexo.value!,
           correo: this.datos_de_contacto_component().form.controls.email.value!,
-          tipo_de_sangre: +this.datos_de_salud_component().form.controls.tipo_de_sangre.value!,
-          cedula: +this.datos_personales_component().form.controls.cedula.value!,
-          nombres: this.datos_personales_component().form.controls.nombres.value!,
-          apellidos: this.datos_personales_component().form.controls.apellidos.value!,
+          tipo_de_sangre:
+            +this.datos_de_salud_component().form.controls.tipo_de_sangre
+              .value!,
+          cedula:
+            +this.datos_personales_component().form.controls.cedula.value!,
+          nombres:
+            this.datos_personales_component().form.controls.nombres.value!,
+          apellidos:
+            this.datos_personales_component().form.controls.apellidos.value!,
           discapacidad,
           fecha_de_nacimiento: parse(
             PersonaSchema.entries.fecha_de_nacimiento,
-            this.datos_personales_component().form.controls.fecha_de_nacimiento.value
+            this.datos_personales_component().form.controls.fecha_de_nacimiento
+              .value
           ),
-          telefono: this.datos_de_contacto_component().form.controls.telefono.value!,
+          telefono:
+            this.datos_de_contacto_component().form.controls.telefono.value!,
           fecha_de_egreso:
             parse(
               EstudianteSchema.entries.fecha_de_egreso,
-              this.datos_academicos_component().form.controls.fecha_de_egreso.value
+              this.datos_academicos_component().form.controls.fecha_de_egreso
+                .value
             ) ?? null,
           fecha_de_inscripcion: parse(
             EstudianteSchema.entries.fecha_de_inscripcion,
-            this.datos_academicos_component().form.controls.fecha_de_inscripcion.value
+            this.datos_academicos_component().form.controls.fecha_de_inscripcion
+              .value
           ),
           municipio_de_nacimiento:
-            this.datos_personales_component().form.controls.municipio_federal.value!,
+            this.datos_personales_component().form.controls.municipio_federal
+              .value!,
           estado_academico:
-            +this.datos_academicos_component().form.controls.estado_academico.value!,
+            +this.datos_academicos_component().form.controls.estado_academico
+              .value!,
+          materias_pendientes:
+            this.datos_academicos_component().form.controls.materias_pendientes
+              .value,
         });
 
       this.toast.add({
@@ -332,7 +381,6 @@ export class RegistrarEstudiantePageComponent implements OnInit {
     }
     this.loadings.enviando_datos = false;
   }
-
 
   /* ................................. getters ................................ */
 

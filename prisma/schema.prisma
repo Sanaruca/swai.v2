@@ -30,10 +30,11 @@ model af_docentes {
 }
 
 model areas_de_formacion {
-  codigo      String        @id(map: "area_de_formacion_pkey") @db.VarChar(3)
-  nombre      String        @db.VarChar(100)
-  af_docentes af_docentes[]
-  pensum      pensum[]
+  codigo              String                @id(map: "area_de_formacion_pkey") @db.VarChar(3)
+  nombre              String                @db.VarChar(100)
+  af_docentes         af_docentes[]
+  pensum              pensum[]
+  materias_pendientes materias_pendientes[]
 
   @@schema("public")
 }
@@ -49,18 +50,18 @@ model discapacitados {
 }
 
 model empleados {
-  cedula               Int      @id
-  rif                  String   @db.VarChar(255)
+  cedula               Int                 @id
+  rif                  String              @db.VarChar(255)
   tipo_de_empleado     Int
-  codigo_carnet_patria String   @db.VarChar(255)
-  centro_de_votacion   String   @db.VarChar(11)
-  fecha_de_ingreso     DateTime @default(now()) @db.Timestamp(6)
-  ultima_actualizacion DateTime @default(now()) @updatedAt @db.Timestamp(0)
-  administrativos     administrativos?
-  personas            personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: " persona_fk")
-  centros_de_votacion centros_de_votacion @relation(fields: [centro_de_votacion], references: [codigo], map: "centro_de_votacion_fk")
-  tipos_de_empleado   tipos_de_empleado   @relation(fields: [tipo_de_empleado], references: [id], map: "tipo_de_empleado_fk")
-  profesores          profesores?
+  codigo_carnet_patria String              @db.VarChar(255)
+  centro_de_votacion   String              @db.VarChar(11)
+  fecha_de_ingreso     DateTime            @default(now()) @db.Timestamp(6)
+  ultima_actualizacion DateTime            @default(now()) @updatedAt @db.Timestamp(0)
+  administrativos      administrativos?
+  personas             personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade, map: " persona_fk")
+  centros_de_votacion  centros_de_votacion @relation(fields: [centro_de_votacion], references: [codigo], map: "centro_de_votacion_fk")
+  tipos_de_empleado    tipos_de_empleado   @relation(fields: [tipo_de_empleado], references: [id], map: "tipo_de_empleado_fk")
+  profesores           profesores?
 
   @@schema("public")
 }
@@ -105,26 +106,38 @@ model estados_de_un_recurso {
 }
 
 model estudiantes {
-  cedula                  Int                 @id
-  fecha_de_inscripcion    DateTime?           @db.Date
-  estado_academico        Int                 @default(1)
+  cedula                  Int                   @id
+  fecha_de_inscripcion    DateTime?             @db.Date
+  estado_academico        Int                   @default(1)
   nivel_academico         Int
-  seccion                 String?             @db.VarChar
+  seccion                 String?               @db.VarChar
   peso                    Int?
   estatura                Int?
   calzado                 Int?
   chemise                 Int?
   pantalon                Int?
-  ultima_actualizacion    DateTime            @default(now()) @updatedAt @db.Timestamp(0)
-  municipio_de_nacimiento String              @db.VarChar(4)
+  ultima_actualizacion    DateTime              @default(now()) @updatedAt @db.Timestamp(0)
+  municipio_de_nacimiento String                @db.VarChar(4)
   tipo                    Int
-  fecha_de_egreso         DateTime?           @db.Date
-  personas                personas            @relation(fields: [cedula], references: [cedula], onDelete: Cascade)
-  estados_academicos      estados_academicos  @relation(fields: [estado_academico], references: [id])
-  municipios              municipios          @relation(fields: [municipio_de_nacimiento], references: [codigo], map: "estudiantes_municipios_fk")
-  niveles_academicos      niveles_academicos  @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction)
-  secciones               secciones?          @relation(fields: [seccion], references: [id], map: "estudiantes_salones_de_clase_fk")
-  tipos_de_estudiante     tipos_de_estudiante @relation(fields: [tipo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tipo_de_estudiante_fk")
+  fecha_de_egreso         DateTime?             @db.Date
+  personas                personas              @relation(fields: [cedula], references: [cedula], onDelete: Cascade)
+  estados_academicos      estados_academicos    @relation(fields: [estado_academico], references: [id])
+  municipios              municipios            @relation(fields: [municipio_de_nacimiento], references: [codigo], map: "estudiantes_municipios_fk")
+  niveles_academicos      niveles_academicos    @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction)
+  secciones               secciones?            @relation(fields: [seccion], references: [id], map: "estudiantes_salones_de_clase_fk")
+  tipos_de_estudiante     tipos_de_estudiante   @relation(fields: [tipo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tipo_de_estudiante_fk")
+  materias_pendientes     materias_pendientes[]
+
+  @@schema("public")
+}
+
+model materias_pendientes {
+  id                Int    @id @default(autoincrement())
+  estudiante        Int
+  area_de_formacion String @db.VarChar(3)
+
+  areas_de_formacion areas_de_formacion @relation(fields: [area_de_formacion], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  estudiantes        estudiantes        @relation(fields: [estudiante], references: [cedula], onDelete: NoAction, onUpdate: NoAction)
 
   @@schema("public")
 }

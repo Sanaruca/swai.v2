@@ -12,6 +12,7 @@ export * from './estado_de_un_recurso.schema';
 export * from './estado_federal.schema';
 export * from './estudiante.schema';
 export * from './id_nombre.schema';
+export * from './meteria_pendiente.schema';
 export * from './municipio.schema';
 export * from './nivel_academico.schema';
 export * from './parroquia.schema';

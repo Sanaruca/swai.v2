@@ -1,3 +1,6 @@
+<pre>
+  {{datos_academicos.value | json}}
+</pre>
 <form [formGroup]="datos_academicos">
       <h5>Datos Académicos</h5>
     <p class="text-sm">Información académica del estudiante</p>
@@ -89,17 +92,17 @@
       </section>
       <section class="form_group">
         <div class="form_input" data-required>
-          <label for="materias_pendientes">Materias Pendientes</label>
+          <label for="posee_materias_pendientes">¿Posee Materias Pendientes?</label>
           <p-selectbutton
-            formControlName="materias_pendientes"
+            formControlName="posee_materias_pendientes"
             [options]="[
               { valor: false, nombre: 'No' },
               { valor: true, nombre: 'Si' }
             ]"
             optionLabel="nombre"
             optionValue="valor"
-            formControlName="discapacidad"
-            id="materias_pendientes"
+            formControlName="posee_materias_pendientes"
+            id="posee_materias_pendientes"
           >
           </p-selectbutton>
           <!-- <small class="text-red-500">
@@ -107,6 +110,18 @@
           </small> -->
         </div>
       </section>
+    @if(datos_academicos.controls.posee_materias_pendientes.value) {
+      <section class="form_group">
+        <div class="form_input" data-required>
+          <label for="materias_pendientes">Materias Pendientes</label>
+          <p-multiselect [options]="areas_de_formacion" formControlName="materias_pendientes" placeholder="Seleccione" [maxlength]="2" optionLabel="nombre" optionValue="codigo" display="chip" />
+
+          <small class="text-red-500">
+            {{ datos_academicos.get('materias_pendientes')?.errors | json }}
+          </small>
+        </div>
+      </section>
+      }      
       <section class="form_group">
         <div
           class="form_input"

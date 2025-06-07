@@ -47,6 +47,11 @@ export async function obtener_estudiante_fn({
           },
         },
       },
+      materias_pendientes: {
+        include: {
+          areas_de_formacion: true,
+        },
+      }
     },
   });
 
@@ -81,6 +86,7 @@ export async function obtener_estudiante_fn({
             : null,
         }
       : null,
+    materias_pendientes: estudiante_db.materias_pendientes.map((mp) => mp.areas_de_formacion),
   });
 
   return estudiante;

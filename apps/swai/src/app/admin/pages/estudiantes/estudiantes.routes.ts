@@ -26,6 +26,7 @@ export const ESTUDIANTES_ROUTES: Route[] = [
     component: RegistrarEstudiantePageComponent,
     resolve: {
       niveles_academicos: resolve_niveles_academicos,
+      areas_de_formacion: () => inject(ApiService).client.institucion.obtener_areas_de_formacion.query(),
       breadcrumb: ((_, state) => ({
         label: 'Registrar',
         routerLink: state.url,
@@ -67,6 +68,7 @@ export const ESTUDIANTES_ROUTES: Route[] = [
         component: RegistrarEstudiantePageComponent,
         path: 'editar',
         resolve: {
+          areas_de_formacion: () => inject(ApiService).client.institucion.obtener_areas_de_formacion.query(),
           niveles_academicos: resolve_niveles_academicos,
           inputs: () => ({ modo: 'editar' }),
           breadcrumb: ((_, state) => ({
