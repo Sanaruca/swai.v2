@@ -389,11 +389,13 @@ export class RegistrarEstudiantePageComponent implements OnInit {
       case 1:
         return this.datos_personales_component().form;
       case 2:
-        return this.datos_academicos_component().form;
-      case 3:
         return this.datos_de_contacto_component().form;
+        case 3:
+        return this.datos_academicos_component().form;
       case 4:
         return this.datos_de_salud_component().form;
+      case 5:
+        return this.datos_antropometricos_component().form;
       default:
         break;
     }

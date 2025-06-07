@@ -111,6 +111,8 @@
               optionValue="id"
               formControlName="sexo"
               id="sexo"
+              [unselectable]="false"
+              [allowEmpty]="false"
             >
               <ng-template #item let-it>
                 <i [class]="'pi ' + (it.id === 'M' ? 'pi-mars' : 'pi-venus')"></i>

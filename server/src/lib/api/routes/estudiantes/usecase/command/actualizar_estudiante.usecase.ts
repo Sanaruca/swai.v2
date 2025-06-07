@@ -19,6 +19,7 @@ import {
   array,
   nullable,
   nullish,
+  number,
   object,
   omit,
   parser,
@@ -44,7 +45,8 @@ export const ActualizarEstudianteSchemaDTO = object({
         'seccion',
       ]).entries,
       seccion: nullable(SeccionSchema.entries.seccion),
-      estado_academico: nullish(EstudianteSchema.entries.estado_academico),
+      estado_academico: nullish(number()),
+      nivel_academico: nullish(number()),
       discapacidad: nullable(omit(DiscapacitadoSchema, ['cedula'])),
       materias_pendientes: nullish(array(AreaDeFromacionSchema.entries.codigo)),
     })
@@ -152,7 +154,7 @@ export const actualizar_estudiante = admin_procedure
         data: {
           fecha_de_inscripcion: actualizacion.fecha_de_inscripcion,
           estado_academico: actualizacion.estado_academico || undefined,
-          nivel_academico: actualizacion.nivel_academico,
+          nivel_academico: actualizacion.nivel_academico || undefined,
           tipo: actualizacion.tipo,
           seccion,
           peso: actualizacion.peso,

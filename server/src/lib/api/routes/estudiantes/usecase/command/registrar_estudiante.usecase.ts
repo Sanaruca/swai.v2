@@ -20,12 +20,14 @@ import {
   parse,
   InferOutput,
   array,
+  number,
 } from 'valibot';
 
 export const RegistrarEstudianteSchemaDTO = object({
   ...omit(PersonaSchema, ['estado_civil', 'ultima_actualizacion']).entries,
-  ...omit(EstudianteSchema, ['ultima_actualizacion']).entries,
-  estado_academico: nullish(EstudianteSchema.entries.estado_academico),
+  ...omit(EstudianteSchema, ['ultima_actualizacion', 'nivel_academico']).entries,
+  nivel_academico: nullish(number()),
+  estado_academico: nullish(number()),
   discapacidad: nullish(omit(DiscapacitadoSchema, ['cedula'])),
   materias_pendientes: nullish(array(AreaDeFromacionSchema.entries.codigo)),
 });
@@ -92,7 +94,7 @@ export const registrar_estudiante = admin_procedure
           create: {
             fecha_de_inscripcion: input.fecha_de_inscripcion ?? null,
             estado_academico: input.estado_academico!,
-            nivel_academico: input.nivel_academico,
+            nivel_academico: input.nivel_academico!,
             tipo: input.tipo,
             seccion: input.seccion,
             peso: input.peso,

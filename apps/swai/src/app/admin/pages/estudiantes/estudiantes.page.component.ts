@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -32,22 +32,32 @@ import { TablaDeEstudiantesComponent } from './components/tabla_de_estudiantes/t
   styleUrl: './estudiantes.page.component.scss',
 })
 export class EstudiantesPageComponent  {
+  /* ............................... injectables .............................. */
+  private api = inject(ApiService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   /* ................................ contantes ............................... */
   protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
 
   
+  /* ............................... components ............................... */
+  protected generar_listados_modal = viewChild.required(
+    GenerarListadosModalComponent
+  )
+
+  /* .................................. state ................................. */
 
   protected imprimir_menu: MenuItem[] = [
     {
       label: 'Listados',
       icon: 'pi pi-copy',
+      command: () => {
+        this.generar_listados_modal().show();
+      }
     },
   ];
 
-  /* ............................... injectables .............................. */
-  private api = inject(ApiService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
 
   /* .................................. data .................................. */
   cantidad_de_estudiantes = this.route.snapshot.data[
@@ -56,5 +66,6 @@ export class EstudiantesPageComponent  {
   estudiantes = this.route.snapshot.data[
     'estudiantes'
   ] as Paginated<EstudianteDTO>;
+
 
 }
