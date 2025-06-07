@@ -10,6 +10,7 @@ import { TIPOS_DE_DISCAPACIDAD, TIPOS_DE_SANGRE } from '@swai/core';
 import { SelectModule } from 'primeng/select';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { validateIf } from '../../../../../../common/utils/angular/forms/validateif';
+import { TextareaModule } from 'primeng/textarea';
 
 
 @Component({
@@ -19,6 +20,7 @@ import { validateIf } from '../../../../../../common/utils/angular/forms/validat
     ReactiveFormsModule,
     SelectModule,
     SelectButtonModule,
+    TextareaModule
   ],
   templateUrl: './datos_de_salud.form.component.html',
   styleUrl: './datos_de_salud.form.component.sass',
