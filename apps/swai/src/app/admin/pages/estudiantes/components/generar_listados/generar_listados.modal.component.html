@@ -7,7 +7,9 @@
                 <li>
                     <label class="selectable-box selectable" [attr.data-selected]="form.controls.tipo_de_listado.value === 'por_seccion'">
                         <input formControlName="tipo_de_listado" type="radio" name="tipo_de_listado" value="por_seccion" class="hidden">
-                        <div class="selectable__icon"></div>
+                        <div class="selectable__icon">
+                            <i class="pi pi-list"></i>
+                        </div>
                         <div>
                             <p class="selectable__title">Por sección académica</p>
                             <p class="selectable__subtitle">Listado de estudiantes por <span class="font-semibold">sección académica</span></p>
@@ -17,7 +19,9 @@
                 <li>
                 <label class="selectable-box selectable" [attr.data-selected]="form.controls.tipo_de_listado.value === 'por_nivel'">
                     <input formControlName="tipo_de_listado" type="radio" name="tipo_de_listado" value="por_nivel" class="hidden">
-                    <div class="selectable__icon"></div>
+                    <div class="selectable__icon">
+                        <i class="pi pi-check-circle"></i>
+                    </div>
                     <div>
                         <p class="selectable__title">Por nivel académico</p>
                         <p class="selectable__subtitle">Listado de estudiantes por <span class="font-semibold">nivel académico</span></p>
@@ -132,7 +136,7 @@
                 </div>
             </li>
             <li class="bordered bg-primary/10 text-primary border-primary text-sm">
-                <span class="font-semibold">Nota:</span> El PDF se generará y descargará automáticamente.
+                <span class="font-semibold">Nota:</span> El PDF se generará y descargará automáticamente con datos de los estudiantes activos.
             </li>
         </ul>
     </ng-container>
