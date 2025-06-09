@@ -19,6 +19,9 @@ export const obtener_niveles_academicos = public_procedure.query<
   // throw new Error('mostro');
 
   const niveles_academicos = await ctx.prisma.niveles_academicos.findMany({
+    where: {
+      numero: { lt: 6 },
+    },
     include: {
       secciones: true,
     },

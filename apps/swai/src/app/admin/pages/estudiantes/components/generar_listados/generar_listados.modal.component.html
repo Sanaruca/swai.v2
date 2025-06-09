@@ -1,12 +1,12 @@
-<p-dialog header="Generar Listados" [modal]="true" [(visible)]="visible" [draggable]="false" [style]="{ width: '25rem' }">
+<p-dialog header="Generar Listados" [modal]="true" [(visible)]="visible" [draggable]="false" [style]="{ width: '36rem' }" (onHide)="form.reset(); paso_actual = 1" >
     <form [formGroup]="form">
-        <ng-container>
+        <ng-container *ngIf="paso_actual === 1">
 
             <h6>¿Qué tipo de listados necesitas?</h6>
             <ul class="mt-5 grid gap-3">
                 <li>
-                    <label class="selectable">
-                        <input type="radio" name="tipo_de_listado" value="por_seccion">
+                    <label class="selectable-box selectable" [attr.data-selected]="form.controls.tipo_de_listado.value === 'por_seccion'">
+                        <input formControlName="tipo_de_listado" type="radio" name="tipo_de_listado" value="por_seccion" class="hidden">
                         <div class="selectable__icon"></div>
                         <div>
                             <p class="selectable__title">Por sección académica</p>
@@ -15,8 +15,8 @@
                     </label>
                 </li>
                 <li>
-                <label class="selectable">
-                    <input type="radio" name="tipo_de_listado" value="por_nivel">
+                <label class="selectable-box selectable" [attr.data-selected]="form.controls.tipo_de_listado.value === 'por_nivel'">
+                    <input formControlName="tipo_de_listado" type="radio" name="tipo_de_listado" value="por_nivel" class="hidden">
                     <div class="selectable__icon"></div>
                     <div>
                         <p class="selectable__title">Por nivel académico</p>
@@ -25,16 +25,122 @@
                 </label>
             </li>
         </ul>
-        <div class="flex justify-end gap-2 mt-5">
-            <button pButton >Siguiente</button>
-        </div>
     </ng-container>
     
-    <ng-container>
-        <h6>¿Qué niveles deseas incluir?</h6>
-        <ul class="mt-5">
+    <ng-container *ngIf="form.controls.tipo_de_listado.value === 'por_seccion' && paso_actual === 2">
+        <h6>¿Qué secciones deseas incluir?</h6>
+        <section class="bordered mt-5">
+            <div class="flex items-center gap-2">
+                <p-checkbox name="check_secciones_academicas" inputId="todo_nivel" [formControl]="form.controls.check_secciones_academicas.controls.todas" [binary]="true" />
+                <label for="todo_nivel" class="font-semibold">Todas las secciones de todos los niveles</label>
+            </div>
 
+            @if (!form.controls.check_secciones_academicas.value.todas) {
+
+                <p-divider></p-divider>
+                <ul class="mt-5 grid gap-2">
+                    @for (nivel_academico of niveles_academicos; track nivel_academico.numero) {
+                        <li class="bordered">
+                            <div class="flex items-center gap-2">
+                                <p-checkbox name="check_secciones_academicas" *ngIf="nivel_academico.numero === 1" [inputId]="'todo_nivel_'+1" [formControl]="form.controls.check_secciones_academicas.controls.todo_primer_nivel" [binary]="true" />
+                                <p-checkbox name="check_secciones_academicas" *ngIf="nivel_academico.numero === 2" [inputId]="'todo_nivel_'+2" [formControl]="form.controls.check_secciones_academicas.controls.todo_segundo_nivel" [binary]="true" />
+                                <p-checkbox name="check_secciones_academicas" *ngIf="nivel_academico.numero === 3" [inputId]="'todo_nivel_'+3" [formControl]="form.controls.check_secciones_academicas.controls.todo_tercer_nivel" [binary]="true" />
+                                <p-checkbox name="check_secciones_academicas" *ngIf="nivel_academico.numero === 4" [inputId]="'todo_nivel_'+4" [formControl]="form.controls.check_secciones_academicas.controls.todo_cuarto_nivel" [binary]="true" />
+                                <p-checkbox name="check_secciones_academicas" *ngIf="nivel_academico.numero === 5" [inputId]="'todo_nivel_'+5" [formControl]="form.controls.check_secciones_academicas.controls.todo_quinto_nivel" [binary]="true" />
+                                <label for="todo_nivel_{{nivel_academico.numero}}" class="font-semibold">{{nivel_academico.nombre}} - Todas las secciones</label>
+                            </div>
+                            <ul class="flex flex-wrap gap-2 mt-5">
+                                @for (seccion of nivel_academico.secciones; track seccion.id) {
+                                    <li>
+                                        <label [for]="'seccion_' + seccion.id" class="selectable-box | flex items-center justify-center min-w-16" [attr.data-selected]="form.controls.secciones_academicas.controls[seccion.id].controls.selected.value">
+                                            <p-checkbox [inputId]="'seccion_'+seccion.id" class="hidden" name="secciones_academicas" [binary]="true" [formControl]="form.controls.secciones_academicas.controls[seccion.id].controls.selected" />
+                                            <p class="font-semibold">{{nivel_academico.numero}}{{ seccion.seccion }}</p>
+                                        </label> 
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </ng-container>
+
+    <ng-container *ngIf="form.controls.tipo_de_listado.value === 'por_nivel' && paso_actual === 2">
+        <h6>¿Qué niveles deseas incluir?</h6>
+        <section class="bordered mt-5">
+
+            <div class="flex items-center gap-2">
+                <p-checkbox name="check_niveles_academicos" inputId="todo_nivel" [formControl]="form.controls.todo_nivel" [binary]="true" />
+                <label for="todo_nivel" class="font-semibold">Todos los niveles</label>
+            </div>
+
+            <p-divider></p-divider>
+
+            <ul class="mt-5 flex gap-2 flex-wrap">
+                <li>
+                    <label for="nivel_1" class="selectable-box | flex items-center justify-center" [attr.data-selected]="form.controls.niveles_academicos.at(0).controls.selected.value">
+                        <p-checkbox class="hidden" name="niveles_academicos" inputId="nivel_1" [formControl]="form.controls.niveles_academicos.at(0).controls.selected" [binary]="true" />
+                        <p class="font-semibold">Primer Año</p>
+                    </label>
+                </li>
+                <li>
+                    <label for="nivel_2" class="selectable-box | flex items-center justify-center" [attr.data-selected]="form.controls.niveles_academicos.at(1).controls.selected.value">
+                        <p-checkbox class="hidden" name="niveles_academicos" inputId="nivel_2" [formControl]="form.controls.niveles_academicos.at(1).controls.selected" [binary]="true" />
+                        <p class="font-semibold">Segundo Año</p>
+                    </label>
+                </li>
+                <li>
+    	            <label for="nivel_3" class="selectable-box | flex items-center justify-center" [attr.data-selected]="form.controls.niveles_academicos.at(2).controls.selected.value">
+        	            <p-checkbox class="hidden" name="niveles_academicos" inputId="nivel_3" [formControl]="form.controls.niveles_academicos.at(2).controls.selected" [binary]="true" />
+        	            <p class="font-semibold">Tercer Año</p>
+    	            </label>
+                </li>
+                <li>
+                    <label for="nivel_4" class="selectable-box | flex items-center justify-center" [attr.data-selected]="form.controls.niveles_academicos.at(3).controls.selected.value">
+                        <p-checkbox class="hidden" name="niveles_academicos" inputId="nivel_4" [formControl]="form.controls.niveles_academicos.at(3).controls.selected" [binary]="true" />
+                        <p class="font-semibold">Cuarto Año</p>
+                    </label>
+                </li>
+                <li>
+                    <label for="nivel_5" class="selectable-box | flex items-center justify-center" [attr.data-selected]="form.controls.niveles_academicos.at(4).controls.selected.value">
+                        <p-checkbox class="hidden" name="niveles_academicos" inputId="nivel_5" [formControl]="form.controls.niveles_academicos.at(4).controls.selected" [binary]="true" />
+                        <p class="font-semibold">Quinto Año</p>
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </ng-container>
+
+    <ng-container *ngIf="paso_actual === 3">
+        <h6>Confirmar generación de PDF</h6>
+        <ul class="bordered grid gap-2 mt-5">
+            <li class="flex gap-2 bordered">
+                <i class="pi pi-list size-11 bg-surface-100 dark:bg-surface-800 rounded-full !grid place-items-center"></i>
+                <div>
+                    <p class="text-sm text-muted-color">Tipo de listado</p>
+                    <p class="font-semibold">{{form.controls.tipo_de_listado.value === 'por_seccion' ? 'Por sección académica' : 'Por nivel académico' }}</p>
+                </div>
+            </li>
+            <li class="flex gap-2 bordered">
+                <i class="pi pi-check size-11 bg-surface-100 dark:bg-surface-800 rounded-full !grid place-items-center"></i>
+                <div>
+                    <p class="text-sm text-muted-color">Incluye</p>
+                    <p class="font-semibold">
+                        {{ form.controls.tipo_de_listado.value === 'por_nivel' ? 'Niveles académicos:' : 'Secciones académicas:' }} {{ form.controls.tipo_de_listado.value === 'por_nivel' ? niveles_selecionados : secciones_selecionadas }}
+                    </p>
+                </div>
+            </li>
+            <li class="bordered bg-primary/10 text-primary border-primary text-sm">
+                <span class="font-semibold">Nota:</span> El PDF se generará y descargará automáticamente.
+            </li>
         </ul>
     </ng-container>
+
+     <div class="flex justify-end gap-2 mt-5">
+            <p-button severity="secondary" label="Atras" icon="pi pi-chevron-left"  (click)="paso_actual = paso_actual - 1" [disabled]="paso_actual === 1"></p-button>
+            <p-button label="Siguiente" icon="pi pi-chevron-right" iconPos="right" (click)="paso_actual = paso_actual + 1" [disabled]="paso_actual === 3 || formulario_actual?.invalid" *ngIf="paso_actual < 3"></p-button>
+            <p-button label="Generar listados" icon="pi pi-file-pdf" *ngIf="paso_actual === 3" (click)="generar_listados()" [loading]="loading"></p-button>
+    </div>
     </form>
 </p-dialog>
