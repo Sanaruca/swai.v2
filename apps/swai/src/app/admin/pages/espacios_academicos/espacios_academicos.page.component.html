@@ -148,7 +148,7 @@
               #{{ espacio_academico.id }}
             </a>
           </td>
-          <td>{{ espacio_academico.nombre }}</td>
+          <td><a [routerLink]="[espacio_academico.metadata.slug]" class="hover:underline">{{ espacio_academico.nombre }}</a></td>
           <td>
             <aw-tag-tipo-de-espacio-academico
               [tipo]="espacio_academico.tipo.id"

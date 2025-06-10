@@ -1,4 +1,4 @@
-import { Component, inject, PLATFORM_ID, viewChild } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -78,7 +78,7 @@ interface IRecurso extends Recurso {
   templateUrl: './espacio_academico.page.component.html',
   styleUrl: './espacio_academico.page.component.scss',
 })
-export class EspacioAcademicoPageComponent {
+export class EspacioAcademicoPageComponent implements OnInit {
   /* ............................... injectables .............................. */
   private router = inject(Router);
   private toast = inject(MessageService);
@@ -86,7 +86,7 @@ export class EspacioAcademicoPageComponent {
   private api = inject(ApiService);
 
   /* .................................. state ................................. */
-  expandedRows = {};
+  expandedRows: Record<string, boolean> = {};
   data!: object;
   platformId = inject(PLATFORM_ID);
 
@@ -279,6 +279,15 @@ export class EspacioAcademicoPageComponent {
   });
 
   protected recurso_primeicon_map = recurso_primeicon_map;
+
+  /* .............................. ciclo de vida ............................. */
+
+  ngOnInit(): void {
+    this.recursos.slice(0, 3).forEach(
+      (recurso) =>
+        this.expandedRows[recurso.id] = true
+    );
+  }
 
   /* ................................. events ................................. */
 
