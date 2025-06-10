@@ -1,4 +1,4 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, PLATFORM_ID, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -29,6 +29,8 @@ import { AñadirRecursoModalComponent } from './components';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../services/api.service';
+import { UpsertEspacioAcademicoModalComponent } from './components/upsert_espacio_academico/upsert_espacio_academico.modal.component';
+import { EliminarEspacioAcaedemicoModalComponent } from '../components';
 
 function clone_object<T extends object>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
@@ -70,6 +72,8 @@ interface IRecurso extends Recurso {
     IllustrationComponent,
     InputNumberModule,
     FormsModule,
+    UpsertEspacioAcademicoModalComponent,
+    EliminarEspacioAcaedemicoModalComponent,
   ],
   templateUrl: './espacio_academico.page.component.html',
   styleUrl: './espacio_academico.page.component.scss',
@@ -92,6 +96,15 @@ export class EspacioAcademicoPageComponent {
 
   protected detalles_clonados: Map<string, RecursoDetalle> = new Map();
 
+  /* ............................... components ............................... */
+
+  protected upsert_espacio_academico_modal = viewChild.required(
+    UpsertEspacioAcademicoModalComponent
+  );
+  protected eliminar_espacio_academico_modal = viewChild.required(
+    EliminarEspacioAcaedemicoModalComponent
+  );
+
   /* .................................. menu .................................. */
   protected menu_options = [
     {
@@ -100,12 +113,33 @@ export class EspacioAcademicoPageComponent {
         {
           label: 'Editar Espacio',
           icon: 'pi pi-pencil',
-          command: () => null,
+          command: () => {
+            this.upsert_espacio_academico_modal().edit({
+              id: this.espacio_academico.id,
+              nombre: this.espacio_academico.nombre,
+              tipo: this.espacio_academico.tipo.id,
+              electricidad: this.espacio_academico.electricidad,
+              internet: this.espacio_academico.internet,
+              ventilacion: this.espacio_academico.ventilacion,
+              capacidad: this.espacio_academico.capacidad,
+            });
+          },
         },
         {
           label: 'Eliminar Espacio',
           icon: 'pi pi-trash',
-          command: () => null,
+          command: () => {
+            this.eliminar_espacio_academico_modal().open({
+              id: this.espacio_academico.id,
+              nombre: this.espacio_academico.nombre,
+              tipo: this.espacio_academico.tipo.id,
+              electricidad: this.espacio_academico.electricidad,
+              internet: this.espacio_academico.internet,
+              ventilacion: this.espacio_academico.ventilacion,
+              capacidad: this.espacio_academico.capacidad,
+
+            });
+          },
         },
       ],
     },
@@ -125,7 +159,6 @@ export class EspacioAcademicoPageComponent {
   ] as RecursosDeUnEspacioAcademicoDTO;
 
   protected resumen_cantidad_de_recursos = ((component) => {
-    
     const estados = ESTADOS_DE_UN_RECURSO.map((estado) => ({
       ...estado,
       recursos: this.cantidad_de_recursos.recursos.reduce<
@@ -153,31 +186,33 @@ export class EspacioAcademicoPageComponent {
           ) || 0
         );
       },
-    }))
-    
-    return ({
-    estados,
-    chart: {
-      datasets: [{
-        data: estados.map((estado) => estado.total),
-        backgroundColor: [
-            '#22c55e',
-            '#14b8a6',
-            '#eab308',
-            '#ef4444',
-            '#6b7280',
-          ],
-          hoverBackgroundColor: [
-            '#4ade80',
-            '#2dd4bf',
-            '#facc15',
-            '#f87171',
-            '#9ca3af',
-          ],
-      }]
-    },
-    
-  })})(this);
+    }));
+
+    return {
+      estados,
+      chart: {
+        datasets: [
+          {
+            data: estados.map((estado) => estado.total),
+            backgroundColor: [
+              '#22c55e',
+              '#14b8a6',
+              '#eab308',
+              '#ef4444',
+              '#6b7280',
+            ],
+            hoverBackgroundColor: [
+              '#4ade80',
+              '#2dd4bf',
+              '#facc15',
+              '#f87171',
+              '#9ca3af',
+            ],
+          },
+        ],
+      },
+    };
+  })(this);
 
   protected recursos = Array.from(
     this.espacio_academico.recursos
@@ -244,7 +279,6 @@ export class EspacioAcademicoPageComponent {
   });
 
   protected recurso_primeicon_map = recurso_primeicon_map;
-
 
   /* ................................. events ................................. */
 
