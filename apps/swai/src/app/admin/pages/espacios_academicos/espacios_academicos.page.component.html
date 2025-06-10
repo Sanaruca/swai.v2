@@ -190,19 +190,73 @@
           <td class="text-center">{{ espacio_academico.capacidad }}</td>
           <td>
             <!-- TODO: los comandos no se activan en el primer click -->
-            <div class="">
-              <p-button
-                (click)="menu.toggle($event)"
-                icon="pi pi-ellipsis-h"
-                severity="secondary"
-              />
-              <p-menu
-                #menu
-                [model]="get_opciones(espacio_academico)"
-                [popup]="true"
-                styleClass="!top-[initial] !left-[initial]"
-              />
-            </div>
+             <div class="relative">
+               <p-button
+               icon="pi pi-ellipsis-h"
+               severity="secondary"
+               variant="text"
+               (click)="espacio_academico.aux.show_acctions = !espacio_academico.aux.show_acctions"
+               />
+            <p-overlay [(visible)]="espacio_academico.aux.show_acctions" contentStyleClass="absolute right-0" >
+              <div class="p-menu">
+                <ul class="p-menu-list">
+                  <li class="p-menu-item">
+                    <div class="p-menu-item-content">
+                      <a
+                      [routerLink]="[
+                        '/admin',
+                        'espacios_academicos',
+                        espacio_academico.metadata.slug,
+                      ]"
+                      class="p-menu-item-link"
+                      >
+                      <i class="pi pi-eye"></i>
+                      <span>Ver</span>
+                    </a>
+                  </div>
+                  </li>
+                  <li class="p-menu-item">
+                    <div class="p-menu-item-content">
+                      <button
+                      (click)="upsert_espacio_academico_modal().edit({
+                        id: espacio_academico.id,
+                        nombre: espacio_academico.nombre,
+                        tipo: espacio_academico.tipo,
+                        electricidad: espacio_academico.electricidad,
+                        internet: espacio_academico.internet,
+                        ventilacion: espacio_academico.ventilacion,
+                        capacidad: espacio_academico.capacidad,
+                      })"
+                      class="p-menu-item-link | w-full"
+                      >
+                      <i class="pi pi-pencil"></i>
+                      <span>Editar</span>
+                    </button>
+                  </div>
+                  </li>
+                  <li class="p-menu-item">
+                    <div class="p-menu-item-content">
+                      <button
+                      (click)="eliminar_espacio_academico_modal().open({
+                        id: espacio_academico.id,
+                        nombre: espacio_academico.nombre,
+                        tipo: espacio_academico.tipo,
+                        electricidad: espacio_academico.electricidad,
+                        internet: espacio_academico.internet,
+                        ventilacion: espacio_academico.ventilacion,
+                        capacidad: espacio_academico.capacidad,
+                      })"
+                      class="p-menu-item-link | w-full"
+                      >
+                      <i class="pi pi-trash"></i>
+                      <span>Eliminar</span>
+                    </button>
+                  </div>
+                  </li>
+                </ul>
+              </div>
+            </p-overlay>
+          </div> 
           </td>
         </tr>
       </ng-template>
@@ -269,10 +323,7 @@
     </section>
   </section>
 </section>
-<!-- <aw-modal-eliminar-espacio-acaedemico
-  [spaceName]="espacio_academico.get('nombre')!.value || 'null'"
-  [(visible)]="puede_mostrar_modal_eliminar"
-  (confirm)="handleDelete()"
-></aw-modal-eliminar-espacio-acaedemico> -->
+<aw-modal-eliminar-espacio-acaedemico (succes)="on_eliminar_espacio_academico_success()"
+></aw-modal-eliminar-espacio-acaedemico>
 
 <aw-modal-upsert-espacio-academico (success)="on_upsert_espacio_academico_success($event)"/>

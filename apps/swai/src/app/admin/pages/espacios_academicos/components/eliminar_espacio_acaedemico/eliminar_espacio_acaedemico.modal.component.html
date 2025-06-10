@@ -19,7 +19,7 @@
       </div>
       <p class="mt-1 text-muted-color">
         ¿Estás seguro que deseas eliminar el espacio académico
-        <span class="font-medium">{{ spaceName }}</span
+        <span class="font-medium">{{ espacio_academico?.nombre }}</span
         >?
       </p>
     </header>
@@ -51,7 +51,7 @@
       <p-button
         label="Cancelar"
         severity="secondary"
-        (click)="onHide()"
+        (click)="cancel()"
       ></p-button>
     </div>
   </ng-template>

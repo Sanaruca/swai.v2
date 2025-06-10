@@ -19,6 +19,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TipoDeEspacioAcademicoTagComponent } from '../../../common/components';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { OverlayModule } from 'primeng/overlay';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -28,7 +29,10 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { EliminarEspacioAcaedemicoModalComponent } from './components';
 import { environment } from '../../../../environments/environment';
-import { SuccessEvent, UpsertEspacioAcademicoModalComponent } from './espacio_academico/components/upsert_espacio_academico/upsert_espacio_academico.modal.component';
+import {
+  SuccessEvent,
+  UpsertEspacioAcademicoModalComponent,
+} from './espacio_academico/components/upsert_espacio_academico/upsert_espacio_academico.modal.component';
 
 @Component({
   selector: 'aw-espacios-acedemicos.page',
@@ -53,6 +57,7 @@ import { SuccessEvent, UpsertEspacioAcademicoModalComponent } from './espacio_ac
     MenuModule,
     EliminarEspacioAcaedemicoModalComponent,
     UpsertEspacioAcademicoModalComponent,
+    OverlayModule,
   ],
   templateUrl: './espacios_academicos.page.component.html',
   styleUrl: './espacios_academicos.page.component.scss',
@@ -74,9 +79,9 @@ export class EspaciosAcademicosPageComponent {
   protected cantidad_de_espacios_academicos = this.route.snapshot.data[
     'cantidad_de_espacios_academicos'
   ] as CantidadDeEspaciosAcademicosDTO;
-  protected espacios_academicos = this.route.snapshot.data[
-    'espacios_academicos'
-  ] as Paginated<EspacioAcademicoDTO>;
+  protected espacios_academicos!: Paginated<
+    EspacioAcademicoDTO & { aux: { show_acctions: boolean } }
+  >;
 
   /* ............................... components ............................... */
 
@@ -163,6 +168,24 @@ export class EspaciosAcademicosPageComponent {
     ];
   }
 
+  /* .............................. ciclo de vida ............................. */
+
+  constructor() {
+    const datos = this.route.snapshot.data[
+      'espacios_academicos'
+    ] as Paginated<EspacioAcademicoDTO>;
+
+    this.espacios_academicos = {
+      ...datos,
+      data: datos.data.map((it) => ({
+        ...it,
+        aux: {
+          show_acctions: false,
+        },
+      })),
+    };
+  }
+
   view_espacio_academico(espacio_academico: EspacioAcademicoDTO) {
     console.log('se detecto click');
     this.router.navigate([
@@ -182,7 +205,15 @@ export class EspaciosAcademicosPageComponent {
     });
   }
   delete_espacio_academico(espacio_academico: EspacioAcademicoDTO) {
-    //
+    this.eliminar_espacio_academico_modal().open({
+      id: espacio_academico.id,
+      nombre: espacio_academico.nombre,
+      tipo: espacio_academico.tipo.id,
+      electricidad: espacio_academico.electricidad,
+      internet: espacio_academico.internet,
+      ventilacion: espacio_academico.ventilacion,
+      capacidad: espacio_academico.capacidad,
+    });
   }
 
   /* ....................... cargar espacios academicos ....................... */
@@ -194,12 +225,28 @@ export class EspaciosAcademicosPageComponent {
 
     this.api.client.espacios_academicos.obtener_espacios_academicos
       .query()
-      .then((r) => (this.espacios_academicos = r));
+      .then(
+        (r) =>
+          (this.espacios_academicos = {
+            ...r,
+            data: r.data.map((it) => ({
+              ...it,
+              aux: {
+                show_acctions: false,
+              },
+            })),
+          })
+      );
   }
 
-  /* ............................ eliminar espacio ............................ */
+  /* ................................. events ................................. */
 
-  /* ............................ registrar espacio ........................... */
+  on_eliminar_espacio_academico_success() {
+    this.toast.add({
+      summary: 'Espacio académico ha sido eliminado con exito',
+      severity: 'success',
+    });
+  }
 
   on_upsert_espacio_academico_success(event: SuccessEvent) {
     if (event.method === 'registrar') {
