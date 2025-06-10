@@ -269,10 +269,10 @@
     </section>
   </section>
 </section>
-<aw-modal-eliminar-espacio-acaedemico
+<!-- <aw-modal-eliminar-espacio-acaedemico
   [spaceName]="espacio_academico.get('nombre')!.value || 'null'"
   [(visible)]="puede_mostrar_modal_eliminar"
   (confirm)="handleDelete()"
-></aw-modal-eliminar-espacio-acaedemico>
+></aw-modal-eliminar-espacio-acaedemico> -->
 
-<aw-modal-upsert-espacio-academico/>
+<aw-modal-upsert-espacio-academico (success)="on_upsert_espacio_academico_success($event)"/>

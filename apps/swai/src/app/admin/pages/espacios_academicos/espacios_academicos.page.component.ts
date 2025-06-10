@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent } from '../../components';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -12,12 +12,7 @@ import { TableModule } from 'primeng/table';
 import { IllustrationComponent } from '../../../common/components/illustration.component';
 import { Paginated, CantidadDeEspaciosAcademicosDTO } from '@swai/server';
 import { IconField } from 'primeng/iconfield';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { InputIcon } from 'primeng/inputicon';
 import { recurso_primeicon_map } from '../../../common/utils';
 import { TooltipModule } from 'primeng/tooltip';
@@ -33,6 +28,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { EliminarEspacioAcaedemicoModalComponent } from './components';
 import { environment } from '../../../../environments/environment';
+import { SuccessEvent, UpsertEspacioAcademicoModalComponent } from './espacio_academico/components/upsert_espacio_academico/upsert_espacio_academico.modal.component';
 
 @Component({
   selector: 'aw-espacios-acedemicos.page',
@@ -56,14 +52,14 @@ import { environment } from '../../../../environments/environment';
     CheckboxModule,
     MenuModule,
     EliminarEspacioAcaedemicoModalComponent,
+    UpsertEspacioAcademicoModalComponent,
   ],
   templateUrl: './espacios_academicos.page.component.html',
   styleUrl: './espacios_academicos.page.component.scss',
 })
 export class EspaciosAcademicosPageComponent {
-
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
   protected TIPOS_DE_ESPACIO_ACADEMICO = TIPOS_DE_ESPACIO_ACADEMICO;
   protected TIPO_DE_ESPACIO_ACADEMICO = TIPO_DE_ESPACIO_ACADEMICO;
   protected recurso_primeicon_map = recurso_primeicon_map;
@@ -81,6 +77,15 @@ export class EspaciosAcademicosPageComponent {
   protected espacios_academicos = this.route.snapshot.data[
     'espacios_academicos'
   ] as Paginated<EspacioAcademicoDTO>;
+
+  /* ............................... components ............................... */
+
+  protected upsert_espacio_academico_modal = viewChild.required(
+    UpsertEspacioAcademicoModalComponent
+  );
+  protected eliminar_espacio_academico_modal = viewChild.required(
+    EliminarEspacioAcaedemicoModalComponent
+  );
 
   /* .................................. stado ................................. */
   protected loadings = {
@@ -166,23 +171,18 @@ export class EspaciosAcademicosPageComponent {
     ]);
   }
   edit_espacio_academico(espacio_academico: EspacioAcademicoDTO) {
-    this.espacio_academico.reset({
+    this.upsert_espacio_academico_modal().edit({
       id: espacio_academico.id,
       nombre: espacio_academico.nombre,
-      electricidad: espacio_academico.electricidad,
-      ventilacion: espacio_academico.ventilacion,
-      internet: espacio_academico.internet,
       tipo: espacio_academico.tipo.id,
+      electricidad: espacio_academico.electricidad,
+      internet: espacio_academico.internet,
+      ventilacion: espacio_academico.ventilacion,
       capacidad: espacio_academico.capacidad,
     });
-    this.puede_mostrar_modal_de_actualizacion = true;
   }
   delete_espacio_academico(espacio_academico: EspacioAcademicoDTO) {
-    this.espacio_academico.reset({
-      id: espacio_academico.id,
-      nombre: espacio_academico.nombre,
-    });
-    this.puede_mostrar_modal_eliminar = true;
+    //
   }
 
   /* ....................... cargar espacios academicos ....................... */
@@ -199,100 +199,31 @@ export class EspaciosAcademicosPageComponent {
 
   /* ............................ eliminar espacio ............................ */
 
-  puede_mostrar_modal_eliminar = false;
-
-  async handleDelete() {
-    try {
-      await this.api.client.espacios_academicos.eliminar_espacio_academico.mutate(
-        this.espacio_academico.get('id')!.value!
-      );
-
-      this.toast.add({
-        summary: 'Espacio académico ha sido eliminado con exito',
-        severity: 'success',
-      });
-
-      this.recargar_pagina();
-    } finally { /* empty */ }
-  }
-
   /* ............................ registrar espacio ........................... */
 
-  @ViewChild('inputRef') inputRef!: ElementRef;
-
-  espacio_academico = new FormGroup({
-    id: new FormControl<number | null>(null),
-    nombre: new FormControl('', [Validators.required]),
-    electricidad: new FormControl(false),
-    ventilacion: new FormControl(false),
-    internet: new FormControl(false),
-    tipo: new FormControl<null | number>(null, [Validators.required]),
-    capacidad: new FormControl<number>(30, [Validators.required]),
-  });
-
-  onDialogShow() {
-    setTimeout(() => {
-      this.inputRef.nativeElement.focus();
-    }, 0);
+  on_upsert_espacio_academico_success(event: SuccessEvent) {
+    if (event.method === 'registrar') {
+      this.on_registrar_espacio_academico_success();
+    } else if (event.method === 'editar') {
+      this.on_actualizar_espacio_academico_success();
+    }
   }
 
-  onDialogHide() {
-    this.espacio_academico.reset(
-      {
-        capacidad: 30,
-        electricidad: false,
-        internet: false,
-        ventilacion: false,
-      },
-      { onlySelf: true }
-    );
+  on_registrar_espacio_academico_success() {
+    this.toast.add({
+      summary: 'Espacio académico ha sido registrado con exito',
+      severity: 'success',
+    });
+  }
+
+  on_actualizar_espacio_academico_success() {
+    this.toast.add({
+      summary: 'Espacio académico ha sido actualizado con exito',
+      severity: 'success',
+    });
   }
 
   mostrar_modal_de_registro() {
-    this.espacio_academico.reset();
-    this.puede_mostrar_modal_de_registro = true;
-  }
-
-  async enviar_datos() {
-    this.loadings.registrando = true;
-    try {
-      const data = {
-        nombre: this.espacio_academico.controls.nombre.value!,
-        tipo: this.espacio_academico.controls.tipo.value!,
-        electricidad: this.espacio_academico.controls.electricidad.value!,
-        internet: this.espacio_academico.controls.internet.value!,
-        ventilacion: this.espacio_academico.controls.ventilacion.value!,
-        capacidad: +this.espacio_academico.controls.capacidad.value!,
-      };
-
-      if (this.puede_mostrar_modal_de_registro) {
-        await this.api.client.espacios_academicos.registrar_espacio_academico.mutate(
-          data
-        );
-
-        this.toast.add({
-          summary: 'Espacio académico ha sido registrado con exito',
-          severity: 'success',
-        });
-      } else if (this.puede_mostrar_modal_de_actualizacion) {
-        await this.api.client.espacios_academicos.actualizar_espacio_academico.mutate(
-          {
-            id: this.espacio_academico.controls.id.value!,
-            actualizacion: data,
-          }
-        );
-
-        this.toast.add({
-          summary: 'Espacio académico ha sido actualizado con exito',
-          severity: 'success',
-        });
-      }
-
-      this.puede_mostrar_modal = false;
-
-      this.recargar_pagina();
-    } finally {
-      this.loadings.registrando = false;
-    }
+    this.upsert_espacio_academico_modal().create();
   }
 }
