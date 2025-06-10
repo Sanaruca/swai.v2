@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  FastLinkComponent,
-  InfoCardComponent,
+  FastLinkComponent
 } from '../../../admin/components';
-import { NIVEL_ACADEMICO_CARDINAL_MAP, PensumDTO } from '@swai/core';
+import { PensumDTO } from '@swai/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CantidadDeEstudiantesDTO } from '@swai/server';
 import { TagModule } from 'primeng/tag';
-import { obtener_color_seccion_class } from './utils';
+import { EditableNivelAcademicoComponent, NivelAcademico } from './components/editable_nivel_academico/editable_nivel_academico.component';
+
 
 @Component({
   selector: 'aw-niveles-academicos.page',
@@ -16,8 +16,8 @@ import { obtener_color_seccion_class } from './utils';
     CommonModule,
     FastLinkComponent,
     TagModule,
-    InfoCardComponent,
     RouterLink,
+    EditableNivelAcademicoComponent
   ],
   templateUrl: './niveles_academicos.page.component.html',
   styleUrl: './niveles_academicos.page.component.scss',
@@ -28,17 +28,40 @@ export class NivelesAcademicosPageComponent {
   protected cantidad_de_estudiantes: CantidadDeEstudiantesDTO =
     this.route.snapshot.data['cantidad_de_estudiantes'];
 
-  protected  NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP
 
-  protected obtener_cantidad_de_estudiantes_por_nivel_academico(
-    nivel_academico: number
-  ): CantidadDeEstudiantesDTO['niveles_academicos'][0] {
-    return this.cantidad_de_estudiantes.niveles_academicos.find(
-      (it) => it.numero === nivel_academico
-    )!;
-  }
+    obtener_nivel_academico_prop(pensum: PensumDTO): NivelAcademico{
 
-  protected obtener_color_seccion_class(seccion: string, contraste = false) {
-    return obtener_color_seccion_class(seccion, contraste);
-  }
+      const nivel_academico = pensum.nivel_academico
+
+      const cantidad_de_estudiantes = this.cantidad_de_estudiantes.niveles_academicos.find((it) => it.numero === nivel_academico.numero)
+
+      const secciones = this.cantidad_de_estudiantes.niveles_academicos.find(
+        (it) => it.numero === nivel_academico.numero
+      )?.secciones.map((it) => ({
+        id: it.id,
+        seccion: it.seccion,
+        nivel_academico: it.nivel_academico,
+        cantidad_de_estudiantes: {
+          activos: it.activos,
+          no_inscritos: it.no_inscritos,
+          retirados: it.retirados,
+          total: it.total,
+        }
+      }));
+
+      return {
+        ...nivel_academico,
+        cantidad_de_estudiantes: {
+          activos: cantidad_de_estudiantes?.activos?? 0,
+          no_inscritos: cantidad_de_estudiantes?.no_inscritos?? 0,
+          retirados: cantidad_de_estudiantes?.retirados?? 0,
+          total: cantidad_de_estudiantes?.total?? 0,
+        },
+        secciones: secciones ?? [],
+        pensum: pensum.areas_de_formacion,
+      }
+    }
+
+
+
 }

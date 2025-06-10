@@ -17,7 +17,13 @@ export const SeccionSchema = object({
     string(),
     custom<`${number}${string}`>((v) => /^[1-5][A-Z]+$/.test(v as string))
   ),
-  nivel_academico: enum_(NIVEL_ACADEMICO),
+  nivel_academico: pipe(
+    enum_(NIVEL_ACADEMICO),
+    custom(
+      (v) => (Number(v) <= 5),
+      'El nivel academico debe ser menor o igual a 5'
+    )
+  ),
   seccion: pipe(string(), toUpperCase(), trim()),
   profesor_guia: nullish(number()), // TODO: relacionar
 });

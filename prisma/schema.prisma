@@ -229,7 +229,7 @@ model secciones {
   nivel_academico    Int
   seccion            String             @db.VarChar
   profesor_guia      Int?
-  espacio_academico  Int
+  espacio_academico  Int?
   estudiantes        estudiantes[]
   profesores         profesores?        @relation(fields: [profesor_guia], references: [cedula], onDelete: NoAction, onUpdate: NoAction, map: "profesor_guia_fk")
   niveles_academicos niveles_academicos @relation(fields: [nivel_academico], references: [numero], onDelete: NoAction, onUpdate: NoAction, map: "salones_de_clase_nivel_academico_fkey")
