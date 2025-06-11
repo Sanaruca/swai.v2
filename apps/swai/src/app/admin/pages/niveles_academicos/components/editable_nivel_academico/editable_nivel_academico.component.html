@@ -9,7 +9,7 @@
       </div>
 
       <div class="flex gap-2">
-        <p-confirmpopup />
+        <p-confirmpopup key="toggle_editing"/>
         <button 
         class="rounded-full py-1 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" (click)="toggle_editing($event)"
         [class]="{
@@ -22,10 +22,13 @@
           {{editing ? 'Modo edición' : 'Editar'}}
           <i class="pi pi-pencil {{editing? 'animate-pulse' : 'text-muted-color'}} text-sm"></i>
         </button>
-        <a class="rounded-full py-1 bg-slate-100 dark:bg-surface-800 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" [routerLink]="['/admin/niveles_academicos',nivel_academico().numero]">
-          Ir a {{nivel_academico().nombre.toLowerCase()}}
-          <i class="pi pi-arrow-right text-muted-color text-sm"></i>
-        </a>
+        @if (!editing) {
+
+          <a class="rounded-full py-1 bg-slate-100 dark:bg-surface-800 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" [routerLink]="['/admin/niveles_academicos',nivel_academico().numero]">
+            Ir a {{nivel_academico().nombre.toLowerCase()}}
+            <i class="pi pi-arrow-right text-muted-color text-sm"></i>
+          </a>
+        }
       </div>
     </header>
     <div class="flex mt-3 gap-3">
@@ -42,16 +45,32 @@
         track $index) {
 
           @if (editing) {
-            <aw-info-card
-          [className]="obtener_color_seccion_class(seccion.seccion)"
-          [iconContentClassName]="
+          <div class="infocard_wrapper">
+                      <aw-info-card
+                      [className]="obtener_color_seccion_class(seccion.seccion)"
+                      [iconContentClassName]="
             obtener_color_seccion_class(seccion.seccion, true)
-          "
+            "
           [label]="'Seccion ' + seccion.seccion"
           icon="pi pi-book"
           [value]="seccion.cantidad_de_estudiantes.total"
           />
 
+          <div class="infocard_wrapper__overlay | group">
+              <button
+              class="infocard_wrapper__overlay__button | peer"
+              pTooltip="Eliminar"
+              tooltipPosition="top"
+              showDelay="1000"
+              (click)="eliminar_seccion(seccion, $event)"
+
+              >
+                <i class="pi pi-trash"></i>
+              </button>
+              <div class="peer-hover:bg-red-400 size-full transition-colors"></div>
+          </div>
+          
+        </div>
           } @else {
 
             
@@ -75,18 +94,33 @@
         secciones_adicionales;
         track $index) {
 
-        <aw-info-card
-        class="animate-pulse"
-        pTooltip="Seccion no registrada"
-        showDelay="500"
-          [className]="obtener_color_seccion_class(seccion.seccion)"
-          [iconContentClassName]="
-            obtener_color_seccion_class(seccion.seccion, true)
-          "
-          [label]="'Seccion ' + seccion.seccion"
-          icon="pi pi-book"
-          [value]="seccion.cantidad_de_estudiantes.total"
-        />
+        <div class="infocard_wrapper">
+          <aw-info-card
+          class="animate-pulse"
+          pTooltip="Seccion no registrada"
+          showDelay="500"
+            [className]="obtener_color_seccion_class(seccion.seccion)"
+            [iconContentClassName]="
+              obtener_color_seccion_class(seccion.seccion, true)
+            "
+            [label]="'Seccion ' + seccion.seccion"
+            icon="pi pi-book"
+            [value]="seccion.cantidad_de_estudiantes.total"
+          />
+
+          <div class="infocard_wrapper__overlay">
+              <button
+              class="infocard_wrapper__overlay__button | peer"
+              pTooltip="Eliminar"
+              tooltipPosition="top"
+              showDelay="1000"
+              (click)="eliminar_seccion(seccion, $event)"
+              >
+                <i class="pi pi-trash"></i>
+              </button>
+              <div class="peer-hover:bg-red-400 size-full transition-colors"></div>
+          </div>
+        </div>
 
         }
       }
@@ -127,9 +161,8 @@
             severity="secondary"
             [rounded]="true"
             icon="pi pi-times"
-            class="p-button-text"
             [disabled]="loading"
-            (click)="editing = false; secciones_adicionales = []"
+            (click)="cancelar()"
             ></p-button>
             <p-button
             [rounded]="true"
@@ -143,3 +176,4 @@
       </div>
     }
   </section>
+  <p-confirmdialog key="confirm_delete"/>

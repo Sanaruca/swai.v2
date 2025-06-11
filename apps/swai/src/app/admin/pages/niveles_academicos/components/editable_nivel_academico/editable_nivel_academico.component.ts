@@ -17,6 +17,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ApiService } from '../../../../../services/api.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 interface NivelAcademicoConPensumDTO extends CoreNivelAcademico {
@@ -53,11 +54,12 @@ export interface NivelAcademico extends NivelAcademicoConPensumDTO {
     ButtonModule,
     Divider,
     TooltipModule,
-    ConfirmPopupModule
+    ConfirmPopupModule,
+    ConfirmDialogModule
   ],
   providers: [ConfirmationService],
   templateUrl: './editable_nivel_academico.component.html',
-  styleUrl: './editable_nivel_academico.component.sass',
+  styleUrl: './editable_nivel_academico.component.scss',
 })
 export class EditableNivelAcademicoComponent {
   /* ............................... injectables .............................. */
@@ -91,6 +93,7 @@ export class EditableNivelAcademicoComponent {
             target: event.target as EventTarget,
             message: '¿Seguro que desea descartar los cambios?',
             icon: 'pi pi-exclamation-triangle',
+            key: 'toggle_editing',
             rejectButtonProps: {
                 label: 'Cancelar',
                 severity: 'secondary',
@@ -100,8 +103,7 @@ export class EditableNivelAcademicoComponent {
                 label: 'Aceptar'
             },
             accept: () => {
-              this.secciones_adicionales = []
-              this.editing = false;
+              this.cancelar();
             },
         });
     } else {
@@ -133,6 +135,51 @@ export class EditableNivelAcademicoComponent {
         },
       },
     ];
+  }
+
+  eliminar_seccion(seccion: NivelAcademico['secciones'][0], event: Event) {
+
+    const index = this.secciones_adicionales.findIndex((it) => it.id === seccion.id);
+    if (index > -1) {
+      this.secciones_adicionales.splice(index, 1);
+      return;
+    }
+
+    this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: `¿Seguro que desea eliminar la sección académica "${seccion.id}"?`,
+            header: 'Eliminar sección académica',
+            icon: 'pi pi-info-circle',
+            key: 'confirm_delete',
+            rejectLabel: 'Cancelar',
+            rejectButtonProps: {
+                label: 'Cancelar',
+                severity: 'secondary',
+                outlined: true,
+            },
+            acceptButtonProps: {
+                label: 'Eliminar',
+                severity: 'danger',
+            },
+
+            accept: () => {
+
+              this.loading = true
+              this.api.client.secciones_academicas.eliminar_seccion_academica.mutate(seccion.id).then(() => {
+                this.toast.add({ severity: 'success', summary: 'Seccion Eliminada', detail: 'Seccion acacemica ha sido eliminada' });
+              })
+              .finally(() => this.loading = false)
+
+
+            },
+        });
+
+
+  }
+
+  cancelar(){
+    this.secciones_adicionales = []
+    this.editing = false
   }
 
   protected aplicar_cambios() {
