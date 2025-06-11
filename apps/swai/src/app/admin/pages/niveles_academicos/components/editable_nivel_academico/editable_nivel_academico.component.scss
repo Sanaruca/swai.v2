@@ -13,7 +13,7 @@
         
         &:hover &__button {
             @apply scale-100 top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 pointer-events-auto;
-            @apply bg-surface-100 text-current;
+            @apply bg-surface-100 text-muted-color-emphasis dark:bg-surface-700;
             @apply hover:bg-red-500 hover:text-white;
 
         }
