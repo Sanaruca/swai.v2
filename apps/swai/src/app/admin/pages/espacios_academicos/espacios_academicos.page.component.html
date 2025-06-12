@@ -1,4 +1,4 @@
-<header class="flex justify-between items-center">
+<header class="xlayout | flex justify-between items-center flex-wrap gap-5">
   <div>
     <h3>Espacios académicos</h3>
     <p class="text-sm">{{INSTITUTION_NAME}}</p>
@@ -13,7 +13,7 @@
   </div>
 </header>
 
-<div class="flex gap-4 mt-5">
+<div class="flex gap-4 mt-5 overflow-auto">
   <aw-info-card
     label="Espacios totales"
     [value]="cantidad_de_espacios_academicos.total"
@@ -76,8 +76,8 @@
   />
 </div>
 
-<section class="flex gap-3 mt-5 items-start">
-  <section class="card">
+<section class="flex gap-3 mt-5 items-start flex-wrap-reverse">
+  <section class="card | flex-1">
     <p-table
       selectionMode="single"
       dataKey="id"

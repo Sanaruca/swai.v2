@@ -1,4 +1,4 @@
-<header class="flex justify-between items-center">
+<header class="xlayout | flex justify-between items-center">
   <div>
     <div class="flex gap-2">
       <h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[seccion_academica.nivel_academico] }} Año</h3>
@@ -71,7 +71,7 @@
   ></aw-info-card>
 </nav>
 
-<section class="mt-4">
+<section class="xlayout |  mt-4">
   <h5>Materias ({{ pensum.areas_de_formacion.length }})</h5>
   <ul class="mt-3 flex flex-wrap gap-1">
     @for (area_de_formacion of pensum.areas_de_formacion; track $index) {

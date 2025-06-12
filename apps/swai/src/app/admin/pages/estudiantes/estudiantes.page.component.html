@@ -1,11 +1,13 @@
-<header class="flex justify-between items-center">
+<header class="xlayout | flex justify-between items-center flex-wrap gap-5">
   <div>
     <h3>Estudiantes</h3>
     <p class="text-sm">{{INSTITUTION_NAME}}</p>
   </div>
   <div class="flex gap-3">
-    <p-menu #menu [model]="imprimir_menu" popup></p-menu>
-      <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+    <div>
+      <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+        <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+    </div>
     <a routerLink="registrar" pButton>
       <i class="pi pi-user-plus"></i>
       <span>Registrar estudiante</span>
@@ -13,7 +15,7 @@
   </div>
 </header>
 
-<nav class="flex gap-3 mt-5 overflow-x-auto">
+<nav class="xlayout | flex gap-3 mt-5 overflow-x-auto">
   <aw-fast-link
     title="1er Año"
     subtitle="Nivel académico"
@@ -51,7 +53,7 @@
   ></aw-fast-link>
 </nav>
 
-<nav class="flex mt-5 gap-4 overflow-auto">
+<nav class="xlayout | flex mt-5 gap-4 overflow-auto">
   <aw-info-card
     label="Total de estudiantes"
     icon="pi pi-users"

@@ -42,9 +42,21 @@
 }
 
 .main{
-  @apply flex-1 px-3 pt-10 overflow-y-auto overflow-x-hidden;
+  @apply flex-1 px-0 pt-10 overflow-y-auto overflow-x-hidden;
   /* ................................... sm ................................... */
-  @apply sm:flex-row sm:pl-6;
+  @apply sm:flex-row sm:pl-6 sm:px-3;
+  @apply md:px-6;
+}
+
+
+::ng-deep .xlayout {
+  @apply px-2;
+
+  @screen sm {
+    @apply px-0;
+  }
+
+
 }
 
 

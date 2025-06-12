@@ -88,6 +88,8 @@ export class EditableNivelAcademicoComponent {
   
   toggle_editing(event: Event) {
 
+    console.log(event.target)
+
     if (this.editing && this.secciones_adicionales.length) {
       this.confirmationService.confirm({
             target: event.target as EventTarget,

@@ -1,7 +1,9 @@
-<h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[cantidad_de_estudiantes.numero] }} Año</h3>
-<p class="text-sm">{{ cantidad_de_estudiantes.nombre }}</p>
+<header class="xlayout">
+  <h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[cantidad_de_estudiantes.numero] }} Año</h3>
+  <p class="text-sm">{{ cantidad_de_estudiantes.nombre }}</p>
+</header>
 
-<nav class="flex mt-5 gap-4 overflow-auto">
+<nav class="xlayout | flex mt-5 gap-4 overflow-auto">
   <aw-info-card
     label="Total de estudiantes"
     icon="pi pi-users"
@@ -37,7 +39,7 @@
   }
 </nav>
 
-<section class="mt-4">
+<section class="xlayout | mt-4">
   <h5>Materias ({{ pensum.areas_de_formacion.length }})</h5>
   <ul class="mt-3 flex flex-wrap gap-1">
     @for (area_de_formacion of pensum.areas_de_formacion; track $index) {

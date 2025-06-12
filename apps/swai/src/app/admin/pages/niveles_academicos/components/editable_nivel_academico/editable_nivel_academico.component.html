@@ -2,14 +2,14 @@
     class="card"
     data-hover="true"
   >
-    <header class="flex items-start justify-between">
+    <header class="flex items-start justify-between flex-wrap gap-5">
       <div>
         <h5>{{ NIVEL_ACADEMICO_CARDINAL_MAP[nivel_academico().numero] }} Año</h5>
         <p class="text-sm">{{ nivel_academico().nombre }}</p>
       </div>
 
       <div class="flex gap-2">
-        <p-confirmpopup key="toggle_editing"/>
+        
         <button 
         class="rounded-full py-1 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" (click)="toggle_editing($event)"
         [class]="{
@@ -177,3 +177,4 @@
     }
   </section>
   <p-confirmdialog key="confirm_delete"/>
+  <p-confirmpopup key="toggle_editing"/>
