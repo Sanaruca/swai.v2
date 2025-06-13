@@ -22,6 +22,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SkeletonModule } from 'primeng/skeleton';
 
+// TODO: refactorizar el template para que sea más sencillo entender
+
 interface NivelAcademicoConPensumDTO extends CoreNivelAcademico {
   pensum: Array<AreaDeFromacion & { horas: number }>;
 }
