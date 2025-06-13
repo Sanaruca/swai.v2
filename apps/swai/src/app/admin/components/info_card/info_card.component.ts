@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'aw-info-card',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SkeletonModule],
   templateUrl: './info_card.component.html',
   styleUrls: ['./info_card.component.scss'],
 })
@@ -15,7 +16,8 @@ export class InfoCardComponent {
   @Input() label = 'No label';
   @Input() value: any = 'No value';
   @Input() variant: 'default' | 'vertical' = 'default';
-  @Input() routerLink: RouterLink['routerLink'];
+  @Input() link: RouterLink['routerLink'];
+  @Input() loading = false;
 
   // HostBinding para combinar las clases base con las clases dinámicas
   get hostClasses() {

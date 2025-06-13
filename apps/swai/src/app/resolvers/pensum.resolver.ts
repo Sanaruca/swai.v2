@@ -13,13 +13,7 @@ export function resolve_pensum(
   return async () => {
     const api = inject(ApiService).client;
 
-    const pensum = await api.institucion.obtener_pensum.query();
-
-    if (nivel_academico) {
-      return pensum.find(
-        (it) => it.nivel_academico.numero === nivel_academico
-      )!;
-    }
+    const pensum = await api.institucion.obtener_pensum.query(nivel_academico?{nivel_academico} : undefined)
 
     return pensum;
   };

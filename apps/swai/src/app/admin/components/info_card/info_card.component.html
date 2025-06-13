@@ -1,22 +1,40 @@
-<a class="host" [ngClass]="hostClasses" [routerLink]="routerLink">
+<a class="host" [ngClass]="hostClasses" [routerLink]="loading? null: link">
+  @if (loading) {
+    <p-skeleton shape="circle" size="2.5rem" styleClass="mr-2" />
+  } @else {
   <div
-    class="rounded-full size-10 grid place-items-center"
-    [ngClass]="iconContentClassName || 'bg-surface-200 dark:bg-surface-900'"
+  class="rounded-full size-10 grid place-items-center"
+  [ngClass]="iconContentClassName || 'bg-surface-200 dark:bg-surface-900'"
   >
-    <i [class]="icon"></i>
-  </div>
+  <i [class]="icon"></i>
+</div>
+}
+
   @if (variant ==='vertical') {
-  <h5>{{ label }}</h5>
+
+    @if(loading){
+      <p-skeleton width="10rem" />
+    } @else {
+      <h5>{{ label }}</h5>
+    }
+
 
   } @else {
   <div>
-    <p>{{ label }}</p>
-    <h5>{{ value }}</h5>
+
+    @if(loading){
+      <p-skeleton width="7rem"  />
+      <p-skeleton width="3rem" height="1.2rem" styleClass="mt-1"/>
+    } @else {
+      <p>{{ label }}</p>
+      <h5>{{ value }}</h5>
+    }
+
   </div>
 
   }
 
-  @if (routerLink) {
+  @if (link && !loading) {
     <i class="pi pi-external-link ml-4"></i>
   }
 </a>

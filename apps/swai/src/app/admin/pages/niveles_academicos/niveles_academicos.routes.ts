@@ -17,7 +17,6 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
     path: '',
     component: NivelesAcademicosPageComponent,
     resolve: {
-      cantidad_de_estudiantes: resolve_cantidad_de_estudiantes,
       pensum: resolve_pensum(),
     },
   },

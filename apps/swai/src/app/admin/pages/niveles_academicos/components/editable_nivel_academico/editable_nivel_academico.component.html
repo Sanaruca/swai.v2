@@ -5,31 +5,37 @@
     <header class="flex items-start justify-between flex-wrap gap-5">
       <div>
         <h5>{{ NIVEL_ACADEMICO_CARDINAL_MAP[nivel_academico()] }} Año</h5>
-        <p class="text-sm">{{ nivel_academico_data?.nombre }}</p>
+        <p class="text-sm">{{ $any(NIVELES_ACADEMICOS_MAP[nivel_academico()])?.nombre }}</p>
       </div>
+
 
       <div class="flex gap-2">
+      @if (loading && !editing) {
+        <p-skeleton width="6rem" height="1.9rem" borderRadius="16px"/>
+        <p-skeleton width="10rem" height="1.9rem"  borderRadius="16px"/>
+      } @else {
         
         <button 
-        class="rounded-full py-1 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" (click)="toggle_editing($event)"
-        [class]="{
-          'text-primary': editing,
-          'bg-primary/10': editing,
-          'bg-surface-100': !editing,
-          'dark:bg-surface-800': !editing
-        }"
-        >
-          {{editing ? 'Modo edición' : 'Editar'}}
-          <i class="pi pi-pencil {{editing? 'animate-pulse' : 'text-muted-color'}} text-sm"></i>
-        </button>
-        @if (!editing) {
-
-          <a class="rounded-full py-1 bg-slate-100 dark:bg-surface-800 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" [routerLink]="['/admin/niveles_academicos',nivel_academico_data?.numero]">
-            Ir a {{nivel_academico_data?.nombre?.toLowerCase()}}
-            <i class="pi pi-arrow-right text-muted-color text-sm"></i>
-          </a>
-        }
-      </div>
+      class="rounded-full py-1 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" (click)="toggle_editing($event)"
+      [class]="{
+        'text-primary': editing,
+        'bg-primary/10': editing,
+        'bg-surface-100': !editing,
+        'dark:bg-surface-800': !editing
+      }"
+      >
+        {{editing ? 'Modo edición' : 'Editar'}}
+        <i class="pi pi-pencil {{editing? 'animate-pulse' : 'text-muted-color'}} text-sm"></i>
+      </button>
+      @if (!editing) {
+        
+        <a class="rounded-full py-1 bg-slate-100 dark:bg-surface-800 hover:bg-primary/10 transition-colors flex items-center gap-3 px-3" [routerLink]="['/admin/niveles_academicos',nivel_academico_data?.numero]">
+          Ir a {{nivel_academico_data?.nombre?.toLowerCase()}}
+          <i class="pi pi-arrow-right text-muted-color text-sm"></i>
+        </a>
+      }
+    }
+  </div>
     </header>
     <div class="flex mt-3 gap-3">
       <nav class="flex gap-4 flex-wrap">
@@ -40,22 +46,44 @@
             nivel_academico_data?.cantidad_de_estudiantes?.total
           "
         />
-        @for (seccion of
-        nivel_academico_data?.secciones;
-        track $index) {
 
-          @if (editing) {
-          <div class="infocard_wrapper">
-                      <aw-info-card
-                      [className]="obtener_color_seccion_class(seccion.seccion)"
-                      [iconContentClassName]="
+        @if (loading && !editing) {
+          @for (_ of [].constructor(8); track $index) {
+            <aw-info-card [loading]="true"/>
+          }
+        }
+
+        @if (editing) {
+
+          @for (seccion of secciones_editables; track $index) {
+
+            @if (!seccion.aux.existe && !seccion.aux.add) {
+
+              <p-button
+          icon="pi pi-plus"
+          label="Añadir Seccion {{seccion.seccion}}"
+          severity="secondary"
+          styleClass="h-full rounded-xl animate-pulse"
+          pTooltip="Seccion inexistente"
+          showDelay="500"
+          (click)="seccion.aux.add = true"
+          [disabled]="loading"
+        ></p-button>
+              
+            } @else {
+              
+              <div class="infocard_wrapper">
+                <aw-info-card
+              [className]="obtener_color_seccion_class(seccion.seccion)"
+              [iconContentClassName]="
             obtener_color_seccion_class(seccion.seccion, true)
             "
           [label]="'Seccion ' + seccion.seccion"
           icon="pi pi-book"
           [value]="seccion.cantidad_de_estudiantes.total"
+          [class]="{'animate-pulse': seccion.aux.add}"
           />
-
+  
           <div class="infocard_wrapper__overlay | group">
               <button
               class="infocard_wrapper__overlay__button | peer"
@@ -63,30 +91,40 @@
               tooltipPosition="top"
               showDelay="300"
               (click)="eliminar_seccion(seccion, $event)"
-
+  
               >
                 <i class="pi pi-trash"></i>
               </button>
               <div class="peer-hover:bg-red-400 peer-hover:dark:bg-red-500 size-full transition-colors"></div>
-          </div>
-          
-        </div>
-          } @else {
-
+            </div>
             
-            <aw-info-card
-          [className]="obtener_color_seccion_class(seccion.seccion)"
-          [iconContentClassName]="
-            obtener_color_seccion_class(seccion.seccion, true)
-          "
-          [label]="'Seccion ' + seccion.seccion"
-          icon="pi pi-book"
-          [value]="seccion.cantidad_de_estudiantes.total"
-          [routerLink]="['/admin/niveles_academicos', seccion.nivel_academico, seccion.seccion]"
-          />
+          </div>
+        }
+        }
+          
+        } @else {
+          
+          @for (seccion of
+          nivel_academico_data?.secciones;
+          track $index) {
+  
+  
+              
+              <aw-info-card
+            [className]="obtener_color_seccion_class(seccion.seccion)"
+            [iconContentClassName]="
+              obtener_color_seccion_class(seccion.seccion, true)
+            "
+            [label]="'Seccion ' + seccion.seccion"
+            icon="pi pi-book"
+            [value]="seccion.cantidad_de_estudiantes.total"
+            [link]="['/admin/niveles_academicos', seccion.nivel_academico, seccion.seccion]"
+            />
+          
+  
+          }
         }
 
-        }
 
         @if (editing) {
           
@@ -132,13 +170,25 @@
           severity="secondary"
           styleClass="h-full rounded-xl"
           (click)="add_seccion()"
+          [disabled]="loading"
         ></p-button>
         }
       </nav>
     </div>
     <section class="mt-3">
-      <h6>Materias ({{ nivel_academico_data?.pensum?.length }})</h6>
+      <h6>Materias 
+        @if (!loading) {
+          ({{ nivel_academico_data?.pensum?.length }})
+        }
+      </h6>
       <ul class="mt-3 flex flex-wrap gap-1">
+        @if (loading && !editing) {
+          @for (_ of [].constructor(8); track $index) {
+            <li>
+              <p-skeleton width="7rem" height="1.7rem" borderRadius="16px" />
+            </li>
+          }
+        }
         @for (area_de_formacion of nivel_academico_data?.pensum; track $index) {
         <li>
           <p-tag
@@ -166,7 +216,7 @@
             ></p-button>
             <p-button
             [rounded]="true"
-            [disabled]="secciones_adicionales.length === 0"
+            [disabled]="!puede_aplicar_cambios"
             [loading]="loading"
             label="Aplicar"
             icon="pi pi-check"

@@ -44,7 +44,7 @@
 <section class="grid gap-5 mt-5">
   @for (pensum of pensum; track $index) {
 
-    <aw-editable-nivel-academico [nivel_academico]="obtener_nivel_academico_prop(pensum)"/>
+    <aw-editable-nivel-academico [nivel_academico]="pensum.nivel_academico.numero"/>
   
   }
 </section>
