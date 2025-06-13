@@ -102,7 +102,7 @@
         }
         }
           
-        } @else {
+        } @else if(!loading) {
           
           @for (seccion of
           nivel_academico_data?.secciones;
@@ -188,18 +188,21 @@
               <p-skeleton width="7rem" height="1.7rem" borderRadius="16px" />
             </li>
           }
+        } @else if(!loading || editing) {
+
+          
+          @for (area_de_formacion of nivel_academico_data?.pensum; track $index) {
+            <li>
+              <p-tag
+              icon="pi pi-book"
+              [value]="area_de_formacion.nombre"
+              [rounded]="true"
+              styleClass="bg-slate-100 text-current dark:bg-surface-800"
+              />
+            </li>
+          }
         }
-        @for (area_de_formacion of nivel_academico_data?.pensum; track $index) {
-        <li>
-          <p-tag
-            icon="pi pi-book"
-            [value]="area_de_formacion.nombre"
-            [rounded]="true"
-            styleClass="bg-slate-100 text-current dark:bg-surface-800"
-          />
-        </li>
-        }
-      </ul>
+        </ul>
     </section>
     @if (editing) {
       <p-divider class="my-5"></p-divider>

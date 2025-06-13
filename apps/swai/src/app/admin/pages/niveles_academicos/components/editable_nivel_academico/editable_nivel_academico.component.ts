@@ -309,7 +309,7 @@ export class EditableNivelAcademicoComponent implements OnInit {
         this.changes_success.emit();
         this.secciones_adicionales = [];
         this.editing = false;
-        this.load_data();
+        setTimeout(() => this.load_data(), 100)
       })
       .finally(() => (this.loading = false));
   }
