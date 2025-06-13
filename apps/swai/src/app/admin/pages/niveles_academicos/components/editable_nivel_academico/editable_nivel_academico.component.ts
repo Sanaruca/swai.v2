@@ -264,6 +264,8 @@ export class EditableNivelAcademicoComponent implements OnInit {
 
             const secciones_para_añadir = this.secciones_editables.filter((seccion) => !seccion.aux.existe && seccion.aux.add);
 
+            this.secciones_editables = this.secciones_editables.filter((it) => it.id !== seccion.id);
+
             this.load_data().then(()=> {
               secciones_para_añadir.forEach((seccion) => {
                 const index = this.secciones_editables.findIndex((it) => it.id === seccion.id)
