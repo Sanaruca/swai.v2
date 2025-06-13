@@ -1,8 +1,9 @@
 <section
     class="card"
     data-hover="true"
+    style="padding-top: 0;"
   >
-    <header class="flex items-start justify-between flex-wrap gap-5">
+    <header class="flex items-start justify-between flex-wrap gap-5 sticky -top-10 card-bg pt-6 pb-2">
       <div>
         <h5>{{ NIVEL_ACADEMICO_CARDINAL_MAP[nivel_academico()] }} Año</h5>
         <p class="text-sm">{{ $any(NIVELES_ACADEMICOS_MAP[nivel_academico()])?.nombre }}</p>
