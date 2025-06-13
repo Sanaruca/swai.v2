@@ -85,7 +85,7 @@ interface Wrapper<T> {
     DatePickerModule,
     InputNumberModule,
     NombrePipe,
-    OverlayModule
+    OverlayModule,
   ],
   templateUrl: './tabla_de_estudiantes.component.html',
   styleUrl: './tabla_de_estudiantes.component.sass',

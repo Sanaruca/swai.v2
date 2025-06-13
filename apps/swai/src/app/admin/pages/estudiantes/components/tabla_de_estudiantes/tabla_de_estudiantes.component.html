@@ -19,7 +19,7 @@
     (onLazyLoad)="cargar_estudiantes($event)"
   >
     <ng-template #caption>
-      <div class="flex">
+      <div class="flex flex-wrap-reverse gap-2 justify-between">
         <div class="filter-content | flex gap-2 items-center">
           <i class="pi pi-filter w-6"></i>
           <p class="font-semibold" *ngIf="filtros_form.length && filtros_activos_form.length === 0">Filtrado de datos</p>
@@ -87,7 +87,7 @@
           </ul>
           <p-button  variant="outlined" label="Filtrar" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros_form.length === 0"/>
         </div>
-        <p-iconfield iconPosition="left" class="ml-auto">
+        <p-iconfield iconPosition="left">
           <p-inputicon>
             <i class="pi pi-search"></i>
           </p-inputicon>
@@ -98,7 +98,7 @@
           />
         </p-iconfield>
       </div>
-      <form class="pl-8 grid gap-2 mt-2">
+      <form class="sm:pl-8 grid gap-2 mt-2 overflow-auto pb-2">
         <p class="font-semibold" *ngIf="filtros_form.length && filtros_activos_form.length > 0">Filtrado de datos</p>
         @for (filtro of filtros_form.controls; let i = $index; track $index) {
           <li class="flex gap-1 items-center">
@@ -125,11 +125,11 @@
         </li>
       }
       <p-button class="justify-self-start" variant="outlined" label="Añadir filtro" icon="pi pi-plus" [rounded]="true" severity="secondary" (click)="add_filtro()" *ngIf="filtros_form.length > 0"/>
-      <div class="justify-self-end flex gap-2">
-        <p-button label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="remove_all_filtros()" *ngIf="filtros_form.length > 0"/>
-        <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros_form.invalid" [rounded]="true" (click)="aplicar_filtros_form()" *ngIf="filtros_form.length > 0"/>
-      </div>
       </form>
+      <section class="flex gap-2 mt-2 justify-end border-t pt-3" *ngIf="filtros_form.length > 0">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="remove_all_filtros()" />
+        <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros_form.invalid" [rounded]="true" (click)="aplicar_filtros_form()"/>
+      </section>
       <p class="mt-5">Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
     </ng-template>
     <ng-template #header>
