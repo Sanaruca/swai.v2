@@ -17,6 +17,7 @@ import {
   EstudianteDTO,
   EstudianteSchema,
   Municipio,
+  NivelAcademicoSchema,
   NIVELES_ACADEMICOS,
   PersonaSchema,
   TIPO_DE_ESTUDIANTE,
@@ -61,19 +62,19 @@ import { DatosAntropometricosFormComponent } from './components/datos_antropomet
   styleUrl: './registrar_estudiante.page.component.scss',
 })
 export class RegistrarEstudiantePageComponent implements OnInit {
-  /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
-
-  /* ................................. inputs ................................. */
-  @Input() modo!: 'registrar' | 'editar';
-  @Input() estudiante: EstudianteDTO | null = null;
-
   /* ............................... injectables .............................. */
 
   private api = inject(ApiService);
   private toast = inject(MessageService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
+  /* ................................ contantes ............................... */
+  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+
+  /* ................................. inputs ................................. */
+  @Input() modo!: 'registrar' | 'editar';
+  @Input() estudiante: EstudianteDTO | null = null;
 
   /* ................................. estado ................................. */
 
@@ -152,6 +153,20 @@ export class RegistrarEstudiantePageComponent implements OnInit {
       this.estudiante = estudiante ?? null;
 
       this.init_modo(modo!);
+
+      const nivel_academico = Number(this.route.snapshot.queryParamMap.get('nivel_academico'))
+
+      if (modo === 'registrar' && nivel_academico){
+
+        try {
+          parse(NivelAcademicoSchema.entries.numero, nivel_academico)
+        } catch {
+          return
+        }
+
+        this.datos_academicos_component().form.controls.nivel_academico.setValue(nivel_academico)
+
+      }
     });
   }
 
@@ -390,7 +405,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         return this.datos_personales_component().form;
       case 2:
         return this.datos_de_contacto_component().form;
-        case 3:
+      case 3:
         return this.datos_academicos_component().form;
       case 4:
         return this.datos_de_salud_component().form;

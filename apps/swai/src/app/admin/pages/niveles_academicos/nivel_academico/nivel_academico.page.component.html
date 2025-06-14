@@ -1,6 +1,15 @@
-<header class="xlayout">
-  <h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[cantidad_de_estudiantes.numero] }} Año</h3>
-  <p class="text-sm">{{ cantidad_de_estudiantes.nombre }}</p>
+<header class="xlayout flex flex-wrap gap-5 justify-between items-center">
+  <section>
+    <h3>{{ NIVEL_ACADEMICO_CARDINAL_MAP[cantidad_de_estudiantes.numero] }} Año</h3>
+    <p class="text-sm">{{ cantidad_de_estudiantes.nombre }}</p>
+  </section>
+  <section class="flex gap-3 items-center">
+    <p-button label="Imprimir" icon="pi pi-print" variant="outlined" (onClick)="inprimir.toggle($event)"/>
+    <a routerLink="/admin/estudiantes/registrar" [queryParams]="{nivel_academico: NIVEL_ACADEMICO}" pButton class="font-semibold">
+      <i class="pi pi-plus"></i> Registrar estudiante
+    </a>
+    <p-button icon="pi pi-ellipsis-h" severity="secondary" size="large" (onClick)="acciones.toggle($event)"></p-button>
+  </section>
 </header>
 
 <nav class="xlayout | flex mt-5 gap-4 overflow-auto">
@@ -59,3 +68,6 @@
   <h6>Estudiantes</h6>
   <aw-tabla-de-estudiantes [filtros_estaticos]="[{campo: 'nivel_academico', condicion: NumberCondicion.IGUAL, valor: NIVEL_ACADEMICO}]" [omitir_campos_filtros]="['nivel_academico']"/>
 </section>
+
+<p-menu [model]="inprimir_menu" [popup]="true" #inprimir/>
+<p-menu [model]="acciones_menu" [popup]="true" #acciones/>

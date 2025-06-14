@@ -60,7 +60,7 @@ export class DatosAcademicosFormComponent implements OnInit {
     tipo_de_estudiante: new FormControl<number | null>(null, {
       validators: [Validators.required],
     }),
-    estado_academico: new FormControl<number | null>(null),
+    estado_academico: new FormControl<number | null>(ESTADO_ACADEMICO.ACTIVO),
     nivel_academico: new FormControl<number | null>(null),
     seccion: new FormControl<string | null>(null),
     fecha_de_inscripcion: new FormControl<string | null>(null),
