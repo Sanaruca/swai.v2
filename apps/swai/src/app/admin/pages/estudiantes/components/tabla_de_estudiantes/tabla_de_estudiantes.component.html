@@ -98,7 +98,7 @@
           />
         </p-iconfield>
       </div>
-      <form class="sm:pl-8 grid gap-2 mt-2 overflow-auto pb-2">
+      <form class="sm:pl-8 grid gap-2 mt-2 pb-2">
         <p class="font-semibold" *ngIf="filtros_form.length && filtros_activos_form.length > 0">Filtrado de datos</p>
         @for (filtro of filtros_form.controls; let i = $index; track $index) {
           <li class="flex gap-1 items-center">

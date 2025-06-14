@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, viewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -45,6 +45,10 @@ export class AdminLayoutComponent implements OnInit {
   private location = inject(Location);
   private router = inject(Router);
 
+  /* ................................ elements ................................ */
+
+  protected main_element = viewChild.required<ElementRef<HTMLElement>>('main');
+
   /* ................................. estado ................................. */
 
   protected sidebar_open = false;
@@ -55,6 +59,8 @@ export class AdminLayoutComponent implements OnInit {
     this.router.events.subscribe((event) => {
 
       if (event instanceof NavigationEnd) {
+        this.main_element().nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+        
         this.current_url = event.urlAfterRedirects;
       }
     });

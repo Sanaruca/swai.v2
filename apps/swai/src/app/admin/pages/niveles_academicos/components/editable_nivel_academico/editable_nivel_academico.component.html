@@ -46,6 +46,8 @@
           [value]="
             nivel_academico_data?.cantidad_de_estudiantes?.total
           "
+          [routerLink]="['/admin/niveles_academicos',nivel_academico()]"
+          class="cursor-pointer"
         />
 
         @if (loading && !editing) {
