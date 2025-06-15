@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CantidadDeEstudiantesPorNivelAcademicoDTO } from '@swai/server';
@@ -25,6 +25,7 @@ import { TablaDeEstudiantesComponent } from '../../estudiantes/components/tabla_
 import { obtener_color_seccion_class } from '../utils/info_card_seccion_color.util';
 import { MenuItem } from 'primeng/api';
 import { ApiService } from '../../../../services/api.service';
+import { PromoverNivelAcademicoModalComponent } from './components/promover_nivel_academico/promover_nivel_academico.modal.component';
 
 @Component({
   selector: 'aw-nivel-academico.page',
@@ -42,6 +43,7 @@ import { ApiService } from '../../../../services/api.service';
     TablaDeEstudiantesComponent,
     MenuModule,
     RouterLink,
+    PromoverNivelAcademicoModalComponent,
   ],
   templateUrl: './nivel_academico.page.component.html',
   styleUrl: './nivel_academico.page.component.scss',
@@ -50,6 +52,12 @@ export class NivelAcademicoPageComponent {
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
+
+  /* .................................. state ................................. */
+
+  protected loadings = {
+    imprimir: false,
+  }
 
   /* ................................ constants ............................... */
 
@@ -61,7 +69,7 @@ export class NivelAcademicoPageComponent {
       label: 'Promover',
       icon: 'pi pi-arrow-up',
       command: () => {
-        console.log('Promover accion ejecutada');
+        this.promover_nivel_academico_modal().open();
       },
     },
     {
@@ -77,6 +85,7 @@ export class NivelAcademicoPageComponent {
       label: 'Listados',
       icon: 'pi pi-list',
       command: () => {
+        this.loadings.imprimir = true;
         Promise.all(
           this.cantidad_de_estudiantes.secciones.map((seccion) => {
             return this.api.client.estudiantes.obtener_estudiantes.query({
@@ -107,10 +116,18 @@ export class NivelAcademicoPageComponent {
 
             generar_listado_de_estudiantes(estudiantes.data, titulo, filename);
           });
+        }).finally(() => {
+          this.loadings.imprimir = false;
         });
       },
     },
   ];
+
+  /* ............................... components ............................... */
+
+  protected promover_nivel_academico_modal = viewChild.required(
+    PromoverNivelAcademicoModalComponent
+  );
 
   /* .................................. data .................................. */
   protected cantidad_de_estudiantes: CantidadDeEstudiantesPorNivelAcademicoDTO =

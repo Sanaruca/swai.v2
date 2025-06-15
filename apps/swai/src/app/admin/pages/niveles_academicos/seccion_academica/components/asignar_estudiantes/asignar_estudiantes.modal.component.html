@@ -4,7 +4,7 @@
     <header class="p-[var(--p-dialog-header-padding)]">
         <div class="flex justify-between">
             <h5>Asignar estudiantes</h5>
-            <p-button icon="pi pi-times" class="p-button-text" (click)="cerrar()" [rounded]="true" variant="text" severity="secondary"></p-button>
+            <p-button icon="pi pi-times" (onClick)="cerrar()" [rounded]="true" variant="text" severity="secondary"></p-button>
         </div>
         
         <form [formGroup]="estudiantes_form" class="mt-5 relative">

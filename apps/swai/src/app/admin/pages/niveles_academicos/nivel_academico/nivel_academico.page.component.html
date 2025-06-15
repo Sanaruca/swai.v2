@@ -4,7 +4,7 @@
     <p class="text-sm">{{ cantidad_de_estudiantes.nombre }}</p>
   </section>
   <section class="flex gap-3 items-center">
-    <p-button label="Imprimir" icon="pi pi-print" variant="outlined" (onClick)="inprimir.toggle($event)"/>
+    <p-button label="Imprimir" icon="pi pi-print" variant="outlined" (onClick)="inprimir.toggle($event)" [loading]="loadings.imprimir"/>
     <a routerLink="/admin/estudiantes/registrar" [queryParams]="{nivel_academico: NIVEL_ACADEMICO}" pButton class="font-semibold">
       <i class="pi pi-plus"></i> Registrar estudiante
     </a>
@@ -71,3 +71,4 @@
 
 <p-menu [model]="inprimir_menu" [popup]="true" #inprimir/>
 <p-menu [model]="acciones_menu" [popup]="true" #acciones/>
+<aw-modal-promover-nivel-academico [nivel_academico]="NIVEL_ACADEMICO" />

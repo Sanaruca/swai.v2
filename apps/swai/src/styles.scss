@@ -159,3 +159,36 @@ a.link {
   content: ' *';
   @apply text-red-500;
 }
+
+/* ............................... selectable ............................... */
+
+.selectable {
+    @apply flex py-4 px-3 rounded-xl border-2 items-center justify-start text-start gap-5 transition-colors;
+    @apply hover:border-primary/50 hover:bg-primary/20;
+
+    &__icon {
+        @apply size-11 bg-surface-100 dark:bg-surface-800 rounded-full flex-none grid place-items-center;
+    }
+
+    &__title {
+        @apply font-semibold;
+    }
+    &__subtitle {
+        @apply text-sm text-balance;
+    }
+}
+
+.selectable-box{
+    @apply transition-all;
+    @apply border-2 py-4 px-3 rounded-xl;
+    @apply cursor-pointer hover:border-primary/50 hover:bg-primary/20;
+
+    &[data-selected="true"] {
+        @apply border-primary/50 bg-primary/30;
+    }
+    
+}
+
+.bordered {
+    @apply border-2 py-4 px-3 rounded-xl;
+}

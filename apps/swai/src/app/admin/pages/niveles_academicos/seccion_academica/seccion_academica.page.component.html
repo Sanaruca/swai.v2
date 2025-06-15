@@ -16,8 +16,6 @@
       <i class="pi pi-user-plus"></i>
       <span>Asignar estudiantes</span>
     </button>
-    <p-menu #menu [model]="imprimir_menu" popup></p-menu>
-    <aw-modal-asignar-estudiantes (success)="recargar()" [seccion]="{id: seccion_academica.id, seccion: seccion_academica.seccion, nivel_academico: seccion_academica.nivel_academico, profesor_guia: seccion_academica.profesor_guia?.cedula}" #asm/>
   </div>
 </header>
 
@@ -91,3 +89,5 @@
   <h6>Estudiantes</h6>
   <aw-tabla-de-estudiantes [omitir_campos_filtros]="['nivel_academico', 'seccion']" [filtros_estaticos]="[{campo: 'seccion', condicion: StringCondicion.IGUAL, valor: seccion_academica.id}]" />
 </section>
+<p-menu #menu [model]="imprimir_menu" popup></p-menu>
+<aw-modal-asignar-estudiantes (success)="recargar()" [seccion]="{id: seccion_academica.id, seccion: seccion_academica.seccion, nivel_academico: seccion_academica.nivel_academico, profesor_guia: seccion_academica.profesor_guia?.cedula}" #asm/>

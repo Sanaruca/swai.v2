@@ -17,6 +17,7 @@ import {
 import { admin_procedure } from '../../../../procedures';
 import {
   array,
+  InferOutput,
   nullable,
   nullish,
   number,
@@ -26,6 +27,7 @@ import {
   partial,
 } from 'valibot';
 import { obtener_estudiante_fn } from '../query/obtener_estudiante.usecase';
+import type { PrismaClient } from '@prisma/client';
 
 // Definición del esquema para la actualización del estudiante
 export const ActualizarEstudianteSchemaDTO = object({
@@ -53,11 +55,25 @@ export const ActualizarEstudianteSchemaDTO = object({
   ),
 });
 
+export type ActualizarEstudianteDTO = InferOutput<
+  typeof ActualizarEstudianteSchemaDTO
+>;
+
 // Procedimiento para actualizar el estudiante
 export const actualizar_estudiante = admin_procedure
   .input(parser(ActualizarEstudianteSchemaDTO))
-  .mutation<EstudianteDTO>(async ({ ctx, input }) => {
-    const { actualizacion } = input;
+  .mutation<EstudianteDTO>(async ({ ctx, input }) => actualizar_estudiante_fn({ params: input, deps: { prisma: ctx.prisma } }));
+
+  /* ................................... fn ................................... */
+
+  export interface ActualizarEstudianteFnParams {
+    params: ActualizarEstudianteDTO;
+    deps: {
+      prisma: PrismaClient;
+    }
+  }
+  export async function actualizar_estudiante_fn({params, deps}: ActualizarEstudianteFnParams): Promise<EstudianteDTO> {
+    const { actualizacion } = params;
     const { discapacidad } = actualizacion;
 
     let seccion: string | null | undefined;
@@ -79,7 +95,7 @@ export const actualizar_estudiante = admin_procedure
         seccion = null;
         actualizacion.materias_pendientes = null;
       } else {
-        const seccion_db = await ctx.prisma.secciones.findFirst({
+        const seccion_db = await deps.prisma.secciones.findFirst({
           where: {
             nivel_academico: actualizacion.nivel_academico,
             seccion: actualizacion.seccion!,
@@ -101,12 +117,12 @@ export const actualizar_estudiante = admin_procedure
     }
 
     // Obtener estudiante y discapacidad en una transacción
-    const [estudiante, discapacitado] = await ctx.prisma.$transaction([
-      ctx.prisma.estudiantes.findUnique({
-        where: { cedula: input.estudiante },
+    const [estudiante, discapacitado] = await deps.prisma.$transaction([
+      deps.prisma.estudiantes.findUnique({
+        where: { cedula: params.estudiante },
       }),
-      ctx.prisma.discapacitados.findUnique({
-        where: { cedula: input.estudiante },
+      deps.prisma.discapacitados.findUnique({
+        where: { cedula: params.estudiante },
       }),
     ]);
 
@@ -114,29 +130,29 @@ export const actualizar_estudiante = admin_procedure
     if (!estudiante) throw EstudianteNoExisteError;
 
     // Actualizar datos en una transacción
-    await ctx.prisma.$transaction([
+    await deps.prisma.$transaction([
       // Manejo de la discapacidad
       ...(discapacidad
         ? [
             discapacitado
-              ? ctx.prisma.discapacitados.update({
+              ? deps.prisma.discapacitados.update({
                   where: { cedula: discapacitado.cedula },
                   data: discapacidad,
                 })
-              : ctx.prisma.discapacitados.create({
+              : deps.prisma.discapacitados.create({
                   data: { cedula: estudiante.cedula, ...discapacidad },
                 }),
           ]
         : discapacidad === null && discapacitado
         ? [
-            ctx.prisma.discapacitados.delete({
+            deps.prisma.discapacitados.delete({
               where: { cedula: discapacitado.cedula },
             }),
           ]
         : []),
 
       // Actualización de la persona
-      ctx.prisma.personas.update({
+      deps.prisma.personas.update({
         where: { cedula: estudiante.cedula },
         data: {
           nombres: actualizacion.nombres,
@@ -149,7 +165,7 @@ export const actualizar_estudiante = admin_procedure
       }),
 
       // Actualización del estudiante
-      ctx.prisma.estudiantes.update({
+      deps.prisma.estudiantes.update({
         where: { cedula: estudiante.cedula },
         data: {
           fecha_de_inscripcion: actualizacion.fecha_de_inscripcion,
@@ -172,14 +188,14 @@ export const actualizar_estudiante = admin_procedure
       actualizacion.materias_pendientes ||
       actualizacion.materias_pendientes === null
     ) {
-      await ctx.prisma.materias_pendientes.deleteMany({
+      await deps.prisma.materias_pendientes.deleteMany({
         where: {
           estudiante: estudiante.cedula,
         },
       });
 
       if (actualizacion.materias_pendientes !== null) {
-        await ctx.prisma.materias_pendientes.createMany({
+        await deps.prisma.materias_pendientes.createMany({
           data: actualizacion.materias_pendientes.map((area_de_formacion) => ({
             estudiante: estudiante.cedula,
             area_de_formacion,
@@ -190,7 +206,7 @@ export const actualizar_estudiante = admin_procedure
 
     // Retornar el estudiante actualizado
     return await obtener_estudiante_fn({
-      deps: { prisma: ctx.prisma },
+      deps: { prisma: deps.prisma },
       params: { cedula: estudiante.cedula },
     });
-  });
+  }
