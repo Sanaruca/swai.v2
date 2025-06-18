@@ -23,9 +23,10 @@ import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { TablaDeEstudiantesComponent } from '../../estudiantes/components/tabla_de_estudiantes/tabla_de_estudiantes.component';
 import { obtener_color_seccion_class } from '../utils/info_card_seccion_color.util';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ApiService } from '../../../../services/api.service';
 import { PromoverNivelAcademicoModalComponent } from './components/promover_nivel_academico/promover_nivel_academico.modal.component';
+import { PensumModalComponent } from './components/pensum/pensum.modal.component';
 
 @Component({
   selector: 'aw-nivel-academico.page',
@@ -44,6 +45,7 @@ import { PromoverNivelAcademicoModalComponent } from './components/promover_nive
     MenuModule,
     RouterLink,
     PromoverNivelAcademicoModalComponent,
+    PensumModalComponent
   ],
   templateUrl: './nivel_academico.page.component.html',
   styleUrl: './nivel_academico.page.component.scss',
@@ -52,6 +54,7 @@ export class NivelAcademicoPageComponent {
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private toast = inject(MessageService);
 
   /* .................................. state ................................. */
 
@@ -65,6 +68,13 @@ export class NivelAcademicoPageComponent {
   protected NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP;
   protected NumberCondicion = NumberCondicion;
   protected acciones_menu: MenuItem[] = [
+    {
+      label: 'Ver pensum',
+      icon: 'pi pi-eye',
+      command: () => {
+        this.pensum_modal().open();
+      },
+    },
     {
       label: 'Promover',
       icon: 'pi pi-arrow-up',
@@ -128,6 +138,9 @@ export class NivelAcademicoPageComponent {
   protected promover_nivel_academico_modal = viewChild.required(
     PromoverNivelAcademicoModalComponent
   );
+  protected pensum_modal = viewChild.required(
+    PensumModalComponent
+  );
 
   /* .................................. data .................................. */
   protected cantidad_de_estudiantes: CantidadDeEstudiantesPorNivelAcademicoDTO =
@@ -141,4 +154,18 @@ export class NivelAcademicoPageComponent {
   obtener_color_seccion_class(seccion: string, contraste = false) {
     return obtener_color_seccion_class(seccion, contraste);
   }
+
+  /* ................................. events ................................. */
+
+  protected on_pensum_success(pensum: PensumDTO){
+
+
+    this.toast.add({
+      summary: 'Pensum actualizado con exito',
+      severity: 'success',
+    })
+    
+    this.pensum = pensum
+  }
+
 }

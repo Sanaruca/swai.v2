@@ -88,11 +88,11 @@ export const actualizar_estudiante = admin_procedure
         actualizacion.nivel_academico === NIVEL_ACADEMICO.Egresado;
       const tiene_seccion = actualizacion.seccion !== undefined;
 
-      if (es_egresado || !tiene_seccion) {
-        // Si es egresado o no tiene sección, seccion se queda como null
+      if (es_egresado) {
+        actualizacion.tipo = TIPO_DE_ESTUDIANTE.EGRESADO;
+        seccion = null;
         actualizacion.tipo = TIPO_DE_ESTUDIANTE.EGRESADO;
         actualizacion.estado_academico = ESTADO_ACADEMICO.EGRESADO;
-        seccion = null;
         actualizacion.materias_pendientes = null;
       } else {
         const seccion_db = await deps.prisma.secciones.findFirst({

@@ -1,9 +1,9 @@
-import { array, InferOutput, integer, number, object, pipe } from 'valibot';
+import { array, InferOutput, integer, number, object, pipe, string } from 'valibot';
 import { NivelAcademicoSchema } from './nivel_academico.schema';
 import { AreaDeFromacionSchema } from './area_de_formacion.schema';
 
 export const PensumSchema = object({
-  id: number(),
+  id: string(),
   nivel_academico: NivelAcademicoSchema.entries.numero,
   area_de_formacion: AreaDeFromacionSchema.entries.codigo,
   horas: pipe(number(), integer()),

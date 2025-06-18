@@ -1,0 +1,99 @@
+<p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '45rem' }">
+    <ng-template #headless>
+        <header class="flex justify-between gap-5 p-[var(--p-dialog-header-padding)]">
+            <div>
+                @if (loadings.data) {
+                    <p-skeleton width="15rem" height="1.9rem" borderRadius="16px"/>
+                    <p-skeleton width="18rem" height="1rem" borderRadius="16px" styleClass="mt-1"/>
+                } @else {
+                    <h4 class="font-semibold">Pensum - {{pensum?.nivel_academico?.nombre}}</h4>
+                    <p class="text-sm">Gestiona las materias y horas semanales para este nivel académico</p>
+                }
+            </div>
+            <p-button icon="pi pi-times" (onClick)="close()" [rounded]="true" variant="text" severity="secondary"/>
+        </header>
+        <section class="p-[var(--p-dialog-content-padding)] overflow-auto">
+            <section class="grid sm:grid-cols-3 gap-3">
+                @if (loadings.data){
+                    <p-skeleton width="100%" height="6rem" borderRadius="16px"/>
+                    <p-skeleton width="100%" height="6rem" borderRadius="16px"/>
+                    <p-skeleton width="100%" height="6rem" borderRadius="16px"/>
+                } @else {
+                    <div class="flex flex-col justify-center items-center bg-indigo-100 text-indigo-500 rounded-xl min-h-24">
+                        <span class="font-semibold text-xl">{{resumen.materias}}</span>
+                        <p>Materias</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center bg-blue-100 text-blue-500 rounded-xl min-h-24">
+                        <span class="font-semibold text-xl">{{resumen.horas_semanales}}h</span>
+                        <p>Horas totales</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center bg-green-100 text-green-500 rounded-xl min-h-24">
+                        <span class="font-semibold text-xl">{{resumen.promedio_materia}}h</span>
+                        <p>Promedio / Materia</p>
+                    </div>
+                }
+            </section>
+            <section class="mt-5">
+                <div *ngIf="areas_de_formacion_no_asignadas.length && !loadings.data" class="p-5 border rounded-xl bg-surface-50 dark:bg-surface-800 mb-5">
+                    <div class="flex gap-2 items-center font-semibold">
+                        <i class="pi pi-plus"></i>
+                        <p class="text-lg">Agregar área de formación</p>
+                    </div>
+                    <form [formGroup]="agregar_mataria_form" class="flex gap-2 flex-wrap items-end mt-5">
+                        <div class="form_input flex-1">
+                            <label for="area_de_formacion">Área de formación</label>
+                            <p-select appendTo="body" [options]="areas_de_formacion_no_asignadas" formControlName="area_de_formacion" inputId="area_de_formacion" optionLabel="nombre" optionValue="codigo" [filter]="true" filterBy="nombre" placeholder="Seleccione"/>
+                        </div>
+                        <div class="form_input flex-1">
+                            <label for="horas_semanales">Horas semanales</label>
+                            <p-inputnumber formControlName="horas_semanales" inputId="horas_semanales" showButtons="true" [min]="1"/>
+                        </div>
+                        <p-button label="Agregar" icon="pi pi-plus" iconPos="left" class="flex-1" styleClass="w-full" [disabled]="agregar_mataria_form.invalid" (onClick)="agregar_materia()" />
+                    </form>
+                </div>
+                <p-table [value]="pensum?.areas_de_formacion || []" styleClass="" tableStyleClass="border rounded-xl overflow-hidden" [loading]="loadings.data" [showLoader]="false">
+                    <ng-template #header>
+                         <tr>
+                             <th class="bg-surface-50 dark:bg-surface-800">Codigo</th>
+                             <th class="bg-surface-50 dark:bg-surface-800">Área de formación</th>
+                             <th class="bg-surface-50 dark:bg-surface-800">Horas semanales</th>
+                             <th class="bg-surface-50 dark:bg-surface-800 text-end">Acciones</th>
+                         </tr>
+                     </ng-template>
+                     <ng-template #loadingbody>
+                         <tr *ngFor="let i of [1,2,3,4]">
+                             <td><p-skeleton width="5rem" height="1.7rem" borderRadius="16px"/></td>
+                             <td><p-skeleton width="15rem" height="1.7rem" borderRadius="16px"/></td>
+                             <td><p-skeleton width="5rem" height="1.7rem" borderRadius="16px"/></td>
+                             <td><p-skeleton width="5rem" height="1.7rem" borderRadius="16px"/></td>
+                         </tr>
+                     </ng-template>
+                     <ng-template #body let-area_de_formacion>
+                        <tr *ngIf="!loadings.data">
+                            <td>{{ area_de_formacion.codigo }}</td>
+                            <td>{{ area_de_formacion.nombre }}</td>
+                            <td>
+                                <div class="flex gap-2 items-center">
+                                    <p-inputnumber [(ngModel)]="area_de_formacion.horas" [showButtons]="true" [min]="1" (onInput)="!$event.value? area_de_formacion.horas = 1: null"/>
+                                    <p-tag icon="pi pi-clock" value="hrs" rounded="true" class="bg-surface-100 dark:bg-surface-800 text-current min-w-max"/>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <p-button icon="pi pi-trash" variant="text" severity="danger" rounded="true" (onClick)="remover_materia(area_de_formacion.codigo)" pTooltip="Remover" tooltipPosition="top" ></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template #emptymessage>
+                        <tr>
+                           <td colspan="4" class="text-center text-muted-color select-none py-10">No hay áreas de formación en el pensum</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </section>
+            <section class="flex gap-3 justify-end items-center mt-5">
+                <p-button label="Cancelar" (onClick)="close()" severity="secondary"></p-button>
+                <p-button label="Guardar Pensum" icon="pi pi-save" severity="primary" (onClick)="guardar()" [loading]="loadings.save"></p-button>
+            </section>
+        </section>
+    </ng-template>
+</p-dialog>

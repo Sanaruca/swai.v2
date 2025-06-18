@@ -72,3 +72,4 @@
 <p-menu [model]="inprimir_menu" [popup]="true" #inprimir/>
 <p-menu [model]="acciones_menu" [popup]="true" #acciones/>
 <aw-modal-promover-nivel-academico [nivel_academico]="NIVEL_ACADEMICO" />
+<aw-modal-pensum [nivel_academico]="NIVEL_ACADEMICO" (success)="on_pensum_success($event)" [close_on_success]="true"/>

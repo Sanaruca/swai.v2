@@ -385,13 +385,15 @@ export class EditableNivelAcademicoComponent implements OnInit {
           },
         }));
 
+      const cantidad_de_estudiantes_del_nivel_academico = cantidad_de_estudiantes.niveles_academicos.find((it) => it.numero === nivel_academico.numero)
+
       this.nivel_academico_data = {
         ...nivel_academico,
         cantidad_de_estudiantes: {
-          activos: cantidad_de_estudiantes?.activos ?? 0,
-          no_inscritos: cantidad_de_estudiantes?.no_inscritos ?? 0,
-          retirados: cantidad_de_estudiantes?.retirados ?? 0,
-          total: cantidad_de_estudiantes?.total ?? 0,
+          activos: cantidad_de_estudiantes_del_nivel_academico?.activos ?? 0,
+          no_inscritos: cantidad_de_estudiantes_del_nivel_academico?.no_inscritos ?? 0,
+          retirados: cantidad_de_estudiantes_del_nivel_academico?.retirados ?? 0,
+          total: cantidad_de_estudiantes_del_nivel_academico?.total ?? 0,
         },
         secciones: secciones ?? [],
         pensum: pensum.areas_de_formacion,

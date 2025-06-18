@@ -248,7 +248,7 @@
               variant="text"
               (click)="estudiante.aux.show_acctions = !estudiante.aux.show_acctions"
             />
-            <p-overlay [(visible)]="estudiante.aux.show_acctions" contentStyleClass="absolute right-0" >
+            <p-overlay [(visible)]="estudiante.aux.show_acctions" contentStyleClass="absolute right-0" appendTo="body">
               <div class="p-menu">
                 <ul class="p-menu-list">
                   <li class="p-menu-item">
