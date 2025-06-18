@@ -50,7 +50,6 @@ export const ObtenerEstudiantesSchemaDTO = object({
           'tipo_de_sangre',
           'nivel_academico',
           'tipo',
-          'seccion',
           'estatura',
           'peso',
           'chemise',
