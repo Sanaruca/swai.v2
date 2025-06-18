@@ -51,6 +51,7 @@
             recurso_del_espacio.get('estado')?.touched
           "
           [class.ng-dirty]="recurso_del_espacio.get('estado')?.touched"
+          appendTo="body"
         >
           <ng-template let-it #item #selectedItem>
             <aw-tag-estado-de-un-recurso [estado]="it.id" />
@@ -97,13 +98,13 @@
     </div>
 
     <div class="flex justify-end mt-5 gap-2">
-      <button
-        pButton
+      <p-button
         label="Cancelar"
         icon="pi pi-times"
         class="p-button-text"
+        severity="secondary"
         (click)="hideDialog()"
-      ></button>
+      />
       <p-button
         label="Añadir"
         icon="pi pi-check"
