@@ -8,7 +8,7 @@ export const AdministrativoSchema = object({
   titulo_de_pregrado: TituloPregradoSchema.entries.id,
 });
 
-export type Administratativo = InferOutput<typeof AdministrativoSchema>;
+export type Administrativo = InferOutput<typeof AdministrativoSchema>;
 
 /* ................................... dto .................................. */
 

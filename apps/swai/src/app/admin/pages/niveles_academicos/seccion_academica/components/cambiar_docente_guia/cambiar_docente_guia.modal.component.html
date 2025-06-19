@@ -1,0 +1,83 @@
+<p-dialog [modal]="true" [(visible)]="visible" [draggable]="false" [style]="{ width: '45rem'}">
+    <ng-template #headless>
+        <header class="p-[var(--p-dialog-header-padding)]">
+            <section class="flex justify-between gap-5">
+                <div>
+                    <h5>Asignar profesor(a) guía</h5>
+                    <p class="text-sm">
+                        Seccion: {{ seccion() }}
+                    </p>
+                </div>
+                <p-button icon="pi pi-times" [rounded]="true" variant="text" severity="secondary" (onClick)="close()"/>
+            </section>
+            <form class="mt-5">
+                <div class="form_input">
+                    <label for="buscar_docente">Buscar docente</label>
+                    <input type="text" pInputText name="buscar_docente" id="buscar_docente" placeholder="Buscar por nombre" [formControl]="busqueda">
+                </div>
+            </form>
+        </header>
+        <section class="p-[var(--p-dialog-content-padding)] overflow-auto">
+            @if(!loadings.data) {
+                <p class="font-semibold">Docentes disponibles ({{ docentes.length }})</p>
+                @if (docentes.length) {
+                    <form class="mt-5" [formGroup]="selection">
+                        <ul class="grid gap-2">
+                        @for (docente of docentes; track $index) {
+                            <li class="flex gap-2 items-center">
+                                <label class="selectable block flex-1" [attr.data-selected]="+$any(selection.value.docente?.cedula) === docente.cedula">
+                                    <input type="radio" name="docente" formControlName="docente" [value]="docente" class="hidden">
+                                    <p-avatar [label]="docente | nombre:'iniciales'" shape="circle" size="large" />
+                                    <div class="min-w-48">
+                                        <p class="selectable__title">
+                                            {{ docente | nombre}}
+                                        </p>
+                                        <span class="selectable__subtitle">V-{{docente.cedula | number }}</span>
+                                    </div>
+                                    @if (docente.seccion_guia) {
+
+                                        <a href="/admin/niveles_academicos/{{docente.seccion_guia.nivel_academico}}/{{docente.seccion_guia.seccion}}" target="_blank" class="ml-auto">
+                                            <p-tag rounded="true" styleClass="border bg-transparent text-color hover:underline">
+                                                Guia de {{ docente.seccion_guia.id }}
+                                                <i class="pi pi-external-link"></i>
+                                            </p-tag>
+                                        </a>
+                                    }
+                                    
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </form>
+                } @else {
+                    <div class="text-center mt-5">
+                        <aw-illustration name="void" class="h-56" />
+                    </div>
+                }
+            } @else {
+                <p-skeleton width="12rem" height="1.5rem" borderRadius="16px"/>
+                <p-skeleton width="100%" height="5.9rem" borderRadius="16px" styleClass="mt-5"/>
+                <p-skeleton width="100%" height="5.9rem" borderRadius="16px" styleClass="mt-2"/>
+                <p-skeleton width="100%" height="5.9rem" borderRadius="16px" styleClass="mt-2"/>
+            }
+        </section>
+        <section class="p-[var(--p-dialog-content-padding)] pt-1">
+            @if (selection.value.docente?.seccion_guia) {
+                <div class="border border-yellow-400 p-3 bg-yellow-500/20 flex gap-2 rounded-xl  mb-5 text-yellow-600 dark:text-yellow-400 text-sm">
+                    <i class="pi pi-exclamation-circle dark:text-yellow-200"></i>
+                    <div>
+                        <p class="font-semibold text-yellow-700 dark:text-yellow-300">{{selection.value.docente?.sexo === 'M' ? 'El docente seleccionado ya tiene secciones asignadas' : 'La docente seleccionada ya tiene secciones asignadas'}} </p>
+                        <p><span class="font-semibold">{{selection.value.docente! | nombre}}</span> actualmente es docente guía de:</p>
+                        <ul class="pl-2">
+                            <li>- {{NIVEL_ACADEMICO_CARDINAL_MAP[selection.value.docente!.seccion_guia!.nivel_academico]}} Año seccion "{{selection.value.docente?.seccion_guia?.seccion}}"</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            <section class="flex justify-end gap-2">
+                <p-button label="Cancelar" severity="secondary" (onClick)="close()"/>
+                <p-button label="Asignar" [loading]="loadings.save" [disabled]="selection.invalid" (onClick)="save()"/>
+            </section>
+        </section>
+    </ng-template>
+</p-dialog>

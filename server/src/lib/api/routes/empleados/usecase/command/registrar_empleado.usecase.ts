@@ -1,25 +1,25 @@
 import {
-  TIPO_DE_EMPLEADO,
-  EmpleadoSchema,
-  ProfesorSchema,
-  AdministrativoSchema,
-  Empleado,
-  EntidadExisteError,
-  PersonaSchema,
-  Administratativo,
-  Profesor,
-  SeccionSchema,
+    TIPO_DE_EMPLEADO,
+    EmpleadoSchema,
+    ProfesorSchema,
+    AdministrativoSchema,
+    Empleado,
+    EntidadExisteError,
+    PersonaSchema,
+    Administrativo,
+    Profesor,
+    SeccionSchema,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
 import {
-  variant,
-  object,
-  literal,
-  omit,
-  InferOutput,
-  parser,
-  parse,
-  nullable,
+    variant,
+    object,
+    literal,
+    omit,
+    InferOutput,
+    parser,
+    parse,
+    nullable,
 } from 'valibot';
 
 const PersonaSinUltimaActualizacionSchema = omit(PersonaSchema, ['ultima_actualizacion'])
@@ -70,7 +70,7 @@ export const registrar_empleado = admin_procedure
       tipo_de_empleado: input.tipo,
     });
 
-    let administrativo: Administratativo | undefined;
+    let administrativo: Administrativo | undefined;
     let profesor: Profesor | undefined;
 
     switch (input.tipo) {

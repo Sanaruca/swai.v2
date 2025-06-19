@@ -1,11 +1,18 @@
 import {
+  Administrativo,
   AdministrativoDTO,
   AdministrativoSchemaDTO,
+  Empleado,
   EmpleadoDTO,
   EmpleadoSchemaDTO,
+  generateFiltroSchema,
+  Persona,
   ProfesorDTO,
   ProfesorSchemaDTO,
   TIPO_DE_EMPLEADO,
+  Profesor,
+  PersonaSchema,
+  EmpleadoSchema,
 } from '@swai/core';
 import { admin_procedure } from '../../../../procedures';
 import {
@@ -13,11 +20,47 @@ import {
   PaginationParams,
   PaginationParamsSchema,
 } from '../../../../../schemas';
-import { enum_, InferOutput, object, optional, parse, parser } from 'valibot';
+import {
+  array,
+  enum_,
+  InferOutput,
+  object,
+  optional,
+  parse,
+  parser,
+  string,
+} from 'valibot';
+import type { Prisma } from '@prisma/client';
+import { CoreFiltroToPrismaFilterMapper } from '../../../../../adapters/CoreFiltroToPrismaFilter.mapper';
 
 export const ObtenerEmpleadosSchemaDTO = object({
+  /**
+   * @deprecated
+   */
   por_tipo: optional(enum_(TIPO_DE_EMPLEADO)),
+  por_nombre: optional(string()),
   paginacion: optional(PaginationParamsSchema),
+  filtros: optional(
+    array(
+      generateFiltroSchema<
+        | keyof Persona
+        | keyof Empleado
+        | keyof Administrativo
+        | keyof Profesor
+      >({
+        campos_validos: [
+          'cedula',
+          'nombres',
+          'apellidos',
+          'sexo',
+          'estado_civil',
+          'tipo_de_sangre',
+          'fecha_de_nacimiento',
+          'tipo_de_empleado',
+        ],
+      })
+    )
+  ),
 });
 
 export type ObtenerEmpleadosDTO = InferOutput<typeof ObtenerEmpleadosSchemaDTO>;
@@ -31,19 +74,40 @@ export const obtener_empleados = admin_procedure
         input?.paginacion ?? {}
       ) as Required<PaginationParams>;
 
+
+      const filtros: Prisma.empleadosWhereInput = {
+        AND: input?.filtros?.filter(it => Object.keys(EmpleadoSchema.entries).includes(it.campo))?.map(filtro => CoreFiltroToPrismaFilterMapper.map(filtro)),
+        personas: {
+          OR: [
+          {
+            nombres: {
+              contains: input?.por_nombre ?? '', // Busca coincidencias parciales en el nombre
+              mode: 'insensitive', // Ignora mayúsculas y minúsculas
+            },
+          },
+          {
+            apellidos: {
+              contains: input?.por_nombre ?? '', // Busca coincidencias parciales en el apellido
+              mode: 'insensitive', // Ignora mayúsculas y minúsculas
+            },
+          },
+        ],
+
+          AND: input?.filtros?.filter((it) => Object.keys(PersonaSchema.entries).includes(it.campo))?.map((filtro) => CoreFiltroToPrismaFilterMapper.map(filtro)),
+        }
+      }
+
       const [empleados, total] = await ctx.prisma.$transaction([
         ctx.prisma.empleados.findMany({
           skip: (paginacion.page - 1) * paginacion.limit, // Saltar los resultados de las páginas anteriores
           take: paginacion.limit, // Tomar el número de resultados especificado
-          where: {
-            tipo_de_empleado: input?.por_tipo,
-          },
+          where: filtros,
           include: {
             personas: {
               include: {
                 estados_civiles: true,
-                tipos_de_sangre: true
-              }
+                tipos_de_sangre: true,
+              },
             },
             centros_de_votacion: true,
             tipos_de_empleado: true,

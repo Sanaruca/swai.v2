@@ -11,11 +11,19 @@
     </p>
   </div>
   <div class="flex gap-3">
-    <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
-    <button pButton routerLink="registrar" pButton (click)="asm.toggle()">
-      <i class="pi pi-user-plus"></i>
-      <span>Asignar estudiantes</span>
-    </button>
+    <p-button  (onClick)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+    @if (!seccion_academica.profesor_guia) {
+      <button pButton (click)="cambiar_docente_guia_modal().open()">
+        <i class="pi pi-user-plus"></i>
+        <span>Asignar profesor(a) guía</span>
+      </button>
+    } @else {
+      <button pButton routerLink="registrar" (click)="asm.toggle()">
+        <i class="pi pi-user-plus"></i>
+        <span>Asignar estudiantes</span>
+      </button>
+    }
+    <p-button icon="pi pi-ellipsis-h" severity="secondary" size="large" (onClick)="acctions_menu.toggle($event)"></p-button>
   </div>
 </header>
 
@@ -90,4 +98,6 @@
   <aw-tabla-de-estudiantes [omitir_campos_filtros]="['nivel_academico', 'seccion']" [filtros_estaticos]="[{campo: 'seccion', condicion: StringCondicion.IGUAL, valor: seccion_academica.id}]" />
 </section>
 <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+<p-menu #acctions_menu [model]="this.acctions_menu" popup></p-menu>
 <aw-modal-asignar-estudiantes (success)="recargar()" [seccion]="{id: seccion_academica.id, seccion: seccion_academica.seccion, nivel_academico: seccion_academica.nivel_academico, profesor_guia: seccion_academica.profesor_guia?.cedula}" #asm/>
+<aw-modal-cambiar-docente-guia [seccion]="seccion_academica.id" (success)="on_cambiar_guia_success($event)" [close_on_success]="true"/> 

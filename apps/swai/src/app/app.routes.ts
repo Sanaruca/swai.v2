@@ -3,12 +3,12 @@ import { LoginPageComponent } from './pages/login/login.page.component';
 import { NotFoundPageComponent } from './pages/not_found/not_found.page.component';
 import { adminGuard } from './guard/admin.guard';
 import { redirectingGuard } from './guard/redirecting.guard';
+import { MainPageComponent } from './pages/main/main.page.component';
 
 export const appRoutes: Route[] = [
   {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
+    component: MainPageComponent
   },
   {
     path: 'admin',

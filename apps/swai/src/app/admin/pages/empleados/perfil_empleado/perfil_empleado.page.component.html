@@ -36,11 +36,13 @@
     <ng-template #headerRight>
         <div class="flex gap-3">
           <p-menu #menu [model]="imprimir_menu" popup></p-menu>
-          <p-button  (click)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+          <p-menu #acctions_menu [model]="this.acctions_menu" popup></p-menu>
+          <p-button  (onClick)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
           <a routerLink="editar" pButton>
             <i class="pi pi-user-edit"></i>
             <span>Editar empleado</span>
           </a>
+          <p-button (onClick)="acctions_menu.toggle($event)" size="large" icon="pi pi-ellipsis-h" severity="secondary" />
         </div>
       </ng-template>
 
@@ -91,3 +93,5 @@
         }
       </aw-seccion-campo-valor>
 </aw-perfil>
+
+<aw-modal-eliminar-emplado [empleado]="empleado" (success)="on_empleado_eliminado()"/>

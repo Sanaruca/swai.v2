@@ -302,9 +302,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
         severity: 'success',
       });
 
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate([`/admin/estudiantes/${this.estudiante!.cedula}`]);
-      });
+        this.router.navigate([`/admin/estudiantes/${this.estudiante!.cedula}`], {state: {actualizado: true}});
     } finally {
       this.loadings.enviando_datos = false;
     }

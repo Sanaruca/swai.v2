@@ -107,9 +107,6 @@ export class EspacioAcademicoPageComponent implements OnInit {
 
   /* .................................. menu .................................. */
   protected menu_options = [
-    {
-      label: 'Opciones',
-      items: [
         {
           label: 'Editar Espacio',
           icon: 'pi pi-pencil',
@@ -141,9 +138,7 @@ export class EspacioAcademicoPageComponent implements OnInit {
             });
           },
         },
-      ],
-    },
-  ] as MenuItem[];
+      ] as MenuItem[];
   /* .................................... . ................................... */
 
   protected ESTADOS_DE_UN_RECURSO = ESTADOS_DE_UN_RECURSO;

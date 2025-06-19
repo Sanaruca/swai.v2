@@ -176,6 +176,10 @@ a.link {
     &__subtitle {
         @apply text-sm text-balance;
     }
+    
+    &[data-selected="true"] {
+        @apply border-primary/50 bg-primary/30;
+    }
 }
 
 .selectable-box{

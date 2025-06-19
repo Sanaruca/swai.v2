@@ -98,6 +98,7 @@ export class PerfilEstudiantePageComponent implements OnInit {
   /* .............................. ciclo de vida ............................. */
 
   ngOnInit(): void {
+
     this.route.data.subscribe((data) => {
       this.estudiante = data['estudiante'];
     })

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FastLinkComponent,
@@ -20,6 +20,7 @@ import {
   NIVEL_ACADEMICO_CARDINAL_MAP,
   NIVELES_ACADEMICOS_MAP,
   PensumDTO,
+  ProfesorDTO,
   SeccionDTO,
   StringCondicion,
 } from '@swai/core';
@@ -28,9 +29,9 @@ import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
 import { TablaDeEstudiantesComponent } from '../../estudiantes/components/tabla_de_estudiantes/tabla_de_estudiantes.component';
 import { Avatar } from 'primeng/avatar';
 import { AsignarEstudiantesModalComponent } from './components/asignar_estudiantes/asignar_estudiantes.modal.component';
-import { AñadirRecursoModalComponent } from '../../espacios_academicos/espacio_academico/components/a\u00F1adir_recurso/a\u00F1adir_recurso.modal.component';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ApiService } from '../../../../services/api.service';
+import { CambiarDocenteGuiaModalComponent } from './components/cambiar_docente_guia/cambiar_docente_guia.modal.component';
 
 @Component({
   selector: 'aw-seccion-academica.page',
@@ -50,7 +51,7 @@ import { ApiService } from '../../../../services/api.service';
     FastLinkComponent,
     TablaDeEstudiantesComponent,
     AsignarEstudiantesModalComponent,
-    AñadirRecursoModalComponent,
+    CambiarDocenteGuiaModalComponent,
   ],
   templateUrl: './seccion_academica.page.component.html',
   styleUrl: './seccion_academica.page.component.scss',
@@ -60,6 +61,7 @@ export class SeccionAcademicaPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private api = inject(ApiService);
+  private toast = inject(MessageService);
 
   /* .............................. data inicial .............................. */
 
@@ -74,14 +76,52 @@ export class SeccionAcademicaPageComponent implements OnInit {
     this.route.snapshot.data[
       'cantidad_de_estudiantes'
     ] as CantidadDeEstudiantesDTO
-  ).niveles_academicos[this.seccion_academica.nivel_academico - 1].secciones.find(seccion => seccion.id === this.seccion_academica.id)!;
+  ).niveles_academicos[
+    this.seccion_academica.nivel_academico - 1
+  ].secciones.find((seccion) => seccion.id === this.seccion_academica.id)!;
+
+  /* ............................... components ............................... */
+
+  protected asignar_estudiantes_modal = viewChild.required(
+    AsignarEstudiantesModalComponent
+  );
+  protected cambiar_docente_guia_modal = viewChild.required(
+    CambiarDocenteGuiaModalComponent
+  );
 
   /* ............................... constantes ............................... */
 
-  protected NIVEL_ACADEMICO_MAP = NIVELES_ACADEMICOS_MAP
-  protected NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP
+  protected NIVEL_ACADEMICO_MAP = NIVELES_ACADEMICOS_MAP;
+  protected NIVEL_ACADEMICO_CARDINAL_MAP = NIVEL_ACADEMICO_CARDINAL_MAP;
 
   protected StringCondicion = StringCondicion;
+
+  protected acctions_menu: MenuItem[] = [
+    {
+      label: 'Cambiar profesor(a) guía',
+      icon: 'pi pi-user-edit',
+      visible: !!this.seccion_academica.profesor_guia,
+      command: () => {
+        this.cambiar_docente_guia_modal().open();
+      },
+    },
+    {
+      label: 'Asignar estudiantes',
+      icon: 'pi pi-user-plus',
+      visible: !this.seccion_academica.profesor_guia,
+      command: () => {
+        this.asignar_estudiantes_modal().toggle();
+      },
+    },
+    {
+      label: 'Eliminar',
+      icon: 'pi pi-trash',
+      disabled: true,
+      command: () => {
+        console.log('Eliminar');
+      },
+    },
+  ];
 
   protected imprimir_menu: MenuItem[] = [
     {
@@ -106,7 +146,9 @@ export class SeccionAcademicaPageComponent implements OnInit {
             generar_listado_de_estudiantes(
               r.data,
               `Lista de estudiantes de ${
-                NIVEL_ACADEMICO_CARDINAL_MAP[this.seccion_academica.nivel_academico as 1 | 2 | 3 | 4 | 5 ]
+                NIVEL_ACADEMICO_CARDINAL_MAP[
+                  this.seccion_academica.nivel_academico as 1 | 2 | 3 | 4 | 5
+                ]
               } Año seccion "${this.seccion_academica.seccion}"`
             )
           );
@@ -123,7 +165,9 @@ export class SeccionAcademicaPageComponent implements OnInit {
       this.pensum = data['pensum'] as PensumDTO;
       this.cantidad_de_estudiantes = (
         data['cantidad_de_estudiantes'] as CantidadDeEstudiantesDTO
-      ).niveles_academicos[this.seccion_academica.nivel_academico - 1].secciones.find(seccion => seccion.id === this.seccion_academica.id)!;
+      ).niveles_academicos[
+        this.seccion_academica.nivel_academico - 1
+      ].secciones.find((seccion) => seccion.id === this.seccion_academica.id)!;
     });
   }
 
@@ -131,5 +175,23 @@ export class SeccionAcademicaPageComponent implements OnInit {
 
   recargar() {
     this.router.navigate([this.router.url], { onSameUrlNavigation: 'reload' });
+  }
+
+  /* ................................. events ................................. */
+
+  on_cambiar_guia_success(profesor: ProfesorDTO) {
+    this.toast.add({
+      summary: 'Docente cambiado con exito',
+      detail: 'El docente guia de la seccion ha sido cambiado correctamente',
+      severity: 'success',
+    });
+    this.seccion_academica.profesor_guia = {
+      cedula: profesor.cedula,
+      nombres: profesor.nombres,
+      apellidos: profesor.apellidos,
+      titulo_de_pregrado: profesor.titulo_de_pregrado.id,
+      especialidad: profesor.especialidad.id,
+      plantel_de_dependencia: profesor.plantel_de_dependencia.dea,
+    };
   }
 }
