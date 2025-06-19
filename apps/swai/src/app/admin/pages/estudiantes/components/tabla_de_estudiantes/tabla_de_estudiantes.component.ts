@@ -280,9 +280,7 @@ export class TablaDeEstudiantesComponent implements OnInit {
 
   /* .................................. state ................................. */
 
-  estudiantes = this.route.snapshot.data[
-    'estudiantes'
-  ] as Paginated<EstudianteDTO & {aux: {show_acctions: boolean}}>;
+  estudiantes: Paginated<EstudianteDTO & {aux: {show_acctions: boolean}}> | null = null ;
 
   loading = false;
 
@@ -297,11 +295,17 @@ export class TablaDeEstudiantesComponent implements OnInit {
   protected filtros_activos = [] as Filtro[];
 
   /* .............................. ciclo de vida ............................. */
-  ngOnInit(): void {
-    this.estudiantes = {
-      ...this.estudiantes,
-      data: this.estudiantes.data.map((it) => ({ ...it, aux: {show_acctions: false}}))
-    }
+  ngOnInit() {
+
+    // this.cargar_estudiantes().then(() => {
+    //   this.estudiantes = {
+    //     ...this.estudiantes,
+    //     data: this.estudiantes.data.map((it) => ({ ...it, aux: {show_acctions: false}}))
+    //   }
+    // });
+
+    console.log('algo')
+
   }
   /* ................................. metodos ................................ */
 

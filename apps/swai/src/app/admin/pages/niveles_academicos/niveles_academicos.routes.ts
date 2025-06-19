@@ -9,7 +9,7 @@ import { inject } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { NivelAcademicoPageComponent } from './nivel_academico/nivel_academico.page.component';
 import { MenuItem } from 'primeng/api';
-import { EstudianteDTO, NIVELES_ACADEMICOS, SeccionDTO } from '@swai/core';
+import { NIVELES_ACADEMICOS, SeccionDTO } from '@swai/core';
 import { SeccionAcademicaPageComponent } from './seccion_academica/seccion_academica.page.component';
 
 export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
@@ -37,10 +37,14 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
         path: '',
         component: NivelAcademicoPageComponent,
         resolve: {
-          estudiantes: (route: ActivatedRouteSnapshot) =>
-            inject(ApiService).client.estudiantes.obtener_estudiantes.query({
-              por_nivel_academico: [+route.paramMap.get('nivel_academico')!],
-            }),
+          secciones_academicas: ((route) => {
+            return inject(
+              ApiService
+            ).client.niveles_academicos.obtener_secciones_academicas.query({
+             nivel_academico: +route.paramMap.get('nivel_academico')!
+            }
+            );
+          }) as ResolveFn<Paginated<SeccionDTO>>,
           cantidad_de_estudiantes: ((route) => {
             return inject(
               ApiService
@@ -68,11 +72,6 @@ export const NIVELES_ACADEMICOS_ROUTES: Route[] = [
               nivel_academico: +r.paramMap.get('nivel_academico')!,
               seccion: r.paramMap.get('seccion')!,
             })) as ResolveFn<SeccionDTO>,
-          estudiantes: ((r) =>
-            inject(ApiService).client.estudiantes.obtener_estudiantes.query({
-              por_nivel_academico: [+r.paramMap.get('nivel_academico')!],
-              por_secion: [r.paramMap.get('seccion')!.toUpperCase()],
-            })) as ResolveFn<Paginated<EstudianteDTO>>,
           breadcrumb: ((r, state) => {
             return {
               label: `Seccion ${r.paramMap.get('seccion')!.toUpperCase()}`,

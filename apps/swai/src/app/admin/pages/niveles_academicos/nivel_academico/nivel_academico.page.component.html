@@ -35,17 +35,48 @@
     iconContentClassName="bg-yellow-200"
   ></aw-info-card>
 
-  @for (seccion of cantidad_de_estudiantes.secciones; track $index) {
-  <aw-info-card
-    [label]="'Seccion ' + seccion.seccion"
-    [value]="seccion.total"
-    [className]="obtener_color_seccion_class(seccion.seccion)"
-    [iconContentClassName]="obtener_color_seccion_class(seccion.seccion, true)"
-    icon="pi pi-book"
-    [link]="['/admin/niveles_academicos', seccion.nivel_academico, seccion.seccion]"
-  ></aw-info-card>
+</nav>
 
-  }
+<nav class="mt-5 xlayout | overflow-auto pb-2">
+  <ul class="flex gap-4">
+    @for (seccion of cantidad_de_estudiantes.secciones; track $index) {
+      <li>
+        <a
+        [routerLink]="['/admin/niveles_academicos', NIVEL_ACADEMICO, seccion.seccion]" 
+        class="inline-block border rounded-xl p-5 min-w-80 group/seccion transition-colors bg-white dark:bg-surface-900 dark:hover:bg-surface-800" [attr.data-color]="ColorSeccion.getColor(seccion.seccion)"
+        >
+          <section class="flex justify-between items-center">
+            <div class="flex gap-2">
+              <div class="size-10 grid place-items-center rounded-full flex-none {{obtener_color_seccion_class(seccion.seccion, true)}}"
+              >
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="min-w-max">
+                <p class="font-medium">Seccion {{ seccion.seccion }}</p>
+                <span class="text-xl font-semibold">{{ seccion.total }}</span>
+              </div>
+              <i class="pi pi-external-link text-[0.8rem] relative top-1 group-hover/seccion:text-muted-color text-transparent transition-colors"></i>
+            </div>
+            <span class="grid place-items-center w-12 h-8 border rounded-full tag">{{seccion.seccion}}</span>
+          </section>
+          <section class="mt-3 pt-3 flex border-t gap-2 items-center text-[.9rem]">
+            @if (seccion.profesor_guia) {
+              <p-avatar [label]="SECCIONES_ACADEMICAS_MAP[seccion.id].profesor_guia! | nombre : 'iniciales'" shape="circle" class="size-10 my-1"/>
+              <div>
+                <p class="font-medium">{{seccion.profesor_guia}}</p>
+                <p class="text-[.9em]">Profesor(a) guía</p>
+              </div>
+              <i class="pi pi-check-circle text-green-500 ml-auto"></i>
+            } @else {
+              <p-avatar icon="pi pi-user" class="bg-gray-200 dark:bg-gray-700 text-gray-500" shape="circle" class="size-10 my-1"/>
+              <p class="text-muted-color">Sin docente asignado</p>
+                <i class="pi pi-exclamation-circle text-yellow-500 ml-auto"></i>
+            }
+          </section>
+        </a>
+      </li>
+    }
+  </ul>
 </nav>
 
 <section class="xlayout | mt-4">

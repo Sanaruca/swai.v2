@@ -1,19 +1,19 @@
 import { Component, inject, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CantidadDeEstudiantesPorNivelAcademicoDTO } from '@swai/server';
+import { CantidadDeEstudiantesPorNivelAcademicoDTO, Paginated } from '@swai/server';
 import { InfoCardComponent } from '../../../../admin/components';
 import {
+  ColorSeccion,
   ESTADO_ACADEMICO,
-  EstudianteDTO,
   generar_listado_de_estudiantes,
   NIVEL_ACADEMICO_CARDINAL_MAP,
   NumberCondicion,
   PensumDTO,
+  SeccionDTO,
   StringCondicion,
 } from '@swai/core';
 import { TableModule } from 'primeng/table';
-import { Paginated } from '@swai/server';
 import { MomentModule } from 'ngx-moment';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -27,6 +27,8 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { ApiService } from '../../../../services/api.service';
 import { PromoverNivelAcademicoModalComponent } from './components/promover_nivel_academico/promover_nivel_academico.modal.component';
 import { PensumModalComponent } from './components/pensum/pensum.modal.component';
+import { Avatar } from 'primeng/avatar';
+import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
 
 @Component({
   selector: 'aw-nivel-academico.page',
@@ -45,7 +47,9 @@ import { PensumModalComponent } from './components/pensum/pensum.modal.component
     MenuModule,
     RouterLink,
     PromoverNivelAcademicoModalComponent,
-    PensumModalComponent
+    PensumModalComponent,
+    Avatar,
+    NombrePipe
   ],
   templateUrl: './nivel_academico.page.component.html',
   styleUrl: './nivel_academico.page.component.scss',
@@ -146,14 +150,20 @@ export class NivelAcademicoPageComponent {
   protected cantidad_de_estudiantes: CantidadDeEstudiantesPorNivelAcademicoDTO =
     this.route.snapshot.data['cantidad_de_estudiantes'];
   protected pensum: PensumDTO = this.route.snapshot.data['pensum'];
-  protected estudiantes: Paginated<EstudianteDTO> =
-    this.route.snapshot.data['estudiantes'];
-
+  protected secciones_academicas = this.route.snapshot.data['secciones_academicas'] as Paginated<SeccionDTO>;
+  protected get SECCIONES_ACADEMICAS_MAP() {
+    return this.secciones_academicas.data.reduce((acc, seccion) => {
+      acc[seccion.id] = seccion;
+      return acc;
+    }, {} as Record<string, SeccionDTO>);
+  }
   /* ................................. metodos ................................ */
 
   obtener_color_seccion_class(seccion: string, contraste = false) {
     return obtener_color_seccion_class(seccion, contraste);
   }
+
+  protected ColorSeccion = ColorSeccion;
 
   /* ................................. events ................................. */
 

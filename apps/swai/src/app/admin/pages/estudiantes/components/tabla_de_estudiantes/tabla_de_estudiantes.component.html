@@ -4,11 +4,11 @@
     [paginator]="true"
     [rowHover]="true"
     [showLoader]="false"
-    [first]="(estudiantes.page - 1 ) * estudiantes.limit"
-    [rows]="estudiantes.limit"
+    [first]="estudiantes? (estudiantes.page - 1 ) * estudiantes.limit : 0"
+    [rows]="estudiantes?.limit || 20"
     [lazy]="true"
-    [value]="estudiantes.data"
-    [totalRecords]="estudiantes.total"
+    [value]="estudiantes?.data || []"
+    [totalRecords]="estudiantes?.total ?? 0"
     [tableStyle]="{ 'min-width': '50rem' }"
     [loading]="loading"
     [showCurrentPageReport]="true"
@@ -130,7 +130,7 @@
         <p-button label="Cancelar" icon="pi pi-times" severity="secondary"  [rounded]="true" (click)="remove_all_filtros()" />
         <p-button label="Aplicar filtros" icon="pi pi-check" [loading]="loading" [disabled]="filtros_form.invalid" [rounded]="true" (click)="aplicar_filtros_form()"/>
       </section>
-      <p class="mt-5">Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
+      <p class="mt-5" *ngIf="estudiantes">Mostrando {{(estudiantes.page-1) * estudiantes.data.length + 1}}-{{estudiantes.page * estudiantes.limit}} de <span class="font-semibold">{{estudiantes.total}} Resultados</span></p>
     </ng-template>
     <ng-template #header>
       <tr>
@@ -149,7 +149,7 @@
       </tr>
     </ng-template>
     <ng-template #loadingbody>
-      @for (n of [].constructor(estudiantes.limit); track $index) {
+      @for (n of [].constructor(estudiantes?.limit?? 20); track $index) {
       <tr>
         <td>
           <div class="flex gap-3">
