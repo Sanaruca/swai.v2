@@ -553,7 +553,7 @@ export class RegistrarEmpleadoPageComponent implements OnInit {
         severity: 'success',
       });
 
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl(`/admin/empleados`, { skipLocationChange: true }).then(() => {
         this.router.navigate([`/admin/empleados/${this.empleado!.cedula}`]);
       });
 

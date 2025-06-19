@@ -1,9 +1,22 @@
-<h3>{{modo === 'editar'? 'Editar' : 'Registrar'}} empleado</h3>
-<p class="text-sm">{{INSTITUTION_NAME}}</p>
 
-<section class="flex gap-5 mt-5">
-  <section class="w-60">
-    <ul class="stepper | sticky top-5">
+<header class="xlayout | flex items-center justify-between gap-5 flex-wrap">
+  <section>
+    <h3>{{modo === 'editar'? 'Editar' : 'Registrar'}} empleado</h3>
+    <p class="text-sm">{{INSTITUTION_NAME}}</p>
+  </section>
+  <section class="ml-auto">
+    <p-button label="Listo" icon="pi pi-check"
+        [disabled]="!puede_enviar_formulario"
+        [loading]="loadings.enviando"
+        iconPos="right"
+        (onClick)="enviar_datos()"
+    />
+  </section>
+</header>
+
+<section class="flex gap-5 mt-5 flex-col md:flex-row">
+  <section class="md:w-60">
+    <ul class="stepper | sticky top-5 xlayout pb-2">
       <li>
         <button
           class="stepper__step"
@@ -125,7 +138,7 @@
       </li>
     </ul>
   </section>
-  <form class="flex-1" [formGroup]="formulario_actual!">
+  <form class="flex-1 xlayout" [formGroup]="formulario_actual!">
     @if (paso_actual === 1) {
     <h5>Datos personales</h5>
     <p class="text-sm">Información del empleado</p>
@@ -614,7 +627,7 @@
         icon="pi pi-angle-left"
         label="Anterior"
         severity="secondary"
-        (click)="paso_actual = paso_actual - 1"
+        (onClick)="paso_actual = paso_actual - 1"
       />
       @if (paso_actual === 5) {
       <p-button
@@ -623,14 +636,14 @@
         [label]="modo === 'editar'? 'Editar' : 'Registrar'"
         [disabled]="!puede_enviar_formulario"
         [loading]="loadings.enviando"
-        (click)="enviar_datos()"
+        (onClick)="enviar_datos()"
       />
       } @else {
       <p-button
         icon="pi pi-angle-right"
         iconPos="right"
         label="Siguiente"
-        (click)="paso_actual = paso_actual + 1"
+        (onClick)="paso_actual = paso_actual + 1"
         [disabled]="formulario_actual?.invalid"
       />
 

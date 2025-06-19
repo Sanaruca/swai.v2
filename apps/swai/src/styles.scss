@@ -76,10 +76,10 @@ a.link {
 /* ................................. stepper ................................ */      
 
 .stepper {
-  @apply grid gap-1;
+  @apply flex gap-1 overflow-auto md:grid;
   &__separator {
     width: 1px;
-    @apply h-12 block border ml-4;
+    @apply h-12 block border mx-4;
   }
 
   &__step {

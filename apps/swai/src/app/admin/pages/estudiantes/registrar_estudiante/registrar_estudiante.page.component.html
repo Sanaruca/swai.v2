@@ -1,9 +1,23 @@
-<h3>{{ modo === 'registrar' ? 'Registrar' : 'Actualizar' }} estudiante</h3>
-<p class="text-sm">{{INSTITUTION_NAME}}</p>
+<header class="flex justify-between gap-5 items-center flex-wrap xlayout">
+  <section>
+    <h3>{{ modo === 'registrar' ? 'Registrar' : 'Actualizar' }} estudiante</h3>
+    <p class="text-sm">{{INSTITUTION_NAME}}</p>
+  </section>
+  <section class="ml-auto">
+<p-button
+        icon="pi pi-check"
+        iconPos="right"
+        label="Listo"
+        [disabled]="!puede_enviar_formulario"
+        [loading]="loadings.enviando_datos"
+        (click)="enviar_datos()"
+      />
+  </section>
+</header>
 
-<section class="flex gap-5 mt-5">
-  <section class="w-60">
-    <ul class="stepper | sticky top-8">
+<section class="flex gap-5 mt-5 flex-col md:flex-row">
+  <section class="md:w-60">
+    <ul class="stepper | sticky top-8  xlayout pb-2">
       <li>
         <button
           class="stepper__step"
@@ -141,7 +155,7 @@
     </ul>
   </section>
 
-  <section class="flex-1">
+  <section class="flex-1 xlayout">
     <aw-form-datos-personales [class]="{hidden: paso_actual !== 1}"/>
     <aw-form-datos-de-contacto [class]="{hidden: paso_actual !== 2}"/>
     <aw-form-datos-academicos [class]="{hidden: paso_actual !== 3}"/>
@@ -153,7 +167,7 @@
         icon="pi pi-angle-left"
         label="Anterior"
         severity="secondary"
-        (click)="paso_actual = paso_actual - 1"
+        (onClick)="paso_actual = paso_actual - 1"
       />
       @if (paso_actual === 5) {
       <p-button
@@ -162,14 +176,14 @@
         [label]="modo === 'registrar' ? 'Registrar' : 'Actualizar'"
         [disabled]="!puede_enviar_formulario"
         [loading]="loadings.enviando_datos"
-        (click)="enviar_datos()"
+        (onClick)="enviar_datos()"
       />
       } @else {
       <p-button
         icon="pi pi-angle-right"
         iconPos="right"
         label="Siguiente"
-        (click)="paso_actual = paso_actual + 1"
+        (onClick)="paso_actual = paso_actual + 1"
         [disabled]="formulario_actual?.invalid"
       />
 
