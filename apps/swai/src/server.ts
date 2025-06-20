@@ -49,7 +49,9 @@ app.use(
  */
 app.use('/**', async (req, res, next) => {
 
-  console.log('ejecutando middleware que identificara la usuar:');
+  console.log('Ejecutando middleware que identificara la usuar:');
+  console.log('cookies:', req.cookies);
+  console.log('headers:', req.headers);
 
   const request_context = {
     usuario: null as UsuarioPayload | null,
