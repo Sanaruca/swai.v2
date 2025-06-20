@@ -44,12 +44,15 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const usuario = this.transferState.get<UsuarioPayload | null>(USER_KEY, null);
 
+      console.log('Usuario desde TransferState:', usuario);
+      
       this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
       
     }
     
     if (isPlatformServer(this.platformId)) {
       const usuario = this.ssr_request_context.usuario;
+      console.log('Usuario desde TransferState server:', usuario);
       
       this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
 
