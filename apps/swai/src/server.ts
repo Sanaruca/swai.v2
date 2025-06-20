@@ -49,7 +49,7 @@ app.use(
  */
 app.use('/**', async (req, res, next) => {
 
-  // console.log('Request Headers:', req.headers); // Log the request headers
+  console.log('ejecutando middleware que identificara la usuar:');
 
   const request_context = {
     usuario: null as UsuarioPayload | null,
