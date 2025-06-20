@@ -170,7 +170,6 @@ export class PensumModalComponent implements OnInit {
   ngOnInit(): void {
     this.agregar_mataria_form.controls.horas_semanales.valueChanges.subscribe(
       (horas_semanales) => {
-        console.log({ horas_semanales });
         if (!horas_semanales) {
           this.agregar_mataria_form.controls.horas_semanales.setValue(1);
         }

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -90,7 +90,7 @@ interface Wrapper<T> {
   templateUrl: './tabla_de_estudiantes.component.html',
   styleUrl: './tabla_de_estudiantes.component.sass',
 })
-export class TablaDeEstudiantesComponent implements OnInit {
+export class TablaDeEstudiantesComponent {
   @Input() filtros_estaticos: Filtro[] = [];
   @Input() omitir_campos_filtros: string[] = [];
 
@@ -295,18 +295,7 @@ export class TablaDeEstudiantesComponent implements OnInit {
   protected filtros_activos = [] as Filtro[];
 
   /* .............................. ciclo de vida ............................. */
-  ngOnInit() {
 
-    // this.cargar_estudiantes().then(() => {
-    //   this.estudiantes = {
-    //     ...this.estudiantes,
-    //     data: this.estudiantes.data.map((it) => ({ ...it, aux: {show_acctions: false}}))
-    //   }
-    // });
-
-    console.log('algo')
-
-  }
   /* ................................. metodos ................................ */
 
   // TODO: esta funcion no deberia ejecutarce la primera vez

@@ -160,10 +160,6 @@ export class CoreFiltroToPrismaFilterMapper {
     if (!condicion)
       throw new Error('Error al mapear Filtros del Core a filtros de Prisma');
 
-      console.log({
-      [filtro.campo]: condicion,
-    })
-
     return {
       [filtro.campo]: condicion,
     };

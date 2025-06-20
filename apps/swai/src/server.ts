@@ -49,7 +49,7 @@ app.use(
  */
 app.use('/**', async (req, res, next) => {
 
-  console.log('Request Headers:', req.headers); // Log the request headers
+  // console.log('Request Headers:', req.headers); // Log the request headers
 
   const request_context = {
     usuario: null as UsuarioPayload | null,
@@ -68,12 +68,16 @@ app.use('/**', async (req, res, next) => {
           headers: {
             authorization: `Bearer ${access_token}`, // Adjunta la cookie a la petición
           },
+
         }),
       ],
+
     });
 
+    console.log('Token de acceso detectado:', access_token);
     try {
       const usuario = await api.auth.whoami.query();
+      console.log('Usuario detectado:', usuario);
       request_context.usuario = usuario;
     } catch { /* empty */ }
   }

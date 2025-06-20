@@ -8,7 +8,7 @@ import { V3 } from 'paseto';
 import cookieParser from 'cookie-parser';
 const { decrypt, generateKey } = V3;
 
-import { UsuarioPayloadSchema } from '@swai/core';
+import { SwaiError, UsuarioPayloadSchema } from '@swai/core';
 import { parse } from 'valibot';
 import type { KeyObject } from 'crypto';
 
@@ -36,16 +36,21 @@ app.use(
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 
+/* ................................. usuario ................................ */
 app.use(async (req, res, next) => {
-  console.log('Request Headers:', req.headers); // Log the request headers
+  // console.log('Request Headers:', req.headers); // Log the request headers
   try {
     const token =
       req.headers.authorization?.split(' ')[1] || req.cookies?.['swai.auth'];
 
     if (token) {
-      const payload = await decrypt(token, paseto_local_key);
-      const usuario = parse(UsuarioPayloadSchema, payload);
-      req.user = usuario;
+      try {
+        const payload = await decrypt(token, paseto_local_key);
+        const usuario = parse(UsuarioPayloadSchema, payload);
+        req.user = usuario;
+      } catch {
+        return next();  
+      }
     }
   } catch (error) {
     console.error('Error al verificar el token:', error);
@@ -75,7 +80,12 @@ app.use(
       })(params);
     },
     onError: ({ error }) => {
-      console.error('Error in trpc middleware:', error);
+      if (error.cause instanceof SwaiError) {
+        const swai_error = error.cause;
+        console.error('SwaiError:', swai_error.codigo);
+        console.error('-  ', swai_error.mensaje);
+
+      }
     },
   })
 );
