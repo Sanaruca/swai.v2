@@ -19,7 +19,8 @@ import { TagModule } from 'primeng/tag';
       [rounded]="true"
     >
       <div class="flex gap-1">
-        <i class="pi pi-circle-fill text-sm"></i>
+        <i class="pi pi-heart-fill text-sm" *ngIf="nivel === 6"></i>
+        <i class="pi pi-circle-fill text-sm" *ngIf="nivel !== 6"></i>
       </div>
     </p-tag>
   `,
@@ -39,6 +40,7 @@ export class NivelAcademicoTagComponent {
       [NIVEL_ACADEMICO.Tercero, 'bg-cyan-100 text-cyan-500'],
       [NIVEL_ACADEMICO.Cuarto, 'bg-pink-100 text-pink-500'],
       [NIVEL_ACADEMICO.Quinto, 'bg-indigo-100 text-indigo-500'],
+      [NIVEL_ACADEMICO.Egresado, 'bg-teal-100 text-teal-500'],
     ]);
 
     return `${class_name.get(this.nivel)} min-w-max`;
