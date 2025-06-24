@@ -8,6 +8,7 @@ import { obtener_seccion_academica } from './usecase/query/obtener_seccion_acade
 import { obtener_registros_recientes } from './usecase/query/obtener_registros_recientes.usecase';
 import { obtener_busqueda_rapida } from './usecase/query/obtener_busqueda_rapida.usecase';
 import { obtener_areas_de_formacion } from './usecase/query/obtener_areas_de_formacion.usecase';
+import { obtener_datos_de_la_institucion } from './usecase/query/obtener_datos_de_la_institucion.usecase';
 
 export const INSTUTUCION_ROUTER = createTRPCRouter({
   obtener_cantidad_de_estudiantes_por_nivel_academico,
@@ -18,5 +19,6 @@ export const INSTUTUCION_ROUTER = createTRPCRouter({
   obtener_seccion_academica,
   obtener_registros_recientes,
   obtener_busqueda_rapida,
-  obtener_areas_de_formacion
+  obtener_areas_de_formacion,
+  obtener_datos_de_la_institucion
 });

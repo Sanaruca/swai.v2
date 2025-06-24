@@ -353,6 +353,7 @@ model municipios {
   estudiantes   estudiantes[]
   estados       estados       @relation(fields: [codigo_estado], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
   parroquias    parroquias[]
+  institucion   institucion[]
 
   @@schema("venezuela")
 }
@@ -368,11 +369,12 @@ model parroquias {
 }
 
 model planteles_educativos {
-  dea            String       @id @db.VarChar(10)
-  nombre         String       @db.VarChar(100)
-  zona_educativa String       @db.VarChar(4)
+  dea            String        @id @db.VarChar(10)
+  nombre         String        @db.VarChar(100)
+  zona_educativa String        @db.VarChar(4)
   profesores     profesores[]
-  estados        estados      @relation(fields: [zona_educativa], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  estados        estados       @relation(fields: [zona_educativa], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  institucion    institucion[]
 
   @@schema("venezuela")
 }
@@ -392,4 +394,25 @@ model titulos_de_pregrado {
   profesores      profesores[]
 
   @@schema("venezuela")
+}
+
+model institucion {
+  codigo                      String    @id @default(cuid())
+  nombre                      String    @db.VarChar(255)
+  rif                         String    @db.VarChar(20)
+  direccion                   String?   @db.VarChar(255)
+  telefono                    String?   @db.VarChar(11)
+  correo                      String?   @db.VarChar(255)
+  fecha_de_fundacion          DateTime? @db.Date
+  ultima_actualizacion        DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  plantel_educativo           String    @unique @db.VarChar(10)
+  municipio                   String    @db.VarChar(4)
+  periodo_academico_actual    String    @db.VarChar(10)
+  inicio_de_periodo_academico DateTime  @db.Date
+  fin_de_periodo_academico    DateTime  @db.Date
+
+  planteles_educativos planteles_educativos @relation(fields: [plantel_educativo], references: [dea], onDelete: NoAction, onUpdate: Cascade, map: "instituciones_plantel_educativo_fk")
+  municipios           municipios           @relation(fields: [municipio], references: [codigo], onDelete: NoAction, onUpdate: Cascade, map: "instituciones_municipio_fk")
+
+  @@schema("sistema")
 }

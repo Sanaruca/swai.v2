@@ -8,3 +8,10 @@ export const PlantelEducativoSchema = object({
 });
 
 export type PlantelEducativo = InferOutput<typeof PlantelEducativoSchema>;
+
+export const PlantelEducativoSchemaDTO = object({
+  ...PlantelEducativoSchema.entries,
+  zona_educativa: EstadoFederalSchema,
+});
+
+export type PlantelEducativoDTO = InferOutput<typeof PlantelEducativoSchemaDTO>;

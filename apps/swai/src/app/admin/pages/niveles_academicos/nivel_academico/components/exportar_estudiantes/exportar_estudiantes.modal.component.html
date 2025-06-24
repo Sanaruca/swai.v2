@@ -1,0 +1,70 @@
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '28rem' }">
+  <ng-template #headless>
+    <header class="p-[var(--p-dialog-header-padding)] flex gap-2 justify-between">
+      <section>
+        <h4>Exportar estudiantes</h4>
+        <p class="text-sm text-muted-color">Selecciona el tipo de datos que deseas exportar. Los datos se descargarán en formato Excel.</p>
+      </section>
+      <p-button icon="pi pi-times" (onClick)="close()" [rounded]="true" variant="text" severity="secondary"/>
+    </header>
+    <form [formGroup]="form" class="p-[var(--p-dialog-content-padding)]">
+      <ul class="grid gap-2">
+        <li>
+          <label
+          pTooltip="No disponible aun"
+          tooltipPosition="top"
+          class="selectable"
+          [attr.data-selected]="form.controls.tipo.value === 'estudiantes'"
+          [attr.data-disabled]="true"
+        >
+          <input
+            type="radio"
+            formControlName="tipo"
+            name="tipo"
+            id="estudiantes"
+            value="estudiantes"
+            [attr.disabled]="true"
+            class="hidden"
+            />
+          <div class="selectable__icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div>
+            <p class="selectable__title">Datos de estudiantes</p>
+            <p class="selectable__subtitle">
+              Exporta toda la información de
+              <span class="font-bold">todos los estudiantes</span>
+              relacionados con el nivel o sección académica actual.
+            </p>
+          </div>
+        </label>
+      </li>
+      
+      <li>
+        <label
+          class="selectable"
+          [attr.data-selected]="form.controls.tipo.value === 'matricula'"
+        >
+        <input type="radio" formControlName="tipo" class="hidden"
+            name="tipo" id="matricula" value="matricula" />
+          <div class="selectable__icon">
+            <i class="pi pi-file"></i>
+          </div>
+          <div>
+            <p class="selectable__title">Matricula académica</p>
+            <p class="selectable__subtitle">
+              Exporta los datos de los 
+              <span class="font-bold">estudiantes activos</span> del nivel academico actual
+              segun el formato de matrícula académica oficial.
+            </p>
+          </div>
+        </label>
+      </li>
+    </ul>
+    <div class="flex justify-end gap-2 mt-5">
+      <p-button label="Cancelar" (onClick)="close()" severity="secondary"/>
+      <p-button icon="pi pi-download" label="Exportar" (onClick)="exportar()" severity="primary" [disabled]="form.invalid" [loading]="loadings.exportar"/>
+    </div>
+  </form>
+</ng-template>
+</p-dialog>

@@ -6,12 +6,11 @@ import { InfoCardComponent } from '../../../../admin/components';
 import {
   ColorSeccion,
   ESTADO_ACADEMICO,
-  generar_listado_de_estudiantes,
-  NIVEL_ACADEMICO_CARDINAL_MAP,
+  generar_listado_de_estudiantes, NIVEL_ACADEMICO_CARDINAL_MAP,
   NumberCondicion,
   PensumDTO,
   SeccionDTO,
-  StringCondicion,
+  StringCondicion
 } from '@swai/core';
 import { TableModule } from 'primeng/table';
 import { MomentModule } from 'ngx-moment';
@@ -29,6 +28,8 @@ import { PromoverNivelAcademicoModalComponent } from './components/promover_nive
 import { PensumModalComponent } from './components/pensum/pensum.modal.component';
 import { Avatar } from 'primeng/avatar';
 import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
+import { AppStateService } from '../../../../services/state.service';
+import { ExportarEstudiantesModalComponent } from "./components/exportar_estudiantes/exportar_estudiantes.modal.component";
 
 @Component({
   selector: 'aw-nivel-academico.page',
@@ -49,8 +50,9 @@ import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
     PromoverNivelAcademicoModalComponent,
     PensumModalComponent,
     Avatar,
-    NombrePipe
-  ],
+    NombrePipe,
+    ExportarEstudiantesModalComponent
+],
   templateUrl: './nivel_academico.page.component.html',
   styleUrl: './nivel_academico.page.component.scss',
 })
@@ -59,6 +61,7 @@ export class NivelAcademicoPageComponent {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private toast = inject(MessageService);
+  private app = inject(AppStateService)
 
   /* .................................. state ................................. */
 
@@ -87,11 +90,9 @@ export class NivelAcademicoPageComponent {
       },
     },
     {
-      label: 'Exportar',
+      label: 'Exportar datos',
       icon: 'pi pi-download',
-      command: () => {
-        console.log('Esportar datos accion ejecutada');
-      },
+      command: () => {this.exportar_estudiantes_modal().open()},
     },
   ];
   protected inprimir_menu: MenuItem[] = [
@@ -133,7 +134,7 @@ export class NivelAcademicoPageComponent {
         }).finally(() => {
           this.loadings.imprimir = false;
         });
-      },
+        },
     },
   ];
 
@@ -144,6 +145,9 @@ export class NivelAcademicoPageComponent {
   );
   protected pensum_modal = viewChild.required(
     PensumModalComponent
+  );
+  protected exportar_estudiantes_modal = viewChild.required(
+    ExportarEstudiantesModalComponent
   );
 
   /* .................................. data .................................. */
@@ -176,6 +180,13 @@ export class NivelAcademicoPageComponent {
     })
     
     this.pensum = pensum
+  }
+  
+  protected on_exportar_estudiantes_success(){
+    this.toast.add({
+      summary: 'Exportacion de datos completada',
+      severity: 'success',
+    })
   }
 
 }

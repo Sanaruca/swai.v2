@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../../environments/environment';
 import { FastLinkComponent, InfoCardComponent } from '../../components';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +12,7 @@ import { NombrePipe } from '../../../common/pipes/nombre.pipe';
 import { TipoDeEmpleadoTagComponent } from '../../../common/components';
 import { Tag } from 'primeng/tag';
 import { Avatar } from 'primeng/avatar';
+import { AppStateService } from '../../../services/state.service';
 
 @Component({
   selector: 'aw-dashboard.page',
@@ -37,10 +37,11 @@ export class DashboardPageComponent implements OnInit {
   /* ............................... injectables .............................. */
   private platformId = inject(PLATFORM_ID)
   private route = inject(ActivatedRoute)
+  private app = inject(AppStateService)
 
   /* ............................... constantes ............................... */
 
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  protected INSTITUTION_NAME = this.app.institucion.nombre;
   protected TIPO_DE_EMPLEADO = TIPO_DE_EMPLEADO;
 
   /* .............................. data inicial .............................. */

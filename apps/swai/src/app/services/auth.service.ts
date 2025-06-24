@@ -1,5 +1,4 @@
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import {
   inject,
   Injectable,
@@ -29,17 +28,17 @@ export class AuthService {
 
   /* ............................... injectables .............................. */
   private api = inject(ApiService);
-  private ssr_request_context = inject<{ usuario: UsuarioPayload | null }>(
-    REQUEST_CONTEXT
-  );
   private router = inject(Router);
-  private http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
   private transferState = inject(TransferState);
-
+  
   /* ................................. estado ................................. */
-
+  
   constructor() {
+    
+    const ssr_request_context = inject<{ usuario: UsuarioPayload | null }>(
+      REQUEST_CONTEXT
+    );
 
     if (isPlatformBrowser(this.platformId)) {
       const usuario = this.transferState.get<UsuarioPayload | null>(USER_KEY, null);
@@ -51,7 +50,7 @@ export class AuthService {
     }
     
     if (isPlatformServer(this.platformId)) {
-      const usuario = this.ssr_request_context.usuario;
+      const usuario = ssr_request_context.usuario;
       console.log('Usuario desde TransferState server:', usuario);
       
       this.#usuario = new BehaviorSubject<UsuarioPayload | null>(usuario)
