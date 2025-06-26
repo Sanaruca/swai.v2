@@ -12,7 +12,7 @@ import { NombrePipe } from '../../../common/pipes/nombre.pipe';
 import { TipoDeEmpleadoTagComponent } from '../../../common/components';
 import { Tag } from 'primeng/tag';
 import { Avatar } from 'primeng/avatar';
-import { AppStateService } from '../../../services/state.service';
+import { AppStateService } from '../../../services/appstate.service';
 
 @Component({
   selector: 'aw-dashboard.page',

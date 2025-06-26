@@ -161,6 +161,13 @@ export const actualizar_empelado = admin_procedure
             });
           }
 
+          await ctx.prisma.secciones.updateMany({
+            where: { profesor_guia: input.cedula },
+            data: {
+              profesor_guia: null,
+            },
+          });
+
           await ctx.prisma.secciones.update({
             where: { id: seccion_academica.id },
             data: {

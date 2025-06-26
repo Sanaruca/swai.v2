@@ -4,7 +4,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../../../../../../services/api.service';
-import { AppStateService } from '../../../../../../services/state.service';
+import { AppStateService } from '../../../../../../services/appstate.service';
 import { ESTADO_ACADEMICO, generar_matricula_de_estudiantes, Matricula, NIVEL_ACADEMICO_CARDINAL_MAP, NumberCondicion, StringCondicion } from '@swai/core';
 import { TooltipModule } from 'primeng/tooltip';
 

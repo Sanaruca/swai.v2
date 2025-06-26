@@ -63,7 +63,7 @@
             @if (seccion.profesor_guia) {
               <p-avatar [label]="SECCIONES_ACADEMICAS_MAP[seccion.id].profesor_guia! | nombre : 'iniciales'" shape="circle" class="size-10 my-1"/>
               <div>
-                <p class="font-medium">{{seccion.profesor_guia}}</p>
+                <p class="font-medium">{{SECCIONES_ACADEMICAS_MAP[seccion.id].profesor_guia! | nombre}}</p>
                 <p class="text-[.9em]">Profesor(a) guía</p>
               </div>
               <i class="pi pi-check-circle text-green-500 ml-auto"></i>

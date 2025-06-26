@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { AppStateService } from './services/appstate.service';
 
 @Component({
   imports: [RouterModule, ButtonModule],
@@ -11,5 +12,6 @@ import { ButtonModule } from 'primeng/button';
 export class AppComponent {
 
   title = 'webapp';
+  app = inject(AppStateService);
 
 }

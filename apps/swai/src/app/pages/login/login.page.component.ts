@@ -10,9 +10,9 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ToastModule } from 'primeng/toast';
+import { AppStateService } from '../../services/appstate.service';
 
 @Component({
   selector: 'aw-login.page',
@@ -32,15 +32,15 @@ export class LoginPageComponent {
 
   /* ............................... injectables .............................. */
   private fb = inject(FormBuilder)
-  private router = inject(Router)
   private auth = inject(AuthService)
+  private app = inject(AppStateService)
 
 
   loading = false;
   loginForm!: FormGroup;
 
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.loginForm = this.fb.group({
       usuario: ['', Validators.required],
       clave: ['', Validators.required],

@@ -28,7 +28,7 @@ import { PromoverNivelAcademicoModalComponent } from './components/promover_nive
 import { PensumModalComponent } from './components/pensum/pensum.modal.component';
 import { Avatar } from 'primeng/avatar';
 import { NombrePipe } from '../../../../common/pipes/nombre.pipe';
-import { AppStateService } from '../../../../services/state.service';
+import { AppStateService } from '../../../../services/appstate.service';
 import { ExportarEstudiantesModalComponent } from "./components/exportar_estudiantes/exportar_estudiantes.modal.component";
 
 @Component({
