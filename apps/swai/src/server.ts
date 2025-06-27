@@ -10,6 +10,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import NodeCache from 'node-cache';
 import morgan from 'morgan';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -31,6 +32,13 @@ const cache = new NodeCache({ stdTTL: 3600 }); // TTL de 1 hora
  * });
  * ```
  */
+app.use('/api',createProxyMiddleware( {
+    target: `${process.env['NX_BACKEND_BASE_URL'] || 'http://localhost:3000'}`,
+    changeOrigin: true,
+    pathRewrite: {
+        '': '/api'
+    },
+}))
 
 /**
  * Serve static files from /browser

@@ -5,9 +5,9 @@ export async function generar_carnet_estudiantil(estudiante: EstudianteDTO) {
   const doc = new jsPDF();
 
   const imagenFrontalUrl =
-    process.env['NX_SWAI_ORIGIN'] + '/img/templates/cf.png';
+    process.env['NX_SWAI_BASE_URL'] + '/img/templates/cf.png';
   const imagenPosteriorUrl =
-    process.env['NX_SWAI_ORIGIN'] + '/img/templates/cp.png';
+    process.env['NX_SWAI_BASE_URL'] + '/img/templates/cp.png';
 
   function cargarImagen(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
