@@ -1,4 +1,4 @@
 export interface AppEnvironmetMAP {
-  API_URL: string;
+  SWAI_BASE_URL: string;
   INSTITUTION_NAME : string;
 }

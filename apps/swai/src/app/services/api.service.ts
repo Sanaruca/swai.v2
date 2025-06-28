@@ -11,9 +11,8 @@ import type {
 } from '@trpc/server/unstable-core-do-not-import';
 import { ISwaiError, SwaiErrorCode } from '@swai/core';
 import { Router } from '@angular/router';
-import { optional } from 'valibot';
 
-const API_BASE_URL = environment.API_URL;
+const API_BASE_URL = `${environment.SWAI_BASE_URL}/api`;
 
 @Injectable({
   providedIn: 'root',
