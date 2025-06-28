@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID, inject, REQUEST_CONTEXT } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, REQUEST_CONTEXT } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { TRPCRootRouter } from '@swai/server';
@@ -22,8 +22,9 @@ export class ApiService {
   private toast = inject(MessageService);
   private router = inject(Router);
   private request_context = inject<{access_token: string | null}>(REQUEST_CONTEXT, {optional: true});
+  private platform = inject(PLATFORM_ID);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+  constructor() {
     this.client = createTRPCClient<TRPCRootRouter>({
       links: [
         httpBatchLink({
@@ -32,12 +33,12 @@ export class ApiService {
           fetch: async (url, options) => {
             
             // Verificar si estamos en el cliente o en el servidor
-            if (isPlatformServer(this.platformId)) {
+            if (isPlatformServer(this.platform)) {
               options = {...options, headers: {...options?.headers, authorization: `Bearer ${this.request_context?.access_token}`}};
               return fetch(url, options);
             }
             
-            if (isPlatformBrowser(this.platformId)) {
+            if (isPlatformBrowser(this.platform)) {
               options = {...options, credentials: 'include'};
               const response = await fetch(url, options);
 
