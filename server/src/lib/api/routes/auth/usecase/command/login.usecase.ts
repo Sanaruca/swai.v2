@@ -58,6 +58,7 @@ export const login = public_procedure
     ctx.server.response.cookie('swai.auth', token, {
       secure: true,
       sameSite: 'none',
+      maxAge: 1000 * 60 * 60 * 24, // 1 dia
     })
     return usuarioPayload
 
