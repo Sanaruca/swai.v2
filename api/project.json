@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "api",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "backend/src",
+  "sourceRoot": "api/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -11,12 +11,12 @@
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
-        "outputPath": "dist/backend",
+        "outputPath": "dist/api",
         "format": ["cjs"],
         "bundle": false,
-        "main": "backend/src/main.ts",
-        "tsConfig": "backend/tsconfig.app.json",
-        "assets": ["backend/src/assets"],
+        "main": "api/src/main.ts",
+        "tsConfig": "api/tsconfig.app.json",
+        "assets": ["api/src/assets"],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
@@ -42,15 +42,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "backend:build",
+        "buildTarget": "api:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "backend:build:development"
+          "buildTarget": "api:build:development"
         },
         "production": {
-          "buildTarget": "backend:build:production"
+          "buildTarget": "api:build:production"
         }
       }
     }

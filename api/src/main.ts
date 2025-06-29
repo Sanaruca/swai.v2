@@ -49,7 +49,7 @@ app.use(async (req, res, next) => {
         const usuario = parse(UsuarioPayloadSchema, payload);
         req.user = usuario;
       } catch {
-        return next();  
+        return next();
       }
     }
   } catch (error) {
@@ -84,7 +84,6 @@ app.use(
         const swai_error = error.cause;
         console.error('SwaiError:', swai_error.codigo);
         console.error('-  ', swai_error.mensaje);
-
       }
     },
   })
