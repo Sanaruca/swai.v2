@@ -6,6 +6,16 @@ import { AppStateService } from "./services/appstate.service";
 import { AuthService } from "./services/auth.service";
 import { Observable } from "rxjs";
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject('Timeout: servidor no respondió'), timeoutMs)
+    )
+  ]);
+}
+
+
 export const app_initializer: () => Observable<void> | Promise<void> | void = () => {
     const app = inject(AppStateService);
     const auth = inject(AuthService);
@@ -27,11 +37,8 @@ export const app_initializer: () => Observable<void> | Promise<void> | void = ()
     if (isPlatformServer(platform)) {
 
       return Promise.all([
-        obtener_datos_de_la_institucion.query(),
-        whoami.query().catch((error) => {
-          console.warn("Error en appinitializer whoami:", error);
-          return null; // o algún valor por defecto
-        })
+        withTimeout(obtener_datos_de_la_institucion.query(), 5000),
+        withTimeout(whoami.query(), 5000)
       ]).then(([institucion, usuario]) => {
         app.institucion = institucion;
         transfer_state.set(INSTITUCION, institucion);

@@ -28,7 +28,6 @@ import { ApiService } from '../../../services/api.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { EliminarEspacioAcaedemicoModalComponent } from './components';
-import { environment } from '../../../../environments/environment';
 import {
   SuccessEvent,
   UpsertEspacioAcademicoModalComponent,
@@ -64,7 +63,7 @@ import {
 })
 export class EspaciosAcademicosPageComponent {
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  protected INSTITUTION_NAME = 'environment.INSTITUTION_NAME';
   protected TIPOS_DE_ESPACIO_ACADEMICO = TIPOS_DE_ESPACIO_ACADEMICO;
   protected TIPO_DE_ESPACIO_ACADEMICO = TIPO_DE_ESPACIO_ACADEMICO;
   protected recurso_primeicon_map = recurso_primeicon_map;

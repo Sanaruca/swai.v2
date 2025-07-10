@@ -52,6 +52,21 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "docker": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
         }
       },
       "defaultConfiguration": "production"
@@ -66,7 +81,10 @@
           "buildTarget": "swai:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/swai/proxy.conf.json"
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -84,6 +102,20 @@
         "staticFilePath": "dist/apps/swai/browser",
         "spa": true
       }
+    },
+    "build-for-docker": {
+      "command": "bunx nx run swai:build:docker"
+    },
+    "docker-build": {
+      "dependsOn": ["build-for-docker"],
+      "executor": "@swai/docker:build",
+      "options": {
+        "tag": "latest",
+        "envPrefix": "SWAI_",
+        "mapEnvirotmentToBuildArgs": true,
+        "readBuildArgsFromDockerFile": true
+      }
+
     }
   }
 }

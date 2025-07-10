@@ -30,7 +30,6 @@ import { ApiService } from '../../../../services/api.service';
 import { TextareaModule } from 'primeng/textarea';
 import { parse, ValiError } from 'valibot';
 import { MessageService } from 'primeng/api';
-import { environment } from '../../../../../environments/environment';
 import { DatosPersonalesFormComponent } from './components/datos_personales/datos_personales.form.component';
 import { DatosDeSaludFormComponent } from './components/datos_de_salud/datos_de_salud.form.component';
 import { DatosDeContactoFormComponent } from './components/datos_de_contacto/datos_de_contacto.form.component';
@@ -70,7 +69,7 @@ export class RegistrarEstudiantePageComponent implements OnInit {
   private router = inject(Router);
 
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  protected INSTITUTION_NAME = 'environment.INSTITUTION_NAME';
 
   /* ................................. inputs ................................. */
   @Input() modo!: 'registrar' | 'editar';

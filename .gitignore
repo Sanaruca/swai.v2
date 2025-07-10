@@ -42,3 +42,7 @@ Thumbs.db
 .nx/workspace-data
 
 .angular
+*.env
+!.env
+!.build.docker.env
+!.docker-build.env

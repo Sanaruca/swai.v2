@@ -17,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@swai/core": ["core/src/index.ts"],
+      "@swai/docker": ["tools/docker/src/index.ts"],
       "@swai/server": ["server/src/index.ts"]
     }
   },

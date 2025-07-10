@@ -1,4 +1,4 @@
-const myOrgEnvRegex = /^NX_/i;
+const myOrgEnvRegex = /^SWAI_/i;
 
 const envVarPlugin = {
   name: 'env-var-plugin',

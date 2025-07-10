@@ -9,7 +9,6 @@ import { ApiService } from '../../../services/api.service';
 import { MomentModule } from 'ngx-moment';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
-import { environment } from '../../../../environments/environment';
 import { MenuItem } from 'primeng/api';
 import { GenerarListadosModalComponent } from './components/generar_listados/generar_listados.modal.component';
 import { TablaDeEstudiantesComponent } from './components/tabla_de_estudiantes/tabla_de_estudiantes.component';
@@ -38,7 +37,7 @@ export class EstudiantesPageComponent  {
   private router = inject(Router);
 
   /* ................................ contantes ............................... */
-  protected INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  protected INSTITUTION_NAME = 'environment.INSTITUTION_NAME';
 
   
   /* ............................... components ............................... */

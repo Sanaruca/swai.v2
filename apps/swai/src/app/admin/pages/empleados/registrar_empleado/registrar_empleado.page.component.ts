@@ -47,7 +47,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { debounceTime } from 'rxjs';
 import { TRPCClientError } from '@trpc/client';
-import { environment } from '../../../../../environments/environment';
 import { NivelAcademicoConSeccionesDTO } from '@swai/server';
 import { Tag } from 'primeng/tag';
 
@@ -78,7 +77,7 @@ import { Tag } from 'primeng/tag';
 })
 export class RegistrarEmpleadoPageComponent implements OnInit {
   /* ................................ contantes ............................... */
-  INSTITUTION_NAME = environment.INSTITUTION_NAME;
+  INSTITUTION_NAME = 'environment.INSTITUTION_NAME';
 
   /* ................................. inputs ................................. */
   @Input() modo!: 'registrar' | 'editar';

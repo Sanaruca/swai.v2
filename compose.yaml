@@ -1,0 +1,23 @@
+name: swai
+
+services:
+  web:
+    depends_on:
+      - api
+    build:
+      args:
+        PORT: 4042
+        SWAI_BASE_URL: http://localhost:4042
+        API_BASE_URL: http://api:3000
+      dockerfile: apps/swai/Dockerfile
+      context: .
+    ports:
+      - "4000:4042"
+  api: 
+    build:
+      args:
+        PORT: 3000
+        CORS_ORIGIN: http://localhost:4042
+        DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/sanz
+      dockerfile: api/Dockerfile
+      context: .

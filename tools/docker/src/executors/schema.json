@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Build executor",
+  "description": "Generates a docker build with build arguments",
+  "type": "object",
+  "properties": {
+    "tag": {
+      "type": "string"
+    },
+    "dockerfile": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "envPrefix": {
+      "type": "string"
+    },
+    "envFile": {
+      "type": "string"
+    },
+    "mapEnvirotmentToBuildArgs": {
+      "type": "boolean",
+      "description": "Map environment variables to build arguments.",
+      "default": false
+    },
+    "readBuildArgsFromDockerFile": {
+      "type": "boolean",
+      "description": "Read build args from dockerfile if \"mapEnvirotmentToBuildArgs\" is true. This option ignore \"buildArgs\" option.",
+      "default": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mapEnvirotmentToBuildArgs": { "const": true }
+        }
+      },
+      "then": {
+        "properties": {
+          "buildArgs": {
+            "type": "array",
+            "description": "Build arguments. This option is ignored if \"readBuildArgsFromDockerFile\" is true.",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "buildArgs": {
+            "type": "object",
+            "description": "Build arguments. This option is ignored if \"readBuildArgsFromDockerFile\" is true.",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      }
+    }
+  ],
+  "required": ["tag"]
+}

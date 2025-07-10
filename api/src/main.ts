@@ -12,6 +12,8 @@ import { SwaiError, UsuarioPayloadSchema } from '@swai/core';
 import { parse } from 'valibot';
 import type { KeyObject } from 'crypto';
 
+console.log(process.env)
+
 let paseto_local_key: KeyObject;
 generateKey('local').then((k) => (paseto_local_key = k));
 
@@ -30,7 +32,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: process.env.NX_CORS_ORIGIN || 'http://localhost:4200',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
   })
 );
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));

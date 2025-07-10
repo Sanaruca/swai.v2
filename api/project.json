@@ -34,6 +34,14 @@
               ".js": ".js"
             }
           }
+        },
+        "docker": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
         }
       }
     },
@@ -52,6 +60,19 @@
         "production": {
           "buildTarget": "api:build:production"
         }
+      }
+    },
+    "build-for-docker": {
+      "command": "bunx nx run api:build:docker"
+    },
+    "docker-build": {
+      "dependsOn": ["build-for-docker"],
+      "executor": "@swai/docker:build",
+      "options": {
+        "tag": "latest",
+        "envPrefix": "API_",
+        "mapEnvirotmentToBuildArgs": true,
+        "readBuildArgsFromDockerFile": true
       }
     }
   }
