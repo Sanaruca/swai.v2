@@ -1,11 +1,21 @@
 import { InstitucionDTO, InstitucionSchemaDTO, SwaiError, SwaiErrorCode } from '@swai/core';
 import { public_procedure } from '../../../../procedures';
 import { parse } from 'valibot';
+import type { PrismaClient } from '@prisma/client';
 
 export const obtener_datos_de_la_institucion = public_procedure.query<InstitucionDTO>(
-  async ({ ctx }) => {
-    
-    const institucion = await ctx.prisma.institucion.findFirst({
+  async ({ ctx }) => obtener_datos_de_la_institucion_fn({ deps: { prisma: ctx.prisma } })
+);
+
+export interface ObtenerDatosDeLaInstitucionParams {
+ deps: {
+  prisma: PrismaClient  
+ }   
+}
+
+export async function obtener_datos_de_la_institucion_fn({ deps }: ObtenerDatosDeLaInstitucionParams): Promise<InstitucionDTO> {
+    const { prisma } = deps;
+    const institucion = await prisma.institucion.findFirst({
       include: {
         planteles_educativos: true,
         municipios: {
@@ -28,5 +38,5 @@ export const obtener_datos_de_la_institucion = public_procedure.query<Institucio
       plantel_educativo: institucion.planteles_educativos,
       municipio: {...institucion.municipios, estado_federal: institucion.municipios.estados},
     });
-  }
-);
+  
+}

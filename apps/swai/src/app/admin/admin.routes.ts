@@ -2,15 +2,21 @@ import { ResolveFn, Route } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin.layout.component';
 import { MenuItem } from 'primeng/api';
 import { DashboardPageComponent } from './pages/dashboard/dashboard.page.component';
-import { resolve_cantidad_de_estudiantes } from '../resolvers';
+import { resolve_cantidad_de_estudiantes, resolve_institucion } from '../resolvers';
 import { inject } from '@angular/core';
 import { ApiService } from '../services/api.service';
+import { ConfiguracionPageComponent } from './pages/configuracion/configuracion.page.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
     path: '',
     component: AdminLayoutComponent,
     children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'prefix',
+      },
       {
         path: 'dashboard',
         component: DashboardPageComponent,
@@ -22,6 +28,17 @@ export const ADMIN_ROUTES: Route[] = [
           cantidad_de_recursos: ()=> inject(ApiService).client.recursos.obtener_cantidad_de_recursos.query(),
           breadcrumb: ((route) => ({
             label: 'Vista Rápida',
+            routerLink: [route.url.toString()],
+          })) as ResolveFn<MenuItem>,
+        },
+      },
+      {
+        path: 'configuracion',
+        component: ConfiguracionPageComponent,
+        resolve: {
+          institucion: resolve_institucion,
+          breadcrumb: ((route) => ({
+            label: 'Configuración',
             routerLink: [route.url.toString()],
           })) as ResolveFn<MenuItem>,
         },

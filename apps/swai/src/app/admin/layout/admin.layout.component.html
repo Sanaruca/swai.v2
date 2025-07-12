@@ -112,6 +112,21 @@
     </ul>
 
     <div class="nav__acctions">
+      <a
+          routerLink="/admin/configuracion"
+          [attr.data-active]="current_url.startsWith('/admin/configuracion')"
+          class="nav__link | size-11  | font-bold"
+          pTooltip="Configuración"
+          [class]="{
+            'w-full': sidebar_open,
+            'p-5': sidebar_open,
+            'justify-center': !sidebar_open,
+            'justify-start': sidebar_open,
+          }"
+        >
+          <i class="pi pi-cog"></i>
+          <p *ngIf="sidebar_open" class="font-normal">Configuración</p>
+        </a>
       <p-button [icon]="'ti ti-layout-sidebar-'+(sidebar_open? 'right':'left')+'-expand'" [rounded]="true" [text]="true" severity="secondary" (click)="sidebar_open = !sidebar_open" />
     </div>
 

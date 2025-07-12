@@ -1,0 +1,134 @@
+<header class="xlayout">
+  <h3>Configuración del Sistema</h3>
+  <p class="text-sm">
+    Configure la información básica de su institución educativa
+  </p>
+</header>
+<section class="xlayout mt-5">
+  <form [formGroup]="form" class="grid gap-5">
+    <section>
+      <header>
+        <h5>Información General</h5>
+        <p class="text-sm">Información de la institución educativa</p>
+      </header>
+      <section class="grid gap-4 | mt-5">
+        <div class="form_input" data-required>
+          <label for="nombre">Nombre</label>
+          <input pInputText id="nombre" formControlName="nombre" />
+        </div>
+        <div class="form_input" data-required>
+          <label for="rif">RIF</label>
+          <input pInputText id="rif" formControlName="rif" />
+        </div>
+        <div class="form_input" data-required>
+          <label for="direccion">Dirección</label>
+          <textarea
+            pTextarea
+            id="direccion"
+            formControlName="direccion"
+            rows="5"
+          ></textarea>
+        </div>
+        <section class="form_group">
+          <div class="form_input">
+            <label for="telefono">Teléfono</label>
+            <input pInputText id="telefono" formControlName="telefono" />
+          </div>
+          <div class="form_input">
+            <label for="correo">Correo</label>
+            <input pInputText id="correo" formControlName="correo" />
+          </div>
+        </section>
+      </section>
+    </section>
+    <section>
+      <header>
+        <h5>Información Institucional</h5>
+        <p class="text-sm">Información de la institución educativa</p>
+      </header>
+      <section class="form_group | mt-5">
+        <div class="form_input">
+          <label for="fecha_de_fundacion">Fecha de fundación</label>
+          <p-datepicker
+            formControlName="fecha_de_fundacion"
+            inputId="fecha_de_fundacion"
+          ></p-datepicker>
+        </div>
+        <div class="form_input" data-required>
+          <label for="plantel_educativo">Plantel educativo</label>
+          <input
+            pInputText
+            id="plantel_educativo"
+            formControlName="plantel_educativo"
+          />
+        </div>
+        <div class="form_input" data-required>
+          <label for="municipio">Municipio</label>
+          <input pInputText id="municipio" formControlName="municipio" />
+        </div>
+      </section>
+    </section>
+    <section>
+      <header>
+        <h5>Período Académico</h5>
+        <p class="text-sm">Configuración del período académico actual</p>
+      </header>
+      
+      <div class="form_input | mt-5">
+        <label for="periodo_academico_actual">Periodo académico actual</label>
+        <p-inputmask
+          mask="9999-9999"
+          formControlName="periodo_academico_actual"
+          [placeholder]="periodo_academico_actual_placeholder"
+          [attr.disabled]="form.controls.evaluar_periodo_academico.value"
+        ></p-inputmask>
+        <label class="flex items-center gap-1">
+          <p-checkbox
+            [binary]="true"
+            formControlName="evaluar_periodo_academico"
+          ></p-checkbox>
+          <span class="font-normal">Evaluar automáticamente</span>
+        </label>
+        <small class="text-muted-color">
+          Se evalúa automáticamente basado en las fechas del período
+        </small>
+      </div>
+      <section class="form_group | mt-5">
+        <div class="form_input" data-required>
+          <label for="inicio_de_periodo_academico"
+            >Inicio de periodo académico</label
+          >
+          <p-datepicker
+            formControlName="inicio_de_periodo_academico"
+            inputId="inicio_de_periodo_academico"
+          ></p-datepicker>
+        </div>
+
+        <div class="form_input" data-required>
+          <label for="fin_de_periodo_academico">Fin de periodo académico</label>
+          <p-datepicker
+            formControlName="fin_de_periodo_academico"
+            inputId="fin_de_periodo_academico"
+          ></p-datepicker>
+        </div>
+      </section>
+    </section>
+    <div class="flex justify-end mt-5 gap-3">
+      <p-button
+        label="Cancelar"
+        severity="secondary"
+        (onClick)="cancelar()"
+      />
+
+      <p-button
+        icon="pi pi-save"
+        iconPos="left"
+        label="Guardar cambios"
+        [loading]="loadings.enviando_datos"
+        (onClick)="guardar()"
+        [disabled]="form.invalid || !hasChanges"
+      />
+
+    </div>
+  </form>
+</section>

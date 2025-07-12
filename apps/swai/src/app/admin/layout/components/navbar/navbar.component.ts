@@ -73,6 +73,11 @@ export class NavbarComponent implements OnInit {
 
   protected profile_menu: MenuItem[] = [
     {
+      label: 'Configuración',
+      icon: 'pi pi-cog',
+      routerLink: '/admin/configuracion',
+    },
+    {
       label: 'Cerrar sesión',
       icon: 'pi pi-sign-out',
       command: () => {
@@ -96,7 +101,7 @@ export class NavbarComponent implements OnInit {
     home: {
       label: 'Admin',
       icon: 'pi pi-home',
-      routerLink: '/',
+      routerLink: '/admin',
     },
   };
 

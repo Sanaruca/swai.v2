@@ -6,8 +6,8 @@ import { ROL } from '@swai/core';
 export const adminGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
 
-  if (auth.snapshot.usuario && auth.snapshot.usuario.rol !== ROL.ADMIN) {
-    return false;
+  if (auth.snapshot.usuario && auth.snapshot.usuario.rol === ROL.ADMIN) {
+    return true;
   }
-  return true;
+  return false;
 };

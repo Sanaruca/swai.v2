@@ -16,10 +16,10 @@
   }
 
   &__acctions{
-    @apply hidden mt-auto;
+    @apply hidden mt-auto border-t border-surface-700 pt-4;
 
     /* ................................... xl ................................... */
-    @apply xl:block;
+    @apply xl:grid gap-3;
   }
 
 

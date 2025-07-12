@@ -12,7 +12,6 @@ import { SwaiError, UsuarioPayloadSchema } from '@swai/core';
 import { parse } from 'valibot';
 import type { KeyObject } from 'crypto';
 
-console.log(process.env)
 
 let paseto_local_key: KeyObject;
 generateKey('local').then((k) => (paseto_local_key = k));
