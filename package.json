@@ -5,6 +5,7 @@
   "engines": {
     "node": "^22.14.0"
   },
+  "packageMananger": "bun@1.2.18",
   "scripts": {
     "prepare": "prisma generate"
   },
