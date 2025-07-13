@@ -13,7 +13,7 @@ import {
   SwaiErrorCode,
   TIPO_DE_EMPLEADO,
 } from '@swai/core';
-import { admin_procedure } from '../../../../../api/procedures';
+import { admin_procedure } from '../../../../procedures';
 import {
   InferOutput,
   nullable,
