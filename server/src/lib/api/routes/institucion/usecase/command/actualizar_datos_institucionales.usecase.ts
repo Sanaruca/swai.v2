@@ -4,7 +4,7 @@ import {
   SwaiError,
   SwaiErrorCode,
 } from '@swai/core';
-import { admin_procedure } from 'server/src/lib/api/procedures';
+import { admin_procedure } from '../../../../procedures';
 import { object, parser, pick } from 'valibot';
 import { obtener_datos_de_la_institucion_fn } from '../query/obtener_datos_de_la_institucion.usecase';
 
