@@ -13,8 +13,7 @@
         "main": "server/src/index.ts",
         "tsConfig": "server/tsconfig.lib.json",
         "assets": [],
-        "format": ["cjs"],
-        "generatePackageJson": true
+        "format": ["cjs"]
       }
     }
   }

@@ -17,7 +17,6 @@
         "main": "api/src/main.ts",
         "tsConfig": "api/tsconfig.app.json",
         "assets": ["api/src/assets"],
-        "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
