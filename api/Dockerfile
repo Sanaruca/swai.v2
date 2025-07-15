@@ -4,17 +4,15 @@ FROM oven/bun:1.2-alpine AS build
 WORKDIR /app
 
 # Copiar archivos necesarios para instalar dependencias y prisma
-COPY package.json .
-COPY prisma/schema.prisma .
+COPY . .
 
 # Instalar dependencias (sin guardar en package.json)
-RUN bun i --no-save --ignore-scripts
+RUN bun i -p --no-save --ignore-scripts
 
 # Generar cliente Prisma
 RUN bunx prisma generate
 
 
-COPY . .
 RUN bunx nx build api
 
 # Cambiar permisos (opcional, según tu necesidad)
