@@ -13,7 +13,8 @@ RUN bun i -p --no-save --ignore-scripts
 # Generar cliente Prisma
 RUN bunx prisma generate
 
-RUN bunx nx build api
+# Copiar el código compilado o construido (en tu caso, dist/api)
+COPY dist/api api/
 
 # Cambiar permisos (opcional, según tu necesidad)
 RUN addgroup --system api && adduser --system -G api api
