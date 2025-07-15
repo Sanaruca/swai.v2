@@ -8,12 +8,12 @@ COPY package.json .
 COPY prisma/schema.prisma .
 
 # Instalar dependencias (sin guardar en package.json)
-RUN bun i -p --no-save --ignore-scripts
+RUN bun i --no-save --ignore-scripts
 
 # Generar cliente Prisma
 RUN bunx prisma generate
 
-# Copiar el código compilado o construido (en tu caso, dist/api)
+
 COPY . .
 RUN bunx nx build api
 
