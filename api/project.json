@@ -65,7 +65,6 @@
       "command": "bunx nx run api:build:docker"
     },
     "docker-build": {
-      "dependsOn": ["build-for-docker"],
       "executor": "@swai/docker:build",
       "options": {
         "tag": "latest",

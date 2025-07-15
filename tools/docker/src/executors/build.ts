@@ -82,9 +82,9 @@ const runExecutor: PromiseExecutor<BuildExecutorSchema> = async (
       return acc;
     }, [] as string[]);
 
-  const command = `docker build ${cliBuildArgs.join(' ')} -t ${
-    validatedOptions.tag
-  } -f ${dockerfilePath} ${validatedOptions.context}`;
+  const imagetag = validatedOptions.tag === 'latest' ? `${projectName}` : `${projectName}:${validatedOptions.tag}`;
+
+  const command = `docker build ${cliBuildArgs.join(' ')} -t ${imagetag} -f ${dockerfilePath} ${validatedOptions.context}`;
 
   console.log(
     '⚙️ Running docker build command with \x1B[33m' +
@@ -93,7 +93,7 @@ const runExecutor: PromiseExecutor<BuildExecutorSchema> = async (
   );
   console.log(
     '\x1B[1m' +
-      `🔨 docker build ... -t ${context.projectName}:${validatedOptions.tag} -f ${dockerfilePath} ${validatedOptions.context}` +
+      `🔨 docker build ... -t ${imagetag} -f ${dockerfilePath} ${validatedOptions.context}` +
       '\x1B[0m'
   );
 
