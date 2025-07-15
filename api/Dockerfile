@@ -15,7 +15,7 @@ RUN bunx prisma generate
 
 # Copiar el código compilado o construido (en tu caso, dist/api)
 COPY . .
-RUN bunx build api
+RUN bunx nx build api
 
 # Cambiar permisos (opcional, según tu necesidad)
 RUN addgroup --system api && adduser --system -G api api
