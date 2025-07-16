@@ -1,19 +1,33 @@
 # Etapa de build: instalar dependencias, generar prisma y preparar la app
-FROM oven/bun:1.2-alpine AS build
+FROM node:22.17-alpine3.22 AS build
+
+# Instalar curl y bash para descargar Bun
+RUN apk add --no-cache curl bash
+
+# Descargar e instalar Bun (versión fija para reproducibilidad)
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.18"
+
+
+# Añadir Bun al PATH
+ENV PATH="/root/.bun/bin:$PATH"
+
+RUN ls /root/.bun/bin
 
 WORKDIR /app
 
 # Copiar archivos necesarios para instalar dependencias y prisma
 COPY . .
 
+
+
 # Instalar dependencias (sin guardar en package.json)
-RUN bun i -p --no-save --ignore-scripts
+RUN bun i --no-save --ignore-scripts
 
 # Generar cliente Prisma
-RUN bunx prisma generate
+RUN bun prisma generate
 
 
-RUN bunx nx build api
+RUN bun nx build api
 
 # Cambiar permisos (opcional, según tu necesidad)
 RUN addgroup --system api && adduser --system -G api api
@@ -42,9 +56,9 @@ WORKDIR /app
 RUN addgroup --system api && adduser --system -G api api
 
 # Copiar desde la etapa build solo los archivos necesarios
-COPY --from=build /app/api ./api
+COPY --from=build /app/dist/api ./api
 COPY --from=build /app/package.json .
-COPY --from=build /app/schema.prisma .
+COPY --from=build /app/prisma/schema.prisma .
 
 RUN bun i -p --no-save --ignore-scripts
 RUN bunx prisma generate
