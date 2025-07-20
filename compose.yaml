@@ -6,18 +6,18 @@ services:
       - api
     build:
       args:
-        PORT: 4042
-        SWAI_BASE_URL: http://localhost:4042
+        PORT: 4000
+        SWAI_BASE_URL: http://localhost:4000
         API_BASE_URL: http://api:3000
       dockerfile: apps/swai/Dockerfile
       context: .
     ports:
-      - "4000:4042"
+      - "4000:4000"
   api: 
     build:
       args:
         PORT: 3000
-        CORS_ORIGIN: http://localhost:4042
+        CORS_ORIGIN: http://localhost:4000
         DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/sanz
       dockerfile: api/Dockerfile
       context: .

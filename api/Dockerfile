@@ -1,6 +1,7 @@
 # Etapa de build: instalar dependencias, generar prisma y preparar la app
 FROM node:22.17-alpine3.22 AS build
 
+
 # Instalar curl y bash para descargar Bun
 RUN apk add --no-cache curl bash
 
@@ -10,8 +11,6 @@ RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.18"
 
 # Añadir Bun al PATH
 ENV PATH="/root/.bun/bin:$PATH"
-
-RUN ls /root/.bun/bin
 
 WORKDIR /app
 
@@ -29,9 +28,6 @@ RUN bun prisma generate
 
 RUN bun nx build api
 
-# Cambiar permisos (opcional, según tu necesidad)
-RUN addgroup --system api && adduser --system -G api api
-RUN chown -R api:api .
 
 # --------------------------------------------------------
 
@@ -48,12 +44,8 @@ ENV PORT=$PORT
 ENV DATABASE_URL=$DATABASE_URL
 ENV CORS_ORIGIN=$CORS_ORIGIN
 
-EXPOSE ${PORT}
-
 WORKDIR /app
 
-# Crear usuario para seguridad
-RUN addgroup --system api && adduser --system -G api api
 
 # Copiar desde la etapa build solo los archivos necesarios
 COPY --from=build /app/dist/api ./api
@@ -63,9 +55,12 @@ COPY --from=build /app/prisma/schema.prisma .
 RUN bun i -p --no-save --ignore-scripts
 RUN bunx prisma generate
 
+# Cambiar permisos (opcional, según tu necesidad)
+RUN addgroup --system api && adduser --system -G api api
 # Cambiar propietario de los archivos
 RUN chown -R api:api .
 
 USER api
 
+EXPOSE ${PORT}
 CMD [ "bun", "api/main.js" ]

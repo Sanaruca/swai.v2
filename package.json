@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "engines": {
-    "node": "22.14"
+    "node": "22.17"
   },
   "packageMananger": "bun@1.2.18",
   "scripts": {

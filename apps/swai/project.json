@@ -103,11 +103,7 @@
         "spa": true
       }
     },
-    "build-for-docker": {
-      "command": "bunx nx run swai:build:docker"
-    },
     "docker-build": {
-      "dependsOn": ["build-for-docker"],
       "executor": "@swai/docker:build",
       "options": {
         "tag": "latest",
