@@ -12,7 +12,7 @@ ENV PATH="/root/.bun/bin:$PATH"
 
 WORKDIR /app
 
-COPY package.json bun.lockb* .
+COPY package.json bun.lockb* ./
 RUN bun install --no-save --ignore-scripts
 COPY . .
 
@@ -39,7 +39,7 @@ RUN addgroup --system swai \
  && adduser --system -G swai swai
 
 # Copia solo lo esencial, con permisos
-COPY --from=build /app/dist/apps/swai    . 
+COPY --from=build /app/dist/swai    . 
 COPY --from=build /app/package.json      .
 COPY --from=build /app/bun.lockb*        .
 COPY --from=build /app/prisma/schema.prisma .
