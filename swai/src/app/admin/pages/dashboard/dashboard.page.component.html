@@ -1,0 +1,160 @@
+<header class="xlayout">
+  <h3>{{INSTITUTION_NAME}}</h3>
+  <p class="text-sm">Vista Rápida</p>
+</header>
+
+<nav class="xlayout | flex gap-3 mt-5 overflow-x-auto">
+    <aw-fast-link
+      title="1er Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-blue-600"
+      iconContentClassName="bg-blue-100"
+      [routerLink]="['/admin/niveles_academicos', 1]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="2do Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-teal-600"
+      iconContentClassName="bg-teal-100"
+      [routerLink]="['/admin/niveles_academicos', 2]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="3er Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-cyan-600"
+      iconContentClassName="bg-cyan-100"
+      [routerLink]="['/admin/niveles_academicos', 3]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="4to Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-pink-600"
+      iconContentClassName="bg-pink-100"
+      [routerLink]="['/admin/niveles_academicos', 4]"
+    ></aw-fast-link>
+    <aw-fast-link
+      title="5to Año"
+      subtitle="Nivel académico"
+      icon="pi pi-circle-fill text-[1.6em] text-indigo-600"
+      iconContentClassName="bg-indigo-100"
+      [routerLink]="['/admin/niveles_academicos', 5]"
+    ></aw-fast-link>
+  </nav>
+
+  <nav class="xlayout | flex mt-5 gap-4 overflow-auto">
+  
+    <!-- <aw-info-card
+      label="Espacios académicos"
+      icon="pi pi-sitemap text-green-500"
+      [value]="cantidad_de_espacios_academicos.total"
+      className="bg-green-100 dark:bg-green-600"
+      iconContentClassName="bg-green-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Estudiantes Activos"
+      icon="pi pi-book text-cyan-600"
+      [value]="cantidad_de_estudiantes.activos"
+      className="bg-cyan-100 dark:bg-cyan-600"
+      iconContentClassName="bg-cyan-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Recursos Totales"
+      icon="pi pi-book text-purple-600"
+      [value]="12"
+      className="bg-purple-100 dark:bg-purple-600"
+      iconContentClassName="bg-purple-200"
+    ></aw-info-card>
+  
+    <aw-info-card
+      label="Profesores"
+      icon="pi pi-book text-blue-600"
+      [value]="cantidad_de_empleados.tipos_de_empleado[TIPO_DE_EMPLEADO.DOCENTE-1].total"
+      className="bg-blue-100 dark:bg-blue-600"
+      iconContentClassName="bg-blue-200"
+    ></aw-info-card>
+
+    <aw-info-card
+    label="Personal Administrativo"
+    icon="pi pi-briefcase text-pink-600"
+    [value]="cantidad_de_empleados.tipos_de_empleado[TIPO_DE_EMPLEADO.ADMINISTRATIVO-1].total"
+    className="bg-pink-100 dark:bg-pink-700"
+    iconContentClassName="bg-pink-200"
+  />
+
+  <aw-info-card
+    label="Personal Obrero"
+    icon="pi pi-building text-indigo-600"
+    [value]="cantidad_de_empleados.tipos_de_empleado[TIPO_DE_EMPLEADO.OBRERO-1].total"
+    className="bg-indigo-100 dark:bg-indigo-700"
+    iconContentClassName="bg-indigo-200"
+  /> -->
+
+  </nav>
+
+  <section class="flex gap-3 mt-5 items-start flex-wrap">
+
+    
+    <div class="card flex-[2]">
+      
+      <p-selectbutton [(ngModel)]="grafica_actual" [options]="graficas"  optionLabel="titulo" optionValue="value" aria-labelledby="basic" optionDisabled="disabled" />
+      
+      <h5 class="my-5">{{graficas[grafica_actual].titulo}}</h5>
+
+      <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="20rem" [responsive]="true"></p-chart>
+
+      <ol class="flex gap-4 mt-5 flex-wrap">
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #1e293b;"></i> Total ({{cantidad_de_estudiantes.total}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #22c55e;"></i> Activos ({{cantidad_de_estudiantes.activos}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #eab308;"></i> No inscritos ({{cantidad_de_estudiantes.no_inscritos}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #3b82f6;"></i> Masculino ({{cantidad_de_estudiantes.masculino}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #ec4899;"></i> Femenino ({{cantidad_de_estudiantes.femenino}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #67e8f9;"></i> Discapacitados ({{cantidad_de_estudiantes.discapacitados}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #f472b6;"></i> En gestación ({{cantidad_de_estudiantes.en_gestacion}})</li>
+        <li class="text-sm"><i class="pi pi-circle-fill text-sm" style="color: #6b7280;"></i> Repitientes ({{cantidad_de_estudiantes.repitientes}})</li>
+      </ol>
+
+    </div>
+    
+    <div class="card | flex-[1]">      
+      <h5>Actividad Reciente</h5>
+
+        <ol class="mt-5">
+          @for (persona of registros_recientes; track persona.cedula) {
+            <li>
+              <a class="flex items-center gap-3 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors px-3 py-4 rounded-xl" [routerLink]="['/admin', persona.tipo === 'estudiante' ? 'estudiantes' : 'empleados', persona.cedula]">
+
+                <p-avatar [label]="persona | nombre:'iniciales'" size="large" shape="circle" class="flex-none" />
+                <div>
+                  <p class="font-medium">
+                    {{persona | nombre}}
+                  </p>
+                  <span>
+                    {{persona.tipo === 'estudiante' ? 'Estudiante' : 'Empleado(a)'}}
+                  </span>
+                </div>
+
+              <div class="ml-auto">
+
+                @if (persona.tipo === 'empleado') {
+                  <aw-tag-tipo-de-empleado [tipo]="persona.tipo_de_empleado.id" />
+                } @else if (persona.tipo === 'estudiante') {
+                  <p-tag
+                  value="Estudiante"
+                  [rounded]="true"
+                  styleClass="bg-teal-500 text-white"
+                  >
+                  <div class="flex items-center gap-1">
+                    <i class="pi pi-book rig"></i>
+                  </div>
+                </p-tag>
+              }
+            </div>
+            </a>
+            </li>
+          }
+        </ol>
+
+    </div>
+</section>

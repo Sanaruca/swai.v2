@@ -1,0 +1,68 @@
+@reference 'tailwindcss';
+
+/* ................................. stepper ................................ */
+.stepper {
+    @apply flex gap-1 overflow-auto md:grid;
+    &__separator {
+      width: 1px;
+      @apply h-12 block border mx-4;
+    }
+  
+    &__step {
+      @apply flex gap-4;
+  
+      &[data-active='true'] {
+        .stepper__step__number {
+          @apply bg-primary text-white;
+        }
+        .stepper__step__title {
+          @apply text-primary font-bold;
+        }
+      }
+  
+      &[data-completed='true'] {
+        .stepper__step__description {
+          @apply text-green-500;
+        }
+  
+        &[data-active='true'] {
+          .stepper__step__title {
+            @apply text-green-500;
+          }
+          .stepper__step__number {
+            @apply bg-green-500;
+          }
+        }
+  
+        &:not([data-active='true']) {
+          .stepper__step__number {
+            @apply bg-green-100;
+            @apply text-green-500;
+          }
+        }
+      }
+  
+      &:hover:not([data-active='true']) {
+        .stepper__step__number {
+          @apply bg-primary-100 dark:bg-primary-600;
+        }
+        .stepper__step__title {
+          @apply text-primary;
+        }
+      }
+    }
+  
+    &__step__number {
+      @apply transition-all flex-none;
+      @apply bg-surface-100 dark:bg-surface-800 size-10 rounded-full;
+      @apply flex justify-center items-center font-semibold;
+    }
+  
+    &__step__title {
+      @apply transition-all;
+      @apply font-medium text-start;
+    }
+    &__step__description {
+      @apply text-sm text-start line-clamp-1;
+    }
+  }

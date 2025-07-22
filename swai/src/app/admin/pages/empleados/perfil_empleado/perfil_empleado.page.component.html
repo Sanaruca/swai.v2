@@ -1,0 +1,97 @@
+<aw-perfil [persona]="empleado">
+    <ng-template #tags>
+        <li>
+            <aw-tag-tipo-de-empleado [tipo]="empleado.tipo_de_empleado.id"/>
+        </li>
+
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.DOCENTE && $docente(empleado).seccion_guia) {
+          <li>
+            <a 
+             [routerLink]="[
+          '/admin',
+          'niveles_academicos',
+          $docente(empleado).seccion_guia!.nivel_academico,
+          $docente(empleado).seccion_guia!.seccion
+        ]"
+            >
+              <p-tag
+                        [value]="
+              'Guia de ' +
+              NIVEL_ACADEMICO_CARDINAL_MAP[$docente(empleado).seccion_guia!.nivel_academico] +
+              ' Año ' +
+              $docente(empleado).seccion_guia!.seccion
+                        "
+                        [rounded]="true"
+                        styleClass="border bg-transparent text-color"
+                      >
+                        <div class="flex items-center gap-1">
+              <i class="pi pi-external-link"></i>
+                        </div>
+                      </p-tag>
+            </a>
+      </li>
+      
+    }
+    </ng-template>
+    <ng-template #headerRight>
+        <div class="flex gap-3">
+          <p-menu #menu [model]="imprimir_menu" popup></p-menu>
+          <p-menu #acctions_menu [model]="this.acctions_menu" popup></p-menu>
+          <p-button  (onClick)="menu.toggle($event)" label="Imprimir" icon="pi pi-print" variant="outlined" />
+          <a routerLink="editar" pButton>
+            <i class="pi pi-user-edit"></i>
+            <span>Editar empleado</span>
+          </a>
+          <p-button (onClick)="acctions_menu.toggle($event)" size="large" icon="pi pi-ellipsis-h" severity="secondary" />
+        </div>
+      </ng-template>
+
+
+      <aw-seccion-campo-valor titulo="Información Laboral">
+        <aw-campo-valor
+          campo="Cargo"
+          [valor]="empleado.tipo_de_empleado.nombre"
+        />
+        <aw-campo-valor
+          campo="RIF"
+          [valor]="empleado.rif"
+        />
+        <aw-campo-valor
+          campo="Carnet de la patria"
+          [valor]="empleado.codigo_carnet_patria"
+        />
+        <aw-campo-valor
+          campo="Centro de votacion"
+          [valor]="empleado.centro_de_votacion.nombre"
+        />
+        <aw-campo-valor
+          campo="Fecha de ingreso"
+          [valor]="empleado.fecha_de_ingreso | date : 'dd/MM/yyyy'"
+        />
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.DOCENTE) {
+          <ng-container ngProjectAs="aw-campo-valor">
+            <aw-campo-valor
+            campo="Titulo de pregrado"
+            [valor]="$docente(empleado).titulo_de_pregrado.nombre"
+            />
+            <aw-campo-valor
+            campo="Plantel de dependencia"
+            [valor]="$docente(empleado).plantel_de_dependencia.dea"
+            />
+            <aw-campo-valor
+            campo="Especialidad"
+            [valor]="$docente(empleado).especialidad.nombre"
+            />
+          </ng-container>
+        }
+
+        @if (empleado.tipo_de_empleado.id === TIPO_DE_EMPLEADO.ADMINISTRATIVO) {
+          <aw-campo-valor
+          campo="Titulo de pregrado"
+          [valor]="$administrativo(empleado).titulo_de_pregrado.nombre"
+          />
+        }
+      </aw-seccion-campo-valor>
+</aw-perfil>
+
+<aw-modal-eliminar-emplado [empleado]="empleado" (success)="on_empleado_eliminado()"/>

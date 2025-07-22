@@ -1,0 +1,55 @@
+@reference "#swai/css";
+
+:host {
+  @apply flex flex-col h-dvh overflow-hidden;
+}
+
+.nav {
+  @apply flex p-3 border-r;
+  transition: cubic-bezier(0, 1, 0, 1) 500ms;
+
+  /* ................................... xl ................................... */
+  @apply xl:flex-col;
+
+  &__links {
+    @apply flex gap-2;
+    /* ................................... xl ................................... */
+    @apply xl:grid;
+  }
+
+  &__acctions {
+    @apply hidden mt-auto border-t border-surface-700 pt-4;
+
+    /* ................................... xl ................................... */
+    @apply xl:grid gap-3;
+  }
+}
+.nav__link {
+  @apply flex gap-3 items-center rounded-lg;
+  @apply hover:bg-primary/20;
+
+  &[data-active='true'] {
+    @apply bg-primary text-white dark:bg-primary-600;
+  }
+}
+
+.layout {
+  @apply flex-col-reverse;
+  @apply flex flex-1 overflow-hidden;
+
+  /* ................................... xl ................................... */
+  @apply xl:flex-row;
+}
+
+.main {
+  @apply flex-1 px-0 pt-10 overflow-y-auto overflow-x-hidden;
+  /* ................................... sm ................................... */
+  @apply sm:flex-row sm:pl-6 sm:px-3;
+  @apply md:px-6;
+}
+
+::ng-deep .xlayout {
+  @apply px-2;
+
+  @apply sm:px-0;
+}

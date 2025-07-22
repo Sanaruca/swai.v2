@@ -1,0 +1,17 @@
+@reference "#swai/css";
+
+.fast_link {
+  @apply flex gap-4 border py-2 px-4 rounded-xl items-center min-w-max;
+  @apply cursor-pointer;
+  @apply dark:bg-surface-800;
+
+  &__icon {
+    @apply flex justify-center items-center size-12 rounded-full;
+  }
+  &__title {
+    @apply font-medium;
+  }
+  &__subtitle {
+    @apply text-xs;
+  }
+}

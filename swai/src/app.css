@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+@plugin 'tailwindcss-primeui';
+
+@import 'primeicons/primeicons.css';
+@import '@tabler/icons-webfont/dist/tabler-icons.css';
+
+
+@import './css/_stepper.css';
+@import './css/_selectable.css';
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply dark:border-surface-700;
+  }
+}
+/* .................................. icons ................................. */
+.ti {
+  @apply text-lg;
+}
+
+/* You can add global styles to this file, and also import other style files */
+
+html {
+  font-size: 16px;
+}
+
+h3 {
+  @apply text-3xl font-semibold;
+}
+h4 {
+  @apply text-2xl font-semibold;
+}
+h5 {
+  @apply text-xl font-semibold;
+}
+h6 {
+  @apply text-lg font-semibold;
+}
+
+/* ................................. navbar ................................. */
+.bar {
+  @apply bg-surface-50 dark:bg-surface-800 border-b;
+}
+
+/* .................................. link .................................. */
+
+a.link {
+  @apply hover:underline text-primary-500 hover:text-primary-600;
+}
+
+/* .................................. card .................................. */
+
+.card {
+  @apply border-t border-b border-surface-200 dark:border-surface-700;
+  @apply py-6 px-2;
+  @apply bg-white dark:bg-surface-900;
+
+  @apply sm:border sm:rounded-2xl sm:px-4;
+}
+
+.card-bg {
+  @apply bg-white dark:bg-surface-900;
+}
+
+/* .................................. forms ................................. */
+
+.form_group {
+  @apply grid gap-4 items-start;
+  grid-template-columns: repeat(auto-fit, 255px);
+}
+
+.form_input {
+  @apply grid gap-1;
+}
+
+.form_input > label {
+  @apply font-medium;
+}
+.form_input[data-required] > label::after {
+  content: ' *';
+  @apply text-red-500;
+}
+
+.bordered {
+  @apply border-2 py-4 px-3 rounded-xl;
+}

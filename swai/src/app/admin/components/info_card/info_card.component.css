@@ -1,0 +1,5 @@
+@reference "#swai/css";
+
+.host {
+  @apply p-4 rounded-xl;
+}

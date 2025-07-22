@@ -1,0 +1,121 @@
+{
+  "name": "swai",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "aw",
+  "sourceRoot": "swai/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "plugins": ["swai/plugins/env-var-plugin.ts"],
+        "allowedCommonJsDependencies": [
+          "core-js",
+          "@babel/runtime",
+          "raf",
+          "rgbcolor"
+        ],
+        "outputPath": "dist/swai",
+        "index": "swai/src/index.html",
+        "browser": "swai/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "swai/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "swai/public"
+          }
+        ],
+        "styles": ["swai/src/app.css","swai/src/styles.css"],
+        "scripts": [],
+        "server": "swai/src/main.server.ts",
+        "ssr": {
+          "entry": "swai/src/server.ts"
+        },
+        "outputMode": "server"
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        },
+        "docker": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "swai:build:production"
+        },
+        "development": {
+          "buildTarget": "swai:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "swai/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "swai:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "swai:build",
+        "staticFilePath": "dist/swai/browser",
+        "spa": true
+      }
+    },
+    "docker-build": {
+      "executor": "@swai/docker:build",
+      "options": {
+        "tag": "latest",
+        "envPrefix": "SWAI_",
+        "mapEnvirotmentToBuildArgs": true,
+        "readBuildArgsFromDockerFile": true
+      }
+    }
+  }
+}
