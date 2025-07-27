@@ -46,3 +46,5 @@ Thumbs.db
 !.env
 !.build.docker.env
 !.docker-build.env
+
+prisma/generated

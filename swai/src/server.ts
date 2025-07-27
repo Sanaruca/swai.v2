@@ -8,10 +8,21 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import NodeCache from 'node-cache';
 import morgan from 'morgan';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-console.log(process.env);
+import { createExpressTRPCContext } from '@swai/server';
+import { ROOT_ROUTER } from '@swai/server';
+import { UsuarioPayloadSchema } from '@swai/core';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import { PrismaClient } from '@prisma/client';
+import { V3 as paseto } from "paseto";
+import type { KeyObject } from 'crypto';
+import { parse } from 'valibot';
+
+
+let paseto_local_key: KeyObject;
+paseto.generateKey('local').then((k) => (paseto_local_key = k));
+const prisma = new PrismaClient();
+
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -20,7 +31,28 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 app.use(cookieParser());
 
-const cache = new NodeCache({ stdTTL: 3600 }); // TTL de 1 hora
+
+/* ................................. usuario ................................ */
+app.use(async (req, res, next) => {
+  try {
+    const token = req.cookies?.['swai.auth'] || req.headers.authorization?.split(' ')[1];
+
+    if (token) {
+      try {
+        const payload = await paseto.decrypt(token, paseto_local_key);
+        const usuario = parse(UsuarioPayloadSchema, payload);
+        req.user = usuario;
+      } catch {
+        return next();
+      }
+    }
+  } catch (error) {
+    console.error('Error al verificar el token:', error);
+  }
+
+  next();
+});
+
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -33,16 +65,26 @@ const cache = new NodeCache({ stdTTL: 3600 }); // TTL de 1 hora
  * });
  * ```
  */
-app.use(
-  '/api',
-  createProxyMiddleware({
-    target: `${process.env['API_BASE_URL'] || 'http://localhost:3000'}`,
-    changeOrigin: true,
-    pathRewrite: {
-      '': '/api',
-    },
-  })
-);
+app.use('/api/trpc', trpcExpress.createExpressMiddleware({
+  router: ROOT_ROUTER,
+  createContext: (params) => {
+    return createExpressTRPCContext({
+      dependencies: {
+        prisma,
+      },
+      env: {
+        paseto_local_key: paseto_local_key,
+      },
+    })(params);
+  },
+  // onError: ({ error }) => {
+  //   if (error.cause instanceof SwaiError) {
+  //     const swai_error = error.cause;
+  //     console.error('SwaiError:', swai_error.codigo);
+  //     console.error('-  ', swai_error.mensaje);
+  //   }
+  // },
+}));
 
 /**
  * Serve static files from /browser
@@ -60,7 +102,7 @@ app.use(morgan('dev'));
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use('/{*splat}', async (req, res, next) => {
+app.use('/**', async (req, res, next) => {
   const request_context = {
     access_token: null as string | null,
   };

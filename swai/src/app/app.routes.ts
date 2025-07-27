@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './pages/login/login.page.component';
 import { NotFoundPageComponent } from './pages/not_found/not_found.page.component';
+import { authGuard } from './guard/auth.guard';
 import { adminGuard } from './guard/admin.guard';
 import { redirectingGuard } from './guard/redirecting.guard';
 import { MainPageComponent } from './pages/main/main.page.component';
@@ -12,7 +13,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'admin',
-    canActivate: [adminGuard],
+    canActivate: [authGuard, adminGuard],
     loadChildren: () =>
       import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },

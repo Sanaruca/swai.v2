@@ -4,7 +4,7 @@ import {
   inject,
   REQUEST_CONTEXT,
 } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { TRPCRootRouter } from '@swai/server';
 import { environment } from '../../environments/environment';
@@ -39,20 +39,10 @@ export class ApiService {
           url: API_BASE_URL + '/trpc',
           transformer: superjson,
           fetch: async (url, options) => {
-            // Verificar si estamos en el cliente o en el servidor
-            if (isPlatformServer(this.platform)) {
-              options = {
-                ...options,
-                headers: {
-                  ...options?.headers,
-                  authorization: `Bearer ${this.request_context?.access_token}`,
-                },
-              };
-              return fetch(url, options);
-            }
+
 
             if (isPlatformBrowser(this.platform)) {
-              options = { ...options, credentials: 'include' };
+              // options = { ...options, credentials: 'include' };
               const response = await fetch(url, options);
 
               if (!response.ok) {
@@ -62,7 +52,6 @@ export class ApiService {
                     swai_error: ISwaiError;
                   }
                 >;
-                console.error('Error en la solicitud:', error);
                 this.toast.add({
                   severity: 'error',
                   summary: error.data.swai_error.mensaje,
@@ -81,11 +70,13 @@ export class ApiService {
 
               return response;
             }
-
-            // Caso por defecto (si no se detecta la plataforma)
-            return Promise.reject(
-              new Error('No se pudo determinar la plataforma')
-            );
+            return fetch(url, {
+              ...options,
+              headers: {
+                ...options?.headers,
+                Authorization: `Bearer ${this.request_context?.access_token}`,
+              },
+            });
           },
         }),
       ],

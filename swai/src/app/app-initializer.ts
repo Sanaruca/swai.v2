@@ -43,8 +43,8 @@ export const app_initializer: () =>
 
   if (isPlatformServer(platform)) {
     return Promise.all([
-      withTimeout(obtener_datos_de_la_institucion.query(), 5000),
-      withTimeout(whoami.query(), 5000),
+      obtener_datos_de_la_institucion.query(),
+      whoami.query().catch(() => null),
     ])
       .then(([institucion, usuario]) => {
         app.institucion = institucion;
