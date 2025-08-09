@@ -1,16 +1,16 @@
 import {
-    Component,
-    ElementRef,
-    HostListener,
-    inject,
-    OnInit,
-    ViewChild,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { Avatar } from 'primeng/avatar';
 import {
-    TipoDeEmpleadoTagComponent,
-    TipoDeEstudianteTagComponent,
+  TipoDeEmpleadoTagComponent,
+  TipoDeEstudianteTagComponent,
 } from '../../../../common/components';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
@@ -23,14 +23,14 @@ import { UsuarioPayload } from '@swai/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import {
-    ActivatedRoute,
-    ActivatedRouteSnapshot,
-    NavigationCancel,
-    NavigationEnd,
-    NavigationError,
-    NavigationStart,
-    Router,
-    RouterLink,
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+  RouterLink,
 } from '@angular/router';
 import { BusquedaRapidaDTO } from '@swai/server';
 import { debounceTime } from 'rxjs';
@@ -72,6 +72,11 @@ export class NavbarComponent implements OnInit {
   protected usuario!: UsuarioPayload;
 
   protected profile_menu: MenuItem[] = [
+    {
+      label: 'Perfil',
+      icon: 'pi pi-user',
+      routerLink: '/admin/perfil',
+    },
     {
       label: 'Configuración',
       icon: 'pi pi-cog',

@@ -5,7 +5,7 @@ import {
   PLATFORM_ID,
   makeStateKey,
 } from '@angular/core';
-import { InstitucionDTO, UsuarioPayload } from '@swai/core';
+import { InstitucionDTO, UsuarioDTO } from '@swai/core';
 import { ApiService } from './services/api.service';
 import { AppStateService } from './services/appstate.service';
 import { AuthService } from './services/auth.service';
@@ -32,7 +32,7 @@ export const app_initializer: () =>
   const platform = inject(PLATFORM_ID);
 
   const INSTITUCION = makeStateKey<InstitucionDTO>('INSTITUCION');
-  const USUARIO = makeStateKey<UsuarioPayload>('USUARIO');
+  const USUARIO = makeStateKey<UsuarioDTO>('USUARIO');
 
   const institucion = transfer_state.get(INSTITUCION, null);
   const usuario = transfer_state.get(USUARIO, null);

@@ -1,6 +1,6 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { UsuarioPayload } from '@swai/core';
+import { UsuarioDTO } from '@swai/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { type LoginDTO } from '@swai/server';
 import { ApiService } from './api.service';
@@ -15,17 +15,17 @@ export class AuthService {
   private router = inject(Router);
   private platform = inject(PLATFORM_ID);
 
-  #usuario = new BehaviorSubject<UsuarioPayload | null>(null);
-  get usuario(): Observable<UsuarioPayload | null> {
+  #usuario = new BehaviorSubject<UsuarioDTO | null>(null);
+  get usuario(): Observable<UsuarioDTO | null> {
     return this.#usuario.asObservable();
   }
 
-  set usuario(usuario: UsuarioPayload | null) {
+  set usuario(usuario: UsuarioDTO | null) {
     this.setSession(usuario);
   }
 
   get snapshot(): {
-    usuario: UsuarioPayload | null;
+    usuario: UsuarioDTO | null;
   } {
     return {
       usuario: this.#usuario.value,
@@ -49,7 +49,7 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  setUsuario(usuario: UsuarioPayload | null) {
+  setUsuario(usuario: UsuarioDTO | null) {
     this.setSession(usuario);
   }
 
@@ -57,7 +57,7 @@ export class AuthService {
    * @private
    * @param usuario
    */
-  private setSession(usuario: UsuarioPayload | null) {
+  private setSession(usuario: UsuarioDTO | null) {
     if (usuario && isPlatformBrowser(this.platform)) {
       sessionStorage.setItem('swai_user', JSON.stringify(usuario));
     } else if (!usuario && isPlatformBrowser(this.platform)) {

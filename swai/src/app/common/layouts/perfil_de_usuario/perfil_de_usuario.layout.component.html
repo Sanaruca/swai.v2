@@ -1,0 +1,250 @@
+<header class="xlayout | flex justify-between items-center flex-wrap gap-5">
+  <div>
+    <h3>Perfil de usuario</h3>
+    <p class="text-sm">
+      Gestiona tu información personal y configuración de cuenta
+    </p>
+  </div>
+  <div class="flex gap-3"></div>
+  <div class="flex gap-3">
+    @if (!esta_editando) {
+      <p-button (onClick)="toggle_editar(true)">
+        <i class="pi pi-pencil"></i>
+        <span>Editar</span>
+      </p-button>
+    } @else {
+      <p-button
+        [disabled]="loadings.actualizar_usuario"
+        severity="secondary"
+        (onClick)="toggle_editar(false)"
+      >
+        <i class="pi pi-times"></i>
+        <span>Cancelar</span>
+      </p-button>
+      <p-button
+        [disabled]="!usuario_modificado"
+        [loading]="loadings.actualizar_usuario"
+        (onClick)="actualizar_usuario()"
+      >
+        <i class="pi pi-save"></i>
+        <span>Guardar</span>
+      </p-button>
+    }
+  </div>
+</header>
+<section class="flex gap-3 mt-5">
+  <aw-info-card
+    icon="pi pi-user"
+    label="Sesiones Activas"
+    value="12"
+    className="bg-blue-100 dark:bg-blue-600"
+    iconContentClassName="dark:bg-blue-700"
+  ></aw-info-card>
+  <aw-info-card
+    icon="pi pi-calendar"
+    label="Ultimo acceso"
+    value="12"
+    className="bg-indigo-100 dark:bg-indigo-600"
+    iconContentClassName="dark:bg-indigo-700"
+  ></aw-info-card>
+  <aw-info-card
+    icon="pi pi-bell"
+    label="Notificaciones"
+    value="12"
+    className="bg-pink-100 dark:bg-pink-600"
+    iconContentClassName="dark:bg-pink-700"
+  ></aw-info-card>
+</section>
+<section class="flex gap-3 mt-5">
+  <section class="flex-2">
+    <section class="card">
+      <h5>Información personal</h5>
+      <p class="text-sm text-muted-color">
+        Actualiza tu información de perfil y datos de contacto
+      </p>
+      <div class="flex mt-5 items-center gap-3">
+        <p-avatar
+          [label]="usuario | nombre: 'iniciales'"
+          size="xlarge"
+          shape="circle"
+          class="flex-none"
+        />
+        <div>
+          <h5>{{ usuario | nombre }}</h5>
+          <p class="text-sm text-muted-color">{{ usuario.correo }}</p>
+          <p-tag
+            class="bg-green-500/20 text-sm text-green-500"
+            value="Cuenta activa"
+          ></p-tag>
+        </div>
+      </div>
+      <form id="usuario_form" [formGroup]="usuario_form">
+        <section class="form_group">
+          <div class="form_input">
+            <label for="nombres">Nombres</label>
+            <input
+              id="nombres"
+              name="nombres"
+              formControlName="nombres"
+              pInputText
+              type="text"
+            />
+          </div>
+          <div class="form_input">
+            <label for="apellidos">Apellidos</label>
+            <input
+              id="apellidos"
+              name="apellidos"
+              formControlName="apellidos"
+              pInputText
+              type="text"
+            />
+          </div>
+        </section>
+        <section class="form_group">
+          <div class="form_input">
+            <label for="nombre_de_usuario">Nombre de usuario</label>
+            <input
+              id="nombre_de_usuario"
+              name="nombre_de_usuario"
+              formControlName="nombre_de_usuario"
+              pInputText
+              type="text"
+            />
+          </div>
+          <div class="form_input">
+            <label for="correo">Correo electronico</label>
+            <input
+              id="correo"
+              name="correo"
+              formControlName="correo"
+              pInputText
+              type="text"
+            />
+          </div>
+        </section>
+        <div class="form_input">
+          <label>Telefono</label>
+          <input
+            id="telefono"
+            name="telefono"
+            formControlName="telefono"
+            pInputText
+            type="text"
+          />
+        </div>
+        <div class="form_input">
+          <label for="sexo">Sexo</label>
+          <p-selectbutton
+            emptyMessage="Sin resultados"
+            [options]="[
+              { id: 'M', nombre: 'Masculino' },
+              { id: 'F', nombre: 'Femenino' },
+            ]"
+            optionLabel="nombre"
+            optionValue="id"
+            formControlName="sexo"
+            id="sexo"
+            [unselectable]="false"
+            [allowEmpty]="false"
+          >
+            <ng-template #item let-it>
+              <i [class]="'pi ' + (it.id === 'M' ? 'pi-mars' : 'pi-venus')"></i>
+              {{ it.nombre }}
+            </ng-template>
+          </p-selectbutton>
+        </div>
+        <div class="form_input">
+          <label for="direccion">Direccion</label>
+          <textarea
+            id="direccion"
+            name="direccion"
+            formControlName="direccion"
+            pInputTextarea
+          ></textarea>
+        </div>
+      </form>
+    </section>
+    <section class="card | mt-5">
+      <header>
+        <h5>Configuración de seguridad</h5>
+        <p class="text-sm text-muted-color">
+          Gestiona la seguridad de tu cuenta y privacidad
+        </p>
+      </header>
+      <ul class="grid gap-5 mt-5">
+        <li>
+          <h6>Cambiar la contraseña</h6>
+          <p>Actualiza tu contraseña de acceso</p>
+          <form
+            [formGroup]="cambio_de_clave_form"
+            id="cambiar_clave_form"
+            class="grid gap-3 mt-5"
+            (submit)="cambiar_clave()"
+          >
+            <div class="form_input">
+              <label for="clave">Contraseña actual</label>
+              <input
+                id="clave"
+                formControlName="clave"
+                pInputText
+                type="password"
+              />
+            </div>
+            <div class="form_input">
+              <label for="nueva_clave">Nueva contraseña</label>
+              <input
+                id="nueva_clave"
+                formControlName="nueva_clave"
+                pInputText
+                type="password"
+              />
+            </div>
+            <div class="form_input">
+              <label for="confirmar_nueva_clave"
+                >Confirmar nueva contraseña</label
+              >
+              <input
+                id="confirmar_nueva_clave"
+                formControlName="confirmar_nueva_clave"
+                pInputText
+                type="password"
+              />
+            </div>
+            <p-button
+              type="submit"
+              label="Cambiar contraseña"
+              [loading]="loadings.cambiar_clave"
+            ></p-button>
+          </form>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section class="card flex-1">
+    <h5>Información de la cuenta</h5>
+    <ul class="grid gap-5">
+      <li class="flex items-center gap-4">
+        <i class="pi pi-user"> </i>
+        <div>
+          <p class="text-muted-color">Rol</p>
+          <p>Administrador</p>
+        </div>
+      </li>
+      <li class="flex items-center gap-4">
+        <i class="pi pi-user"> </i>
+        <div>
+          <p class="text-muted-color">Departamento</p>
+          <p>Admiistrador</p>
+        </div>
+      </li>
+      <li class="flex items-center gap-4">
+        <i class="pi pi-user"> </i>
+        <div>
+          <p class="text-muted-color">Miembro desde</p>
+          <p>Administrador</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+</section>

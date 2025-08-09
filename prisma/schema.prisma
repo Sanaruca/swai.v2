@@ -185,6 +185,7 @@ model personas {
   sexos                sexos            @relation(fields: [sexo], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tipos_de_sangre      tipos_de_sangre  @relation(fields: [tipo_de_sangre], references: [id])
   profesores           profesores?
+  usuarios             usuarios[]
 
   @@schema("public")
 }
@@ -317,6 +318,8 @@ model usuarios {
   rol               String           @db.VarChar(25)
   cedula            Int
   roles_de_usuario  roles_de_usuario @relation(fields: [rol], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
+
+  personas personas @relation(fields: [cedula], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("sistema")
 }

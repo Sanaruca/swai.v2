@@ -11,16 +11,13 @@ import { fileURLToPath } from 'node:url';
 import morgan from 'morgan';
 import { createExpressTRPCContext } from '@swai/server';
 import { ROOT_ROUTER } from '@swai/server';
-import { UsuarioPayloadSchema } from '@swai/core';
+import { UsuarioSchemaDTO } from '@swai/core';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { PrismaClient } from '@prisma/client';
-import { V3 as paseto } from "paseto";
-import type { KeyObject } from 'crypto';
 import { parse } from 'valibot';
+import * as jwt from "jsonwebtoken";
 
 
-let paseto_local_key: KeyObject;
-paseto.generateKey('local').then((k) => (paseto_local_key = k));
 const prisma = new PrismaClient();
 
 
@@ -39,8 +36,8 @@ app.use(async (req, res, next) => {
 
     if (token) {
       try {
-        const payload = await paseto.decrypt(token, paseto_local_key);
-        const usuario = parse(UsuarioPayloadSchema, payload);
+        const payload = jwt.verify(token, process.env['SWAI_SECRET'] as string);
+        const usuario = parse(UsuarioSchemaDTO, payload);
         req.user = usuario;
       } catch {
         return next();
@@ -73,7 +70,7 @@ app.use('/api/trpc', trpcExpress.createExpressMiddleware({
         prisma,
       },
       env: {
-        paseto_local_key: paseto_local_key,
+        secret: process.env['SWAI_SECRET'] as string,
       },
     })(params);
   },

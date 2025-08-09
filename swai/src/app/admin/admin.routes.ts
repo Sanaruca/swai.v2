@@ -9,6 +9,7 @@ import {
 import { inject } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { ConfiguracionPageComponent } from './pages/configuracion/configuracion.page.component';
+import { PerfilDeUsuarioLayoutComponent } from '../common/layouts/perfil_de_usuario/perfil_de_usuario.layout.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -21,25 +22,35 @@ export const ADMIN_ROUTES: Route[] = [
         pathMatch: 'prefix',
       },
       {
+        path: 'perfil',
+        component: PerfilDeUsuarioLayoutComponent,
+        resolve: {
+          breadcrumb: ((route) => ({
+            label: 'Perfil',
+            routerLink: [route.url.toString()],
+          })) as ResolveFn<MenuItem>,
+        },
+      },
+      {
         path: 'dashboard',
         component: DashboardPageComponent,
         resolve: {
           registros_recientes: () =>
             inject(
-              ApiService
+              ApiService,
             ).client.institucion.obtener_registros_recientes.query(),
           cantidad_de_estudiantes: resolve_cantidad_de_estudiantes,
           cantidad_de_empleados: () =>
             inject(
-              ApiService
+              ApiService,
             ).client.empleados.obtener_cantidad_de_empleados.query(),
           cantidad_de_espacios_academicos: () =>
             inject(
-              ApiService
+              ApiService,
             ).client.espacios_academicos.obtener_cantidad_de_espacios_academicos.query(),
           cantidad_de_recursos: () =>
             inject(
-              ApiService
+              ApiService,
             ).client.recursos.obtener_cantidad_de_recursos.query(),
           breadcrumb: ((route) => ({
             label: 'Vista Rápida',
@@ -62,7 +73,7 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'estudiantes',
         loadChildren: () =>
           import('./pages/estudiantes/estudiantes.routes').then(
-            (m) => m.ESTUDIANTES_ROUTES
+            (m) => m.ESTUDIANTES_ROUTES,
           ),
         resolve: {
           breadcrumb: ((route) => ({
@@ -75,7 +86,7 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'empleados',
         loadChildren: () =>
           import('./pages/empleados/empleados.routes').then(
-            (m) => m.EMPLEADOS_ROUTES
+            (m) => m.EMPLEADOS_ROUTES,
           ),
         resolve: {
           breadcrumb: ((route) => ({
@@ -88,7 +99,7 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'niveles_academicos',
         loadChildren: () =>
           import('./pages/niveles_academicos/niveles_academicos.routes').then(
-            (m) => m.NIVELES_ACADEMICOS_ROUTES
+            (m) => m.NIVELES_ACADEMICOS_ROUTES,
           ),
         resolve: {
           breadcrumb: ((route) => ({
@@ -101,7 +112,7 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'espacios_academicos',
         loadChildren: () =>
           import('./pages/espacios_academicos/espacios_academicos.routes').then(
-            (m) => m.ESPACIOS_ACADEMICOS_ROUTES
+            (m) => m.ESPACIOS_ACADEMICOS_ROUTES,
           ),
         resolve: {
           breadcrumb: ((route) => ({

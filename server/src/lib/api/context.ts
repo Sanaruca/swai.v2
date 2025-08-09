@@ -2,21 +2,19 @@ import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import type * as express from 'express';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { PrismaClient } from '@prisma/client';
-import { UsuarioPayload, UsuarioPayloadSchema } from '@swai/core';
+import { UsuarioDTO, UsuarioSchemaDTO } from '@swai/core';
 import { parse } from 'valibot';
-import type { KeyObject } from 'crypto';
-
 export interface TRPCContext {
   prisma: PrismaClient;
   sesssion: {
-    usuario: UsuarioPayload | null;
+    usuario: UsuarioDTO | null;
   };
   server: {
     request: express.Request;
     response: express.Response;
   };
   env: {
-    paseto_local_key: KeyObject;
+    secret: string;
   };
 }
 
@@ -25,7 +23,7 @@ export const createExpressTRPCContext: (options: {
     prisma: PrismaClient;
   };
   env: {
-    paseto_local_key: KeyObject;
+    secret: string;
   };
 }) => (options: CreateExpressContextOptions) => TRPCContext =
   ({ dependencies, env }) =>
@@ -35,7 +33,7 @@ export const createExpressTRPCContext: (options: {
     const usuario = req['user']
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-      ? parse(UsuarioPayloadSchema, req['user'])
+      ? parse(UsuarioSchemaDTO, req['user'])
       : null;
 
     return {
