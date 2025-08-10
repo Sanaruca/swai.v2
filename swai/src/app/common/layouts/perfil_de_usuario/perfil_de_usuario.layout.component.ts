@@ -9,10 +9,16 @@ import { TextareaModule } from 'primeng/textarea';
 import { AuthService } from 'swai/src/app/services/auth.service';
 import { NombrePipe } from '../../pipes/nombre.pipe';
 import { ApiService } from 'swai/src/app/services/api.service';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { UsuarioDTO } from '@swai/core';
+import { UsuarioDTO, UsuarioSchema } from '@swai/core';
+import { safeParse } from 'valibot';
 
 // TODO: puede ser optimizado
 
@@ -56,13 +62,23 @@ export class PerfilDeUsuarioLayoutComponent implements OnInit {
     sexo: new FormControl(this.usuario.sexo),
   });
 
-  protected cambio_de_clave_form = new FormGroup({
-    clave: new FormControl(''),
-    nueva_clave: new FormControl(''),
+  protected cambiar_clave_form = new FormGroup({
+    clave: new FormControl('', []),
+    nueva_clave: new FormControl('', [
+      (c) => (c.value ? this.validar_clave(c) : null),
+    ]),
     confirmar_nueva_clave: new FormControl(''),
   });
 
   protected usuario_modificado = false;
+
+  get puede_habilitar_cambiar_clave() {
+    return (
+      this.cambiar_clave_form.value.clave &&
+      this.cambiar_clave_form.value.nueva_clave &&
+      this.cambiar_clave_form.value.confirmar_nueva_clave
+    );
+  }
 
   ngOnInit(): void {
     this.usuario_form.controls.sexo.disable();
@@ -75,11 +91,27 @@ export class PerfilDeUsuarioLayoutComponent implements OnInit {
       );
       this.usuario_modificado = algun_dato_modificado;
     });
+
+    this.cambiar_clave_form.controls.confirmar_nueva_clave.valueChanges.subscribe(
+      (value) => {
+        const same = this.cambiar_clave_form.value.nueva_clave === value;
+
+        if (!same) {
+          this.cambiar_clave_form.controls.confirmar_nueva_clave.setErrors({
+            invalid: 'Las contraseñas deben coincidir',
+          });
+        } else {
+          this.cambiar_clave_form.controls.confirmar_nueva_clave.setErrors(
+            null,
+          );
+        }
+      },
+    );
   }
 
   protected cambiar_clave() {
-    const cambio_de_clave = this.cambio_de_clave_form.value;
-    if (this.cambio_de_clave_form.invalid) return;
+    const cambio_de_clave = this.cambiar_clave_form.value;
+    if (this.cambiar_clave_form.invalid) return;
     this.loadings.cambiar_clave = true;
     this.api.client.auth.cambiar_clave
       .mutate({
@@ -88,7 +120,7 @@ export class PerfilDeUsuarioLayoutComponent implements OnInit {
         confirmar_nueva_clave: cambio_de_clave.confirmar_nueva_clave!,
       })
       .then(() => {
-        this.cambio_de_clave_form.reset();
+        this.cambiar_clave_form.reset();
         this.toast.add({
           severity: 'success',
           summary: 'Contraseña a cambiada',
@@ -164,5 +196,13 @@ export class PerfilDeUsuarioLayoutComponent implements OnInit {
       },
       { emitEvent: false },
     );
+  }
+
+  private validar_clave(control: AbstractControl) {
+    const validation = safeParse(UsuarioSchema.entries.clave, control.value);
+    if (validation.success) return null;
+    return {
+      invalid: validation.issues[0].message,
+    };
   }
 }

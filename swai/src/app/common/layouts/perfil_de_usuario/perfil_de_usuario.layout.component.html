@@ -177,7 +177,7 @@
           <h6>Cambiar la contraseña</h6>
           <p>Actualiza tu contraseña de acceso</p>
           <form
-            [formGroup]="cambio_de_clave_form"
+            [formGroup]="cambiar_clave_form"
             id="cambiar_clave_form"
             class="grid gap-3 mt-5"
             (submit)="cambiar_clave()"
@@ -190,6 +190,9 @@
                 pInputText
                 type="password"
               />
+              <small class="text-red-500">{{
+                cambiar_clave_form.get('clave')?.errors | json
+              }}</small>
             </div>
             <div class="form_input">
               <label for="nueva_clave">Nueva contraseña</label>
@@ -199,6 +202,9 @@
                 pInputText
                 type="password"
               />
+              <small class="text-red-500">{{
+                cambiar_clave_form.get('nueva_clave')?.errors | json
+              }}</small>
             </div>
             <div class="form_input">
               <label for="confirmar_nueva_clave"
@@ -210,9 +216,15 @@
                 pInputText
                 type="password"
               />
+              <small class="text-red-500">{{
+                cambiar_clave_form.get('confirmar_nueva_clave')?.errors | json
+              }}</small>
             </div>
             <p-button
               type="submit"
+              [disabled]="
+                !puede_habilitar_cambiar_clave || cambiar_clave_form.invalid
+              "
               label="Cambiar contraseña"
               [loading]="loadings.cambiar_clave"
             ></p-button>
