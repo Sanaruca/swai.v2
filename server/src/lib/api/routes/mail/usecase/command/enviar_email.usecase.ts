@@ -78,9 +78,12 @@ export async function enviar_email_fn({ params, deps }: EnviarEmailFnParams) {
 
   const { error } = await resend.emails.send(resend_payload);
 
-  if (error)
+  if (error) {
+    console.error(error);
+
     throw new SwaiError({
       codigo: SwaiErrorCode.ERROR_INTERNO,
       mensaje: 'Ocurrio un error al tratar de enviar un correo electronico',
     });
+  }
 }

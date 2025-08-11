@@ -12,6 +12,7 @@ import { CardModule } from 'primeng/card';
 import { ApiService } from '../../services/api.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'aw-recuperar-clave.page.component',
@@ -22,6 +23,7 @@ import { ToastModule } from 'primeng/toast';
     ReactiveFormsModule,
     CardModule,
     ToastModule,
+    RouterLink,
   ],
   templateUrl: './recuperar_clave.page.component.html',
   styleUrl: './recuperar_clave.page.component.css',
@@ -47,7 +49,6 @@ export class RecuperarClavePageComponent {
       .mutate({ correo: this.recuperar_clave_form.value.correo! })
       .then(() => {
         this.success = true;
-        this.recuperar_clave_form.reset();
         this.toast.add({
           severity: 'success',
           summary: 'Exito',

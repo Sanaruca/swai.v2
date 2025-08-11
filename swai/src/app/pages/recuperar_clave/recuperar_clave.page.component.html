@@ -1,16 +1,85 @@
 <p-toast></p-toast>
-<form [formGroup]="recuperar_clave_form" (submit)="enviar_formulario()">
-  <div class="form_input">
-    <label for="correo">Correo electrónico</label>
-    <input id="correo" formControlName="correo" pInputText type="email" />
-    <small class="text-red-500">{{
-      recuperar_clave_form.get('correo')?.errors | json
-    }}</small>
-  </div>
-  <p-button
-    type="submit"
-    [loading]="loadings.enviando"
-    [disabled]="recuperar_clave_form.invalid"
-    label="Enviar correo de recuperación"
-  ></p-button>
-</form>
+
+<div class="flex gap-5 h-screen">
+  <img
+    class="hidden xl:block bg-blue-400 min-w-96 object-cover flex-2 h-full"
+    src="https://images.pexels.com/photos/40465/pexels-photo-40465.jpeg"
+  />
+
+  <section class="grid place-items-center flex-3">
+    <p-card class="p-5 pt-10" [style]="{ 'max-width': '30rem' }">
+      <ng-template #header>
+        @if (success) {
+          <div class="space-y-1 p-4 text-center">
+            <i class="pi pi-check-circle text-green-500 text-4xl"></i>
+            <h2 class="text-2xl font-bold">Correo enviado</h2>
+            <p class="text-muted-color">
+              Se ha enviado un correo electrónico a su cuenta
+            </p>
+          </div>
+        } @else {
+          <svg
+            class="m-auto w-11 h-full fill-primary dark:fill-primary-600 hidden md:block"
+            width="36"
+            height="40"
+            viewBox="0 0 36 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M0 15V31H5C5.52527 31 6.04541 31.1035 6.53076 31.3045C7.01599 31.5055 7.45703 31.8001 7.82837 32.1716C8.19983 32.543 8.49451 32.984 8.69556 33.4693C8.89648 33.9546 9 34.4747 9 35V40H21L36 25V9H31C30.4747 9 29.9546 8.89655 29.4692 8.69553C28.984 8.49451 28.543 8.19986 28.1716 7.82843C27.8002 7.457 27.5055 7.01602 27.3044 6.53073C27.1035 6.04544 27 5.5253 27 5V0H15L0 15ZM17 30H10V19L19 10H26V21L17 30Z"
+              fill="#0004E8-"
+            ></path>
+          </svg>
+          <div class="space-y-1 p-4 text-center">
+            <h2 class="text-2xl font-bold">Recuperar contraseña</h2>
+            <p class="text-muted-color">
+              Ingresa tu correo electrónico para recibir un enlace de
+              recuperación
+            </p>
+          </div>
+        }
+      </ng-template>
+      @if (success) {
+        <div class="p-5 rounded-lg border">
+          <p class="text-muted-color">Correo envado a:</p>
+          <p class="font-semibold">{{ recuperar_clave_form.value.correo }}</p>
+        </div>
+        <p class="mt-5 text-center text-sm text-muted-color">
+          Revisa tu bandeja de entrada y haz clic en el enlace para restablecer
+          tu contraseña.
+        </p>
+        <div class="flex justify-center mt-5">
+          <p-button routerLink="/login" variant="text"
+            >Volver al inicio de sessión</p-button
+          >
+        </div>
+      } @else {
+        <form [formGroup]="recuperar_clave_form" (submit)="enviar_formulario()">
+          <div class="form_input">
+            <label for="correo">Correo electrónico</label>
+            <input
+              [disabled]="loadings.enviando"
+              id="correo"
+              formControlName="correo"
+              pInputText
+              type="email"
+            />
+            <small class="text-red-500">{{
+              recuperar_clave_form.get('correo')?.errors | json
+            }}</small>
+          </div>
+          <p-button
+            styleClass="mt-5"
+            type="submit"
+            [loading]="loadings.enviando"
+            [disabled]="recuperar_clave_form.invalid"
+            label="Enviar correo de recuperación"
+          ></p-button>
+        </form>
+      }
+    </p-card>
+  </section>
+</div>

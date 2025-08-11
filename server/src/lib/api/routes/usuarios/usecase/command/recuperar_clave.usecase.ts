@@ -31,6 +31,37 @@ export const recuperar_clave = public_procedure
       });
     }
 
+    const solicitud_pendiente = await ctx.prisma.recuperar_cuenta.findUnique({
+      where: {
+        usuario: usuario.id,
+      },
+    });
+
+    if (solicitud_pendiente) {
+      const esta_la_solicitud_expirada =
+        solicitud_pendiente.exp.getTime() < new Date().getTime();
+
+      console.log(
+        'esta_la_solicitud_expirada :>> ',
+        esta_la_solicitud_expirada,
+      );
+
+      if (esta_la_solicitud_expirada) {
+        await ctx.prisma.recuperar_cuenta.delete({
+          where: {
+            usuario: usuario.id,
+          },
+        });
+      } else {
+        throw new SwaiError({
+          codigo: SwaiErrorCode.RECURSO_LIMITE_EXCEDIDO,
+          mensaje: 'Ya hay una solicitud pendiente',
+          descripcion:
+            'Ya se ha enviado una solicitud para recuperar la contraseña de este usuario. Por favor, espere un momento y vuelva a intentarlo.',
+        });
+      }
+    }
+
     const token = generar_token_de_recuperacion_de_clave_fn(
       usuario.id,
       ctx.env.secret,
@@ -52,6 +83,14 @@ export const recuperar_clave = public_procedure
         },
       },
     });
+
+    await ctx.prisma.recuperar_cuenta.create({
+      data: {
+        usuario: usuario.id,
+        email_de_recuperacion_enviado: true,
+        exp: new Date(Date.now() + 180000),
+      },
+    });
   });
 
 function generar_token_de_recuperacion_de_clave_fn(
@@ -64,7 +103,7 @@ function generar_token_de_recuperacion_de_clave_fn(
     },
     secret,
     {
-      expiresIn: '1d',
+      expiresIn: '3m',
     },
   );
 

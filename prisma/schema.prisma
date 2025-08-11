@@ -320,7 +320,8 @@ model usuarios {
   correo            String           @default("none") @db.VarChar(50)
   roles_de_usuario  roles_de_usuario @relation(fields: [rol], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
 
-  personas personas @relation(fields: [cedula], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  personas         personas           @relation(fields: [cedula], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  recuperar_cuenta recuperar_cuenta[]
 
   @@schema("sistema")
 }
@@ -419,6 +420,17 @@ model institucion {
 
   planteles_educativos planteles_educativos @relation(fields: [plantel_educativo], references: [dea], onDelete: NoAction, onUpdate: Cascade, map: "instituciones_plantel_educativo_fk")
   municipios           municipios           @relation(fields: [municipio], references: [codigo], onDelete: NoAction, onUpdate: Cascade, map: "instituciones_municipio_fk")
+
+  @@schema("sistema")
+}
+
+model recuperar_cuenta {
+  id                            String   @id @default(cuid())
+  usuario                       String   @unique
+  email_de_recuperacion_enviado Boolean  @default(false)
+  exp                           DateTime
+
+  usuarios usuarios @relation(fields: [usuario], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("sistema")
 }

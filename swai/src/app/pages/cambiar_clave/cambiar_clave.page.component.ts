@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
 import { safeParse } from 'valibot';
 import { UsuarioSchema } from '@swai/core';
 import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'aw-cambiar-clave.page.component',
@@ -25,6 +26,7 @@ import { MessageService } from 'primeng/api';
     ButtonModule,
     InputTextModule,
     ToastModule,
+    CardModule,
   ],
   templateUrl: './cambiar_clave.page.component.html',
   styleUrl: './cambiar_clave.page.component.css',
