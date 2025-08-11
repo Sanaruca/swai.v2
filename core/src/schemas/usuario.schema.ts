@@ -1,9 +1,18 @@
-import { custom, InferOutput, object, pick, pipe, string } from 'valibot';
+import {
+  custom,
+  email,
+  InferOutput,
+  object,
+  pick,
+  pipe,
+  string,
+} from 'valibot';
 import { CedulaSchema } from './cedula.schema';
 import { PersonaSchemaDTO } from './persona.schema';
 
 export const UsuarioSchema = object({
   id: string(),
+  correo: pipe(string(), email()),
   nombre_de_usuario: string(),
   clave: pipe(
     string(),
@@ -26,12 +35,11 @@ export const UsuarioSchemaDTO = object({
     'cedula',
     'nombres',
     'apellidos',
-    'correo',
     'direccion',
     'sexo',
     'telefono',
   ]).entries,
-  ...pick(UsuarioSchema, ['id', 'nombre_de_usuario', 'rol']).entries,
+  ...pick(UsuarioSchema, ['id', 'nombre_de_usuario', 'rol', 'correo']).entries,
 });
 
 export type UsuarioDTO = InferOutput<typeof UsuarioSchemaDTO>;

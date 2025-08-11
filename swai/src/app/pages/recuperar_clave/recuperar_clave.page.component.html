@@ -1,0 +1,16 @@
+<p-toast></p-toast>
+<form [formGroup]="recuperar_clave_form" (submit)="enviar_formulario()">
+  <div class="form_input">
+    <label for="correo">Correo electrónico</label>
+    <input id="correo" formControlName="correo" pInputText type="email" />
+    <small class="text-red-500">{{
+      recuperar_clave_form.get('correo')?.errors | json
+    }}</small>
+  </div>
+  <p-button
+    type="submit"
+    [loading]="loadings.enviando"
+    [disabled]="recuperar_clave_form.invalid"
+    label="Enviar correo de recuperación"
+  ></p-button>
+</form>

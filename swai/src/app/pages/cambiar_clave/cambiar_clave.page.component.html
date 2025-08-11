@@ -1,0 +1,33 @@
+<p-toast></p-toast>
+
+@if (verificando_informacion) {
+  <p>Verificando informacion</p>
+} @else {
+  <form [formGroup]="cambiar_clave_form" (submit)="cambiar_clave()">
+    <div class="form_input" data-required>
+      <label for="clave">Nueva clave</label>
+      <input id="clave" formControlName="clave" pInputText type="password" />
+      <small class="text-red-500">{{
+        cambiar_clave_form.get('clave')?.errors | json
+      }}</small>
+    </div>
+    <div class="form_input" data-required>
+      <label for="confirmar_clave">Confirmar clave</label>
+      <input
+        id="confirmar_clave"
+        formControlName="confirmar_clave"
+        pInputText
+        type="password"
+      />
+      <small class="text-red-500">{{
+        cambiar_clave_form.get('confirmar_clave')?.errors | json
+      }}</small>
+    </div>
+    <p-button
+      type="submit"
+      [disabled]="cambiar_clave_form.invalid"
+      label="Cambiar clave"
+      [loading]="loadings.cambiando_clave"
+    ></p-button>
+  </form>
+}

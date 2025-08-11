@@ -15,11 +15,9 @@ import { UsuarioSchemaDTO } from '@swai/core';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { PrismaClient } from '@prisma/client';
 import { parse } from 'valibot';
-import * as jwt from "jsonwebtoken";
-
+import * as jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
-
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -28,11 +26,11 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 app.use(cookieParser());
 
-
 /* ................................. usuario ................................ */
 app.use(async (req, res, next) => {
   try {
-    const token = req.cookies?.['swai.auth'] || req.headers.authorization?.split(' ')[1];
+    const token =
+      req.cookies?.['swai.auth'] || req.headers.authorization?.split(' ')[1];
 
     if (token) {
       try {
@@ -50,7 +48,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-
 /**
  * Example Express Rest API endpoints can be defined here.
  * Uncomment and define endpoints as necessary.
@@ -62,26 +59,31 @@ app.use(async (req, res, next) => {
  * });
  * ```
  */
-app.use('/api/trpc', trpcExpress.createExpressMiddleware({
-  router: ROOT_ROUTER,
-  createContext: (params) => {
-    return createExpressTRPCContext({
-      dependencies: {
-        prisma,
-      },
-      env: {
-        secret: process.env['SWAI_SECRET'] as string,
-      },
-    })(params);
-  },
-  // onError: ({ error }) => {
-  //   if (error.cause instanceof SwaiError) {
-  //     const swai_error = error.cause;
-  //     console.error('SwaiError:', swai_error.codigo);
-  //     console.error('-  ', swai_error.mensaje);
-  //   }
-  // },
-}));
+app.use(
+  '/api/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: ROOT_ROUTER,
+    createContext: (params) => {
+      return createExpressTRPCContext({
+        dependencies: {
+          prisma,
+        },
+        env: {
+          secret: process.env['SWAI_SECRET'] as string,
+          resend_token: process.env['SWAI_RESEND_TOKEN'] as string,
+          swai_base_url: process.env['SWAI_BASE_URL'] as string,
+        },
+      })(params);
+    },
+    // onError: ({ error }) => {
+    //   if (error.cause instanceof SwaiError) {
+    //     const swai_error = error.cause;
+    //     console.error('SwaiError:', swai_error.codigo);
+    //     console.error('-  ', swai_error.mensaje);
+    //   }
+    // },
+  }),
+);
 
 /**
  * Serve static files from /browser
@@ -91,7 +93,7 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  })
+  }),
 );
 
 app.use(morgan('dev'));
@@ -111,7 +113,7 @@ app.use('/**', async (req, res, next) => {
   return angularApp
     .handle(req, request_context)
     .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next()
+      response ? writeResponseToNodeResponse(response, res) : next(),
     )
     .catch(next);
 });

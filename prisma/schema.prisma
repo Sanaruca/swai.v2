@@ -317,6 +317,7 @@ model usuarios {
   clave             String           @db.VarChar(100)
   rol               String           @db.VarChar(25)
   cedula            Int
+  correo            String           @default("none") @db.VarChar(50)
   roles_de_usuario  roles_de_usuario @relation(fields: [rol], references: [nombre], onDelete: NoAction, onUpdate: NoAction)
 
   personas personas @relation(fields: [cedula], references: [cedula], onDelete: Cascade, onUpdate: Cascade)

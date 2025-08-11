@@ -1,112 +1,135 @@
 <p-toast />
 <div class="flex min-h-screen">
-
   <div class="hidden h-auto relative lg:flex">
-    <img src="/img/lnmjs.webp" alt="Liceo Nacional Miguel José Sanz" class="h-auto w-[32rem] object-cover"/>
-    <div class="absolute bottom-4 left-4 bg-white bg-opacity-75 p-2 rounded text-sm text-gray-700">
+    <img
+      src="/img/lnmjs.webp"
+      alt="Liceo Nacional Miguel José Sanz"
+      class="h-auto w-[32rem] object-cover"
+    />
+    <div
+      class="absolute bottom-4 left-4 bg-white bg-opacity-75 p-2 rounded text-sm text-gray-700"
+    >
       <p>
         Imagen tomada de
-        <a href="https://www.instagram.com/corpoturismo" target="_blank" class="text-blue-500 font-semibold hover:underline">
-          &#64;corpoturismo</a>
-          a través de Instagram
+        <a
+          href="https://www.instagram.com/corpoturismo"
+          target="_blank"
+          class="text-blue-500 font-semibold hover:underline"
+        >
+          &#64;corpoturismo</a
+        >
+        a través de Instagram
       </p>
     </div>
   </div>
- 
-  <main class="flex-1 p-8 flex flex-col">
 
+  <main class="flex-1 p-8 flex flex-col">
     <header class="flex-none">
-      <img src="/img/mppe.png" alt="Logo del Ministerio de educación de la República Bolivariana de Venezuela" class="h-16 w-auto" />
+      <img
+        src="/img/mppe.png"
+        alt="Logo del Ministerio de educación de la República Bolivariana de Venezuela"
+        class="h-16 w-auto"
+      />
     </header>
 
     <section class="grid place-items-center flex-1">
       <p-card styleClass="w-full max-w-md shadow-lg">
         <ng-template pTemplate="header">
           <div class="space-y-1 p-4 text-center">
-          <h2 class="text-2xl font-bold">Iniciar sesión</h2>
-          <p class="text-gray-500">
-            Ingresa tus credenciales para acceder a tu cuenta
-          </p>
-        </div>
-      </ng-template>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4" action="/api/login" method="post">
-        <div class="form_input">
-          <label for="usuario" class="block text-sm font-medium">Usuario</label>
-          <input
-            pInputText
-            id="usuario"
-            formControlName="usuario"
-            placeholder="Ingresa tu nombre de usuario"
-            class="w-full"
-            [ngClass]="{
-              'ng-invalid ng-dirty':
+            <h2 class="text-2xl font-bold">Iniciar sesión</h2>
+            <p class="text-gray-500">
+              Ingresa tus credenciales para acceder a tu cuenta
+            </p>
+          </div>
+        </ng-template>
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-4"
+          action="/api/login"
+          method="post"
+        >
+          <div class="form_input">
+            <label for="usuario" class="block text-sm font-medium"
+              >Usuario</label
+            >
+            <input
+              pInputText
+              id="usuario"
+              formControlName="usuario"
+              placeholder="Ingresa tu nombre de usuario"
+              class="w-full"
+              [ngClass]="{
+                'ng-invalid ng-dirty':
+                  loginForm.get('usuario')?.invalid &&
+                  loginForm.get('usuario')?.touched,
+              }"
+            />
+            <small
+              *ngIf="
                 loginForm.get('usuario')?.invalid &&
                 loginForm.get('usuario')?.touched
-              }"
-          />
-          <small
-            *ngIf="
-              loginForm.get('usuario')?.invalid &&
-              loginForm.get('usuario')?.touched
-            "
-            class="text-red-500"
-          >
-            Usuario es requerido
-          </small>
-        </div>
-      
-        <div class="form_input">
-          <div class="flex items-center justify-between">
-            <label for="clave" class="block text-sm font-medium"
-            >Contraseña</label
+              "
+              class="text-red-500"
             >
-            <a href="#" class="text-xs text-primary-500 hover:underline"
-            >¿Olvidaste tu contraseña?</a
-            >
+              Usuario es requerido
+            </small>
           </div>
-          <p-password
-            id="password"
-            formControlName="clave"
-            [toggleMask]="true"
-            placeholder="Ingresa tu contraseña"
-            styleClass="w-full"
-            [ngClass]="{
-              'ng-invalid ng-dirty':
-                loginForm.get('clave')?.invalid &&
-                loginForm.get('clave')?.touched
-            }"
-            inputStyleClass="w-full"
-            [feedback]="false"
+
+          <div class="form_input">
+            <div class="flex items-center justify-between">
+              <label for="clave" class="block text-sm font-medium"
+                >Contraseña</label
+              >
+              <a
+                href="/recuperar_clave"
+                class="text-xs text-primary-500 hover:underline"
+                >¿Olvidaste tu contraseña?</a
+              >
+            </div>
+            <p-password
+              id="password"
+              formControlName="clave"
+              [toggleMask]="true"
+              placeholder="Ingresa tu contraseña"
+              styleClass="w-full"
+              [ngClass]="{
+                'ng-invalid ng-dirty':
+                  loginForm.get('clave')?.invalid &&
+                  loginForm.get('clave')?.touched,
+              }"
+              inputStyleClass="w-full"
+              [feedback]="false"
             ></p-password>
             <small
-            *ngIf="
-              loginForm.get('clave')?.invalid &&
-              loginForm.get('clave')?.touched
+              *ngIf="
+                loginForm.get('clave')?.invalid &&
+                loginForm.get('clave')?.touched
               "
-            class="text-red-500"
+              class="text-red-500"
             >
-            Contraseña es requerida
-          </small>
-        </div>
-      
-        <p-button
-        type="submit"
-        label="Iniciar sesión"
-        [loading]="loading"
-          styleClass="w-full mt-5"
-        ></p-button>
-      </form>
-      <ng-template pTemplate="footer">
-        <div class="flex justify-center p-4">
-          <p class="text-sm text-gray-500">
-            ¿No tienes una cuenta?
-            <a href="#" class="text-primary-500 hover:underline ml-1"
-              >Contacta a la institución</a
-            >
-          </p>
-        </div>
-      </ng-template>
-        </p-card>
+              Contraseña es requerida
+            </small>
+          </div>
+
+          <p-button
+            type="submit"
+            label="Iniciar sesión"
+            [loading]="loading"
+            styleClass="w-full mt-5"
+          ></p-button>
+        </form>
+        <ng-template pTemplate="footer">
+          <div class="flex justify-center p-4">
+            <p class="text-sm text-gray-500">
+              ¿No tienes una cuenta?
+              <a href="#" class="text-primary-500 hover:underline ml-1"
+                >Contacta a la institución</a
+              >
+            </p>
+          </div>
+        </ng-template>
+      </p-card>
     </section>
-</main>
+  </main>
 </div>

@@ -26,12 +26,12 @@ export async function obtener_usuario_fn({
       nombre_de_usuario: true,
       rol: true,
 
+      correo: true,
       personas: {
         select: {
           cedula: true,
           nombres: true,
           apellidos: true,
-          correo: true,
           direccion: true,
           sexo: true,
           telefono: true,

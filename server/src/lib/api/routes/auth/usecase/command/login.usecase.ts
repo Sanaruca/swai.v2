@@ -1,21 +1,9 @@
-import {
-  SwaiError,
-  SwaiErrorCode,
-  UsuarioDTO,
-  UsuarioSchemaDTO,
-} from '@swai/core';
-import {
-  InferOutput,
-  object,
-  parse,
-  parser,
-  pipe,
-  string,
-  trim,
-} from 'valibot';
+import { SwaiError, SwaiErrorCode, UsuarioDTO } from '@swai/core';
+import { InferOutput, object, parser, pipe, string, trim } from 'valibot';
 import { public_procedure } from '../../../../procedures';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { obtener_usuario_fn } from '../../../usuarios/usecase/query/obtener_usuario.usecase';
 
 export const LoginSchemaDTO = object({
   usuario: pipe(string(), trim()),
@@ -30,23 +18,8 @@ export const login = public_procedure
     const usuario = await ctx.prisma.usuarios.findUnique({
       where: { nombre_de_usuario: input.usuario },
       select: {
-        id: true,
-        nombre_de_usuario: true,
         cedula: true,
-        rol: true,
         clave: true,
-        personas: {
-          select: {
-            nombres: true,
-            apellidos: true,
-            correo: true,
-            direccion: true,
-            sexo: true,
-            telefono: true,
-
-            estados_civiles: true,
-          },
-        },
       },
     });
 
@@ -64,16 +37,14 @@ export const login = public_procedure
       });
     }
 
-    const usuarioDTO: UsuarioDTO = parse(UsuarioSchemaDTO, {
-      id: usuario.id,
-      nombre_de_usuario: usuario.nombre_de_usuario,
+    const usuario_dto = await obtener_usuario_fn({
       cedula: usuario.cedula,
-      rol: usuario.rol,
-      ...usuario.personas,
-      estado_civil: usuario.personas.estados_civiles,
+      deps: {
+        prisma: ctx.prisma,
+      },
     });
 
-    const token = jwt.sign(usuarioDTO, ctx.env.secret, {
+    const token = jwt.sign(usuario_dto, ctx.env.secret, {
       expiresIn: '1d',
     });
 
@@ -82,5 +53,5 @@ export const login = public_procedure
       sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24, // 1 dia
     });
-    return usuarioDTO;
+    return usuario_dto;
   });

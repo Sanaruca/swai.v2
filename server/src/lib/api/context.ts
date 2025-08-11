@@ -14,7 +14,9 @@ export interface TRPCContext {
     response: express.Response;
   };
   env: {
+    resend_token: string;
     secret: string;
+    swai_base_url: string;
   };
 }
 
@@ -23,7 +25,9 @@ export const createExpressTRPCContext: (options: {
     prisma: PrismaClient;
   };
   env: {
+    resend_token: string;
     secret: string;
+    swai_base_url: string;
   };
 }) => (options: CreateExpressContextOptions) => TRPCContext =
   ({ dependencies, env }) =>
@@ -31,9 +35,9 @@ export const createExpressTRPCContext: (options: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const usuario = req['user']
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-      ? parse(UsuarioSchemaDTO, req['user'])
+      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        parse(UsuarioSchemaDTO, req['user'])
       : null;
 
     return {
