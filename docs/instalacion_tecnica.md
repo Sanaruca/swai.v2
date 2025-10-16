@@ -7,7 +7,7 @@ Esta sección describe, de forma directa y narrativa, los pasos necesarios para 
 
 ### Requisitos previos
 
-El sistema requiere `Node.js` en su versión 22, `PostgreSQL` en versión 16 o superior y `Bun` en la serie 1. Antes de comenzar instale opcionalmente de forma global las utilidades sugeridas para la gestión de variables y procesos: `dotenvx` y `pm2`. Para comprobar su disponibilidad ejecute en la terminal:
+El sistema requiere `Node.js` en su versión 22, `PostgreSQL` en versión 16 o superior y `Bun` en la versión 1. Antes de comenzar instale opcionalmente de forma global las utilidades sugeridas para la gestión de variables y procesos: `dotenvx` y `pm2`. Para comprobar su disponibilidad ejecute en la terminal:
 
 ```bash
 dotenvx --version
