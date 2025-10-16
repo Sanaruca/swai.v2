@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instalador del Sistema</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+        background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #1a1a1a;
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 600px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+
+      /* Added progress dots indicator at top */
+      .progress-dots {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        padding: 32px 40px 24px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        transition: all 0.3s ease;
+      }
+
+      .dot.active {
+        background: #ff8c00;
+        width: 24px;
+        border-radius: 4px;
+      }
+
+      .dot.completed {
+        background: #ff8c00;
+      }
+
+      .content {
+        padding: 20px 60px 60px;
+        min-height: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .screen {
+        display: none;
+        animation: fadeIn 0.4s ease-out;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Redesigned welcome screen with minimal icon */
+      .welcome-icon {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .welcome-icon svg {
+        width: 64px;
+        height: 64px;
+      }
+
+      .welcome-text {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      .welcome-text h2 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #1a1a1a;
+        letter-spacing: -0.5px;
+      }
+
+      .welcome-text p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      /* Modern minimal button design */
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 16px 32px;
+        background: #ff8c00;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.2px;
+      }
+
+      .btn:hover {
+        background: #ff7a00;
+        box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Clean requirement cards design */
+      .requirement-list {
+        margin: 32px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .requirement-item {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: #fafafa;
+        border-radius: 12px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .requirement-item.checking {
+        border-color: #ff8c00;
+        background: #fff8f0;
+      }
+
+      .requirement-item.passed {
+        border-color: #10b981;
+        background: #f0fdf4;
+      }
+
+      .requirement-item.failed {
+        border-color: #ef4444;
+        background: #fef2f2;
+      }
+
+      .requirement-icon {
+        font-size: 24px;
+        margin-right: 16px;
+        min-width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .requirement-text {
+        flex: 1;
+      }
+
+      .requirement-text h3 {
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: #1a1a1a;
+      }
+
+      .requirement-text p {
+        font-size: 13px;
+        color: #999;
+      }
+
+      .requirement-status {
+        font-size: 20px;
+        min-width: 24px;
+        text-align: center;
+      }
+
+      /* Minimal progress bar design */
+      .progress-container {
+        margin: 48px 0 32px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #f0f0f0;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: #ff8c00;
+        width: 0%;
+        transition: width 0.5s ease;
+        border-radius: 3px;
+      }
+
+      .progress-text {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 15px;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .progress-percentage {
+        text-align: center;
+        font-size: 56px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        letter-spacing: -2px;
+      }
+
+      /* Subtle spinner animation */
+      .installing-animation {
+        text-align: center;
+        margin: 32px 0;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid #f0f0f0;
+        border-top-color: #ff8c00;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Clean completion screen */
+      .complete-icon {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .complete-icon svg {
+        width: 80px;
+        height: 80px;
+        animation: scaleIn 0.4s ease-out;
+      }
+
+      @keyframes scaleIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .complete-text {
+        text-align: center;
+      }
+
+      .complete-text h2 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        letter-spacing: -0.5px;
+      }
+
+      .complete-text p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 12px;
+        line-height: 1.6;
+      }
+
+      .status-message {
+        text-align: center;
+        margin: 24px 0;
+        font-size: 15px;
+        color: #999;
+        font-weight: 400;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+        .content {
+          padding: 20px 32px 48px;
+        }
+
+        .welcome-text h2,
+        .complete-text h2 {
+          font-size: 28px;
+        }
+
+        .progress-percentage {
+          font-size: 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Added progress indicator dots -->
+      <div class="progress-dots">
+        <div class="dot active" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+        <div class="dot" id="dot-4"></div>
+      </div>
+
+      <div class="content">
+        <!-- Pantalla 1: Bienvenida -->
+        <div class="screen active" id="welcome-screen">
+          <div class="welcome-icon">
+            <!-- Minimal SVG icon -->
+            <svg
+              viewBox="0 0 64 64"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="8"
+                y="12"
+                width="48"
+                height="36"
+                rx="4"
+                stroke="#ff8c00"
+                stroke-width="2.5"
+              />
+              <path d="M8 20h48" stroke="#ff8c00" stroke-width="2.5" />
+              <circle cx="14" cy="16" r="1.5" fill="#ff8c00" />
+              <circle cx="19" cy="16" r="1.5" fill="#ff8c00" />
+              <circle cx="24" cy="16" r="1.5" fill="#ff8c00" />
+              <path
+                d="M20 30l8 8 16-16"
+                stroke="#ff8c00"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="welcome-text">
+            <h2>Bienvenido al asistente de instalación SWAI / INSTALLER</h2>
+            <p>
+              Este asistente te guiará a través del proceso de instalación del
+              sistema en tu equipo.
+            </p>
+          </div>
+          <button class="btn" onclick="quitAndOpenSwai()">Continuar</button>
+        </div>
+
+        <!-- Pantalla 2: Requisitos -->
+        <div class="screen" id="requirements-screen">
+          <div class="welcome-text">
+            <h2>Requisitos del sistema</h2>
+            <p>
+              Verificaremos que tu equipo cumple con los requisitos necesarios.
+            </p>
+          </div>
+
+          <div class="requirement-list">
+            <div class="requirement-item" id="disk-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Espacio en disco</h3>
+                <p>Mínimo 2GB disponibles</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+
+            <div class="requirement-item" id="os-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                  <path d="M8 21h8M12 17v4" />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Sistema operativo</h3>
+                <p>Windows 10 o superior</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+
+            <div class="requirement-item" id="ram-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Memoria RAM</h3>
+                <p>Mínimo 4GB</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+
+            <div class="requirement-item" id="net-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Conexión a internet</h3>
+                <p>Requerida para la instalación</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+            <div class="requirement-item" id="postgres-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>PostgreSQL</h3>
+                <p>Requerido para la instalación</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+            <div class="requirement-item" id="bun-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Bun</h3>
+                <p>Requerido para la instalación</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+            <div class="requirement-item" id="node-req">
+              <div class="requirement-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                  />
+                </svg>
+              </div>
+              <div class="requirement-text">
+                <h3>Node.js v22.x.x</h3>
+                <p>Requerido para la instalación</p>
+              </div>
+              <div class="requirement-status">⏳</div>
+            </div>
+          </div>
+
+          <button class="btn" id="check-btn" onclick="checkRequirements()">
+            Verificar requisitos
+          </button>
+          <button class="btn hidden" id="install-btn" onclick="install()">
+            Instalar
+          </button>
+        </div>
+
+        <!-- Pantalla 3: Instalando -->
+        <div class="screen" id="installing-screen">
+          <div class="welcome-text">
+            <h2>Instalando</h2>
+            <p>Por favor espera mientras se completa la instalación.</p>
+          </div>
+
+          <div class="installing-animation">
+            <div class="spinner"></div>
+          </div>
+
+          <div class="progress-percentage" id="progress-percentage">0%</div>
+
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">Inicializando...</div>
+          </div>
+
+          <div class="status-message" id="status-message">
+            Preparando archivos del sistema
+          </div>
+        </div>
+
+        <!-- Pantalla 4: Completado -->
+        <div class="screen" id="complete-screen">
+          <div class="complete-icon">
+            <!-- Success checkmark SVG -->
+            <svg
+              viewBox="0 0 80 80"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="40"
+                cy="40"
+                r="38"
+                stroke="#10b981"
+                stroke-width="3"
+                fill="#f0fdf4"
+              />
+              <path
+                d="M25 40l10 10 20-20"
+                stroke="#10b981"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="complete-text">
+            <h2>Instalación completada</h2>
+            <p>El sistema se ha instalado correctamente.</p>
+            <p>Ya puedes comenzar a usar todas las funcionalidades.</p>
+          </div>
+          <button
+            class="btn"
+            onclick="location.reload()"
+            style="margin-top: 48px"
+          >
+            Finalizar
+          </button>
+        </div>
+        <!-- Pantalla 5: Error -->
+        <div class="screen" id="error-screen">
+          <div class="error-icon">
+            <!-- Error icon SVG -->
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11.9998 8.99999V13M11.9998 17H12.0098M10.6151 3.89171L2.39019 18.0983C1.93398 18.8863 1.70588 19.2803 1.73959 19.6037C1.769 19.8857 1.91677 20.142 2.14613 20.3088C2.40908 20.5 2.86435 20.5 3.77487 20.5H20.2246C21.1352 20.5 21.5904 20.5 21.8534 20.3088C22.0827 20.142 22.2305 19.8857 22.2599 19.6037C22.2936 19.2803 22.0655 18.8863 21.6093 18.0983L13.3844 3.89171C12.9299 3.10654 12.7026 2.71396 12.4061 2.58211C12.1474 2.4671 11.8521 2.4671 11.5935 2.58211C11.2969 2.71396 11.0696 3.10655 10.6151 3.89171Z"
+                stroke="#ef4444"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="error-text">
+            <h2>Instalación fallida</h2>
+            <p>Ha ocurrido un error durante la instalación.</p>
+            <p>Por favor, intenta nuevamente.</p>
+          </div>
+          <button
+            class="btn"
+            onclick="quitAndOpenSwai()"
+            style="margin-top: 48px"
+          >
+            Finalizar
+          </button>
+        </div>
+        <!-- Pantalla 6: Credenciales postgres -->
+        <div class="screen" id="postgres-screen">
+          <div class="welcome-text">
+            <h2>Configuración de PostgreSQL</h2>
+            <p>
+              Por favor, ingresa las credenciales de tu base de datos
+              PostgreSQL.
+            </p>
+          </div>
+          <div class="form">
+            <style>
+              .postgres-form-label {
+                margin-bottom: 8px;
+                font-weight: 600;
+              }
+
+              .postgres-form-input {
+                padding: 8px;
+                border: 1px solid #d1d1d1;
+                border-radius: 4px;
+                background-color: #fafafa;
+              }
+            </style>
+            <form action="javascript:void(0)" onsubmit="return install()">
+              <label for="pg-user" class="postgres-form-label">Usuario:</label>
+              <br />
+              <input
+                type="text"
+                id="pg-user"
+                name="pg-user"
+                value="postgres"
+                required
+                class="postgres-form-input"
+              />
+              <br />
+              <br />
+              <label for="pg-pass" class="postgres-form-label"
+                >Contraseña:</label
+              >
+              <br />
+              <input
+                type="password"
+                id="pg-pass"
+                name="pg-pass"
+                required
+                class="postgres-form-input"
+              />
+              <br />
+              <br />
+              <br />
+              <button class="btn" type="submit">Continuar e Instalar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function install() {
+        goToScreen('installing-screen', 3);
+        startInstallation();
+      }
+
+      function goToScreen(screenId, dotNumber) {
+        document.querySelectorAll('.screen').forEach((screen) => {
+          screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+
+        // Update progress dots
+        updateProgressDots(dotNumber);
+      }
+
+      function updateProgressDots(activeNumber) {
+        for (let i = 1; i <= 4; i++) {
+          const dot = document.getElementById(`dot-${i}`);
+          dot.classList.remove('active', 'completed');
+
+          if (i === activeNumber) {
+            dot.classList.add('active');
+          } else if (i < activeNumber) {
+            dot.classList.add('completed');
+          }
+        }
+      }
+
+      async function checkRequirements() {
+        document.getElementById('check-btn').disabled = true;
+        const diskElement = document.getElementById('disk-req');
+        const osElement = document.getElementById('os-req');
+        const ramElement = document.getElementById('ram-req');
+        const netElement = document.getElementById('net-req');
+        const pgElement = document.getElementById('postgres-req');
+        const bunElement = document.getElementById('bun-req');
+        const nodeElement = document.getElementById('node-req');
+
+        diskElement.classList.remove('passed', 'failed');
+        osElement.classList.remove('passed', 'failed');
+        ramElement.classList.remove('passed', 'failed');
+        netElement.classList.remove('passed', 'failed');
+        pgElement.classList.remove('passed', 'failed');
+        bunElement.classList.remove('passed', 'failed');
+        nodeElement.classList.remove('passed', 'failed');
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Check Disk
+
+        diskElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const diskCheck = await window.electron.checkDisk();
+        diskElement.classList.remove('checking');
+        diskElement.classList.add(diskCheck ? 'passed' : 'failed');
+        diskElement.querySelector('.requirement-status').textContent = diskCheck
+          ? '✓'
+          : '✗';
+
+        // Check OS
+
+        osElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const osCheck = window.electron.checkWindows();
+        osElement.classList.remove('checking');
+        osElement.classList.add(osCheck ? 'passed' : 'failed');
+        osElement.querySelector('.requirement-status').textContent = osCheck
+          ? '✓'
+          : '✗';
+
+        // Check RAM
+
+        ramElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const ramCheck = window.electron.checkRAM();
+        ramElement.classList.remove('checking');
+        ramElement.classList.add(ramCheck ? 'passed' : 'failed');
+        ramElement.querySelector('.requirement-status').textContent = ramCheck
+          ? '✓'
+          : '✗';
+
+        // Check internet
+
+        netElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const netCheck = await window.electron.checkInternet();
+        netElement.classList.remove('checking');
+        netElement.classList.add(netCheck ? 'passed' : 'failed');
+        netElement.querySelector('.requirement-status').textContent = netCheck
+          ? '✓'
+          : '✗';
+
+        // Check PostgreSQL
+
+        pgElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const pgCheck = await window.electron.checkPostgres();
+        pgElement.classList.remove('checking');
+        pgElement.classList.add(pgCheck ? 'passed' : 'failed');
+        pgElement.querySelector('.requirement-status').textContent = pgCheck
+          ? '✓'
+          : '✗';
+
+        // Check Bun
+
+        bunElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const bunCheck = await window.electron.checkBun();
+        bunElement.classList.remove('checking');
+        bunElement.classList.add(bunCheck ? 'passed' : 'failed');
+        bunElement.querySelector('.requirement-status').textContent = bunCheck
+          ? '✓'
+          : '✗';
+
+        // Check Node.js
+
+        nodeElement.classList.add('checking');
+        /**
+         * @type {boolean}
+         */
+        const nodeCheck = await window.electron.checkNode();
+        nodeElement.classList.remove('checking');
+        nodeElement.classList.add(nodeCheck ? 'passed' : 'failed');
+        nodeElement.querySelector('.requirement-status').textContent = nodeCheck
+          ? '✓'
+          : '✗';
+
+        setTimeout(() => {
+          if (
+            diskCheck &&
+            osCheck &&
+            ramCheck &&
+            netCheck &&
+            pgCheck &&
+            bunCheck &&
+            nodeCheck
+          ) {
+            // document.getElementById('install-btn').classList.remove('hidden');
+            document.getElementById('check-btn').classList.add('hidden');
+            goToScreen('postgres-screen', 4);
+          } else {
+            document.getElementById('check-btn').disabled = false;
+            goToScreen('requirements-screen', 2);
+          }
+        }, 1000);
+
+        // requirements.forEach((req, index) => {
+        //   setTimeout(() => {
+        //     const element = document.getElementById(req.id);
+        //     element.classList.add('checking');
+
+        //     setTimeout(() => {
+        //       element.classList.remove('checking');
+        //       element.classList.add('passed');
+        //       element.querySelector('.requirement-status').textContent = '✓';
+
+        //       if (index === requirements.length - 1) {
+        //         setTimeout(() => {
+        //           goToScreen('installing-screen', 3);
+        //           startInstallation();
+        //         }, 600);
+        //       }
+        //     }, 500);
+        //   }, req.delay);
+        // });
+      }
+
+      function startInstallation() {
+        window.electron.checkWorkspace();
+
+        const pgUser = document.getElementById('pg-user').value;
+        const pgPass = document.getElementById('pg-pass').value;
+
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercentage = document.getElementById(
+          'progress-percentage',
+        );
+        const progressText = document.getElementById('progress-text');
+        const statusMessage = document.getElementById('status-message');
+
+        const steps = [
+          {
+            percent: 15,
+            text: 'Extrayendo archivos',
+            status: 'Copiando archivos del sistema',
+          },
+          {
+            percent: 30,
+            text: 'Instalando componentes',
+            status: 'Configurando módulos principales',
+          },
+          {
+            percent: 50,
+            text: 'Configurando sistema',
+            status: 'Aplicando configuraciones',
+          },
+          {
+            percent: 70,
+            text: 'Instalando dependencias',
+            status: 'Descargando componentes adicionales',
+          },
+          {
+            percent: 85,
+            text: 'Finalizando instalación',
+            status: 'Verificando integridad de archivos',
+          },
+          { percent: 100, text: 'Completado', status: 'Instalación exitosa' },
+        ];
+
+        let currentStep = 0;
+
+        function updateProgress() {
+          if (currentStep < steps.length) {
+            const step = steps[currentStep];
+            progressFill.style.width = step.percent + '%';
+            progressPercentage.textContent = step.percent + '%';
+            progressText.textContent = step.text;
+            statusMessage.textContent = step.status;
+
+            currentStep++;
+
+            // if (currentStep < steps.length) {
+            //   setTimeout(updateProgress, 1400);
+            // } else {
+            //   setTimeout(() => {
+            //     goToScreen('complete-screen', 4);
+            //   }, 800);
+            // }
+          }
+        }
+
+        updateProgress();
+
+        setTimeout(async () => {
+          updateProgress();
+
+          try {
+            await window.electron.runBunInstall();
+            updateProgress();
+            await window.electron.runPrismaPush();
+            await window.electron.runDatabaseSeed(pgUser, pgPass);
+            updateProgress();
+            await window.electron.runNxBuild();
+            updateProgress();
+            await window.electron.runFinishInstall();
+            updateProgress();
+            setTimeout(() => {
+              goToScreen('complete-screen', 4);
+            }, 800);
+          } catch (error) {
+            goToScreen('error-screen', 5);
+          }
+        }, 3000);
+      }
+
+      function quitAndOpenSwai() {
+        window.electron.openExternal('http://localhost:4000');
+        window.electron.quit();
+      }
+    </script>
+  </body>
+</html>

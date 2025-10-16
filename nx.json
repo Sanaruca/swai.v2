@@ -55,5 +55,6 @@
         "targetName": "eslint:lint"
       }
     }
-  ]
+  ],
+  "defaultProject": "installer"
 }
