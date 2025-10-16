@@ -1,0 +1,13 @@
+theme: minima
+title: SWAI
+author:
+  name: Sanaruca
+  email: 'sanaruca@gmail.com'
+
+  minima:
+  nav_pages:
+    - instalacion_tecnica.md
+  social_links:
+    - title: GitHub
+      icon: github
+      url: 'https://github.com/sanaruca'

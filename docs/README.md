@@ -1,3 +1,3 @@
 # Documentación de instalación
 
-- [Instalación](instalacion_tecnica.md)
+- [Instalación Técnica](instalacion_tecnica.md)
