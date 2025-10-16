@@ -1,4 +1,7 @@
-# 📘 Documentación Técnica de Instalación
+---
+layout: page
+title: 📘 Documentación Técnica de Instalación
+---
 
 **SWAI — Sistema Web de Administración Institucional**
 
