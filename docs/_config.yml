@@ -5,9 +5,12 @@ author:
   name: Sanaruca
   email: 'sanaruca@gmail.com'
 
+# Navegación personalizada
+header_pages:
+  - index.md
+  - instalacion_tecnica.md
+
 minima:
-  nav_pages:
-    - instalacion_tecnica.md
   social_links:
     - title: GitHub
       icon: github
