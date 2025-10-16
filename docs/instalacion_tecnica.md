@@ -4,8 +4,6 @@
 
 Esta guía describe los pasos técnicos necesarios para instalar y ejecutar **SWAI** en un entorno local o de servidor.
 
----
-
 ## ✅ Requisitos previos
 
 Antes de comenzar, asegúrate de tener instaladas las siguientes dependencias:
@@ -59,8 +57,6 @@ Ejecute el siguiente comando para instalar las dependencias del proyecto:
 bun install
 ```
 
----
-
 ### 4. Construir la aplicación
 
 Compila los proyectos principales:
@@ -68,8 +64,6 @@ Compila los proyectos principales:
 ```bash
 bun nx run-many --target build --projects 'swai,server'
 ```
-
----
 
 ### 5. Ejecutar el seed de la base de datos
 
@@ -81,8 +75,6 @@ psql -U <usuario> -d <nombre_base_datos> -f prisma/seed.sql
 
 _(Reemplaza `<usuario>` y `<nombre_base_datos>` con tus valores reales.)_
 
----
-
 ### 6. Iniciar la aplicación
 
 Ejecuta el servidor con **dotenvx** y **pm2**:
@@ -90,8 +82,6 @@ Ejecuta el servidor con **dotenvx** y **pm2**:
 ```bash
 dotenvx run -- pm2 start --name swai-server node -- dist/swai/server/server.mjs
 ```
-
----
 
 ## 🌐 Acceso a la aplicación
 
@@ -104,8 +94,6 @@ Si todo fue correcto, abre en tu navegador:
 - **Usuario:** `admin`
 - **Contraseña:** `Swai%4dm1n157r4d0r`
 
----
-
 ## 📌 Notas finales
 
 - Se recomienda mantener **pm2** corriendo como servicio para asegurar la persistencia del proceso.
@@ -117,9 +105,3 @@ Si todo fue correcto, abre en tu navegador:
   ```bash
   pm2 logs swai-server
   ```
-
----
-
-```
-
-```
