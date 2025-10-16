@@ -9,8 +9,13 @@ author:
 header_pages:
   - index.md
   - instalacion_tecnica.md
+  - instalacion_con_installer.md
 
 minima:
+  navigation:
+    - index.md
+    - instalacion_tecnica.md
+    - instalacion_con_installer.md
   social_links:
     - title: GitHub
       icon: github
