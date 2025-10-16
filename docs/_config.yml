@@ -1,9 +1,10 @@
 theme: minima
 title: SWAI
-description: Documentación oficial de SWAI sistema web
-author:
-  name: Sanaruca
-  email: 'sanaruca@gmail.com'
+description: Manual de instalación de SWAI sistema web
+site:
+  author:
+    name: Sanaruca
+    email: 'sanaruca@gmail.com'
 
 # Navegación personalizada
 header_pages:
@@ -17,4 +18,4 @@ minima:
   social_links:
     - title: GitHub
       icon: github
-      url: 'https://github.com/sanaruca'
+      url: 'https://github.com/Sanaruca'
